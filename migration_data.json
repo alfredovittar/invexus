@@ -1,0 +1,4671 @@
+{
+  "inventario": [
+    {
+      "id": "INV-001",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD247272",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 46672500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-02-05",
+      "gastos_acum": 700.0,
+      "ganancia_real": 53229550.0,
+      "rentabilidad": 1640.3559322033898
+    },
+    {
+      "id": "INV-002",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD247289",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 46672500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-02-05",
+      "gastos_acum": 0.0,
+      "ganancia_real": 52537250.0,
+      "rentabilidad": 1654.716535433071
+    },
+    {
+      "id": "INV-003",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD247261",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 46672500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-02-11",
+      "gastos_acum": 0.0,
+      "ganancia_real": 54814250.0,
+      "rentabilidad": 1726.4330708661416
+    },
+    {
+      "id": "INV-004",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD248214",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 46672500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-01-16",
+      "gastos_acum": 0.0,
+      "ganancia_real": 54814250.0,
+      "rentabilidad": 1726.4330708661416
+    },
+    {
+      "id": "INV-005",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD248226",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 46672500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-01-27",
+      "gastos_acum": 0.0,
+      "ganancia_real": 57388250.0,
+      "rentabilidad": 1807.5039370078741
+    },
+    {
+      "id": "INV-006",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD248229",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 46672500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-01-21",
+      "gastos_acum": 0.0,
+      "ganancia_real": 54418250.0,
+      "rentabilidad": 1713.9606299212599
+    },
+    {
+      "id": "INV-007",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "BLACK",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD245259",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 56080500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-01-23",
+      "gastos_acum": 0.0,
+      "ganancia_real": 64311850.0,
+      "rentabilidad": 1685.7627785058978
+    },
+    {
+      "id": "INV-008",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "GREEN",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD232401",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 56080500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-009",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "GREEN",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD232369",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 56080500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": "2026-01-16",
+      "gastos_acum": 0.0,
+      "ganancia_real": 64961850.0,
+      "rentabilidad": 1702.8007863695937
+    },
+    {
+      "id": "INV-010",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD232362",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 56080500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-011",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD232117",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 56080500.0,
+      "tc_compra": 1470.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-01-05",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-012",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "X55 II",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "BLACK",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TD269595",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 33150.0,
+      "costo_ars": 47421075.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 36900.0,
+      "precio_minimo": 36900.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-013",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "X55 II",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "PLATINUM GREY",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TD270009",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 33150.0,
+      "costo_ars": 47421075.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 36900.0,
+      "precio_minimo": 36900.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": "2026-04-01",
+      "gastos_acum": 0.0,
+      "ganancia_real": 52001250.0,
+      "rentabilidad": 1568.6651583710407
+    },
+    {
+      "id": "INV-014",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "X55 II",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "WHITE",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TD269772",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 33150.0,
+      "costo_ars": 47421075.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 36900.0,
+      "precio_minimo": 36900.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-015",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "U5 PLUS",
+      "version": "AUTO",
+      "anio": 2026,
+      "color": "PLATINUM GREY",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "SD093283",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 19950.0,
+      "costo_ars": 28538475.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 25600.0,
+      "precio_minimo": 25600.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": "2026-03-12",
+      "gastos_acum": 0.0,
+      "ganancia_real": 37600050.0,
+      "rentabilidad": 1884.7142857142858
+    },
+    {
+      "id": "INV-016",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "PLATINUM GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD264513",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 54573575.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": "2026-02-03",
+      "gastos_acum": 0.0,
+      "ganancia_real": 64311850.0,
+      "rentabilidad": 1685.7627785058978
+    },
+    {
+      "id": "INV-017",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "WHITE",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD257666",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 45418375.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": "2026-02-10",
+      "gastos_acum": 0.0,
+      "ganancia_real": 52240250.0,
+      "rentabilidad": 1645.3622047244094
+    },
+    {
+      "id": "INV-018",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "BLUE",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD258183",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 54573575.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": "2026-02-20",
+      "gastos_acum": 0.0,
+      "ganancia_real": 52035850.0,
+      "rentabilidad": 1363.9803407601573
+    },
+    {
+      "id": "INV-019",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ40",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "BLACK",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TD420649",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 48450.0,
+      "costo_ars": 67781550.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 54500.0,
+      "precio_minimo": 54500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": "2026-03-19",
+      "gastos_acum": 0.0,
+      "ganancia_real": 74190660.0,
+      "rentabilidad": 1531.282972136223
+    },
+    {
+      "id": "INV-020",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ40",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "GREY",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TB420642",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 48450.0,
+      "costo_ars": 67781550.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 54500.0,
+      "precio_minimo": 54500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": "2026-03-29",
+      "gastos_acum": 0.0,
+      "ganancia_real": 76951550.0,
+      "rentabilidad": 1588.2672858617132
+    },
+    {
+      "id": "INV-021",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "U5 PLUS",
+      "version": "AUTO",
+      "anio": 2026,
+      "color": "PLATINUM GREY",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "SD131386",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 19500.0,
+      "costo_ars": 27280500.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 25600.0,
+      "precio_minimo": 25600.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-022",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "U5 PLUS",
+      "version": "AUTO",
+      "anio": 2026,
+      "color": "PLATINUM GREY",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "SD131414",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 19500.0,
+      "costo_ars": 27280500.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 25600.0,
+      "precio_minimo": 25600.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": "2026-03-13",
+      "gastos_acum": 0.0,
+      "ganancia_real": 37600500.0,
+      "rentabilidad": 1928.2307692307693
+    },
+    {
+      "id": "INV-023",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "X55 PLUS",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "SILVER",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TD191190",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 53371850.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": "2026-03-27",
+      "gastos_acum": 0.0,
+      "ganancia_real": 60351850.0,
+      "rentabilidad": 1581.9619921363042
+    },
+    {
+      "id": "INV-024",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "X55 PLUS",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "SILVER",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TD191180",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 53371850.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": "2026-03-17",
+      "gastos_acum": 0.0,
+      "ganancia_real": 61638850.0,
+      "rentabilidad": 1615.697247706422
+    },
+    {
+      "id": "INV-025",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "X55 PLUS",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "WHITE",
+      "km": 0,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "TT191132",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 38150.0,
+      "costo_ars": 53371850.0,
+      "tc_compra": 1399.0,
+      "precio_lista": 42500.0,
+      "precio_minimo": 42500.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-25",
+      "fecha_venta": "2026-03-26",
+      "gastos_acum": 0.0,
+      "ganancia_real": 55969120.0,
+      "rentabilidad": 1467.0804718217562
+    },
+    {
+      "id": "INV-026",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "GREEN",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD240890",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": "2026-03-09",
+      "gastos_acum": 0.0,
+      "ganancia_real": 52438250.0,
+      "rentabilidad": 1651.5984251968505
+    },
+    {
+      "id": "INV-027",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "AZUL",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD240539",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-028",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "LIGTH GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD240656",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": "2026-03-19",
+      "gastos_acum": 0.0,
+      "ganancia_real": 52339250.0,
+      "rentabilidad": 1648.4803149606298
+    },
+    {
+      "id": "INV-029",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "GREEN",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD252339",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": "2026-04-01",
+      "gastos_acum": 0.0,
+      "ganancia_real": 51475564.1,
+      "rentabilidad": 1621.277609448819
+    },
+    {
+      "id": "INV-030",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "GREEN",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD252467",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-031",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD252306",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": "2026-03-16",
+      "gastos_acum": 0.0,
+      "ganancia_real": 49698425.0,
+      "rentabilidad": 1565.304724409449
+    },
+    {
+      "id": "INV-032",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "MATTE GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD258638",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": "2026-03-11",
+      "gastos_acum": 0.0,
+      "ganancia_real": 48703250.0,
+      "rentabilidad": 1533.9606299212599
+    },
+    {
+      "id": "INV-033",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "LIGTH GREY",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD258509",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-034",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "WHITE",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD258173",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-035",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "BAIC",
+      "modelo": "BJ30",
+      "version": "4X2",
+      "anio": 2026,
+      "color": "WHITE",
+      "km": 0,
+      "combustible": "Híbrido",
+      "transmision": "Automática",
+      "vin": "TD257839",
+      "patente": null,
+      "proveedor": "BAIC ARGENTINA",
+      "costo_usd": 31750.0,
+      "costo_ars": 44958000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 35800.0,
+      "precio_minimo": 35800.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-06",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-036",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "CHEVROLET",
+      "modelo": "CRUZE LTZ 4P",
+      "version": "AUTO",
+      "anio": 2020,
+      "color": "PERLADO",
+      "km": 102000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AE678QP",
+      "patente": "AE678QP",
+      "proveedor": "FHUR TOMATIS",
+      "costo_usd": 19250000.0,
+      "costo_ars": 27258000000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 23000000.0,
+      "precio_minimo": 22800000.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-09",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-037",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "TAOS HIGHLINE 250 TSI AT",
+      "version": "AUTO",
+      "anio": 2023,
+      "color": "GRIS",
+      "km": 20000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AG285DJ",
+      "patente": "AG285DJ",
+      "proveedor": "LORENZO MELINA",
+      "costo_usd": 38900000.0,
+      "costo_ars": 55627000000.0,
+      "tc_compra": 1430.0,
+      "precio_lista": 38900000.0,
+      "precio_minimo": 38900000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-16",
+      "fecha_venta": "2026-01-19",
+      "gastos_acum": 0.0,
+      "ganancia_real": 0.0,
+      "rentabilidad": 0.0
+    },
+    {
+      "id": "INV-038",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "FIAT",
+      "modelo": "TORO FREEDOM 2,4 4X4",
+      "version": "PICK UP",
+      "anio": 2022,
+      "color": null,
+      "km": 64387,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AF140HF",
+      "patente": "AF140HF",
+      "proveedor": "JURE SERGIO RAUL",
+      "costo_usd": 27000000.0,
+      "costo_ars": 38623500000.0,
+      "tc_compra": 1430.5,
+      "precio_lista": 27000000.0,
+      "precio_minimo": 27000000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-21",
+      "fecha_venta": "2026-02-11",
+      "gastos_acum": 0.0,
+      "ganancia_real": 0.0,
+      "rentabilidad": 0.0
+    },
+    {
+      "id": "INV-039",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "TOYOTA",
+      "modelo": "COROLLA XEI CVT",
+      "version": "AUTO",
+      "anio": 2023,
+      "color": "BLANCO",
+      "km": 29000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AF780CS",
+      "patente": "AF780CS",
+      "proveedor": "DE MARCO PAOLO",
+      "costo_usd": 33000000.0,
+      "costo_ars": 46398000000.0,
+      "tc_compra": 1406.0,
+      "precio_lista": 35150000.0,
+      "precio_minimo": 35150000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-10",
+      "fecha_venta": "2026-03-12",
+      "gastos_acum": 0.0,
+      "ganancia_real": 4300000.0,
+      "rentabilidad": 0.1303030303030303
+    },
+    {
+      "id": "INV-040",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "TOYOTA",
+      "modelo": "COROLLA CROSS XEI",
+      "version": "SUV",
+      "anio": 2024,
+      "color": "BLANCO",
+      "km": 20000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AG630EZ",
+      "patente": "AG630EZ",
+      "proveedor": "RAGONE GABRIELA NA",
+      "costo_usd": 43000000.0,
+      "costo_ars": 61619000000.0,
+      "tc_compra": 1433.0,
+      "precio_lista": 43000000.0,
+      "precio_minimo": 43000000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-23",
+      "fecha_venta": "2026-02-11",
+      "gastos_acum": 0.0,
+      "ganancia_real": 0.0,
+      "rentabilidad": 0.0
+    },
+    {
+      "id": "INV-041",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "TAOS CONFORTLINE",
+      "version": "SUV",
+      "anio": 2023,
+      "color": "GRIS",
+      "km": 80000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AF986TJ",
+      "patente": "AF986TJ",
+      "proveedor": "BRACAMONTE MAURICIO",
+      "costo_usd": 35000000.0,
+      "costo_ars": 50610000000.0,
+      "tc_compra": 1446.0,
+      "precio_lista": 35000000.0,
+      "precio_minimo": 35000000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-03",
+      "fecha_venta": "2026-02-19",
+      "gastos_acum": 0.0,
+      "ganancia_real": 0.0,
+      "rentabilidad": 0.0
+    },
+    {
+      "id": "INV-042",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "TOYOTA",
+      "modelo": "YARIS CVT",
+      "version": "AUTO",
+      "anio": 2017,
+      "color": "BLANCO",
+      "km": 94000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AB149AR",
+      "patente": "AB149AR",
+      "proveedor": "YUNES VICTOR",
+      "costo_usd": 18000000.0,
+      "costo_ars": 25740000000.0,
+      "tc_compra": 1430.0,
+      "precio_lista": 19000000.0,
+      "precio_minimo": 19000000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-01-16",
+      "fecha_venta": "2026-03-05",
+      "gastos_acum": 0.0,
+      "ganancia_real": 1800000.0,
+      "rentabilidad": 0.1
+    },
+    {
+      "id": "INV-043",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "CITROEN",
+      "modelo": "C4 CATUS THP AT",
+      "version": "SUV",
+      "anio": 2024,
+      "color": null,
+      "km": 14300,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AG587FK",
+      "patente": "AG587FK",
+      "proveedor": "JORGE SAAD MARIA",
+      "costo_usd": 26000000.0,
+      "costo_ars": 37232000000.0,
+      "tc_compra": 1432.0,
+      "precio_lista": 26000000.0,
+      "precio_minimo": 26000000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-02-06",
+      "fecha_venta": "2026-02-12",
+      "gastos_acum": 0.0,
+      "ganancia_real": 0.0,
+      "rentabilidad": 0.0
+    },
+    {
+      "id": "INV-044",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "FIAT",
+      "modelo": "TORO VOLCANO",
+      "version": "4X4",
+      "anio": 2020,
+      "color": "BLANCA",
+      "km": 78700,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AE062UR",
+      "patente": "AE062UR",
+      "proveedor": "KANCYPER LEANDRO",
+      "costo_usd": 23550000.0,
+      "costo_ars": 33346800000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 29500000.0,
+      "precio_minimo": 29500000.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-02-09",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-045",
+      "empresa": "INVEXUS",
+      "tipo": "0km",
+      "marca": "VOLKSWAGEN",
+      "modelo": "AMAROK V6 EXTR",
+      "version": "4X4",
+      "anio": 2026,
+      "color": "GRIS",
+      "km": 0,
+      "combustible": "NAFTA",
+      "transmision": "Automática",
+      "vin": null,
+      "patente": null,
+      "proveedor": "KANCYPER LEANDRO",
+      "costo_usd": 72000000.0,
+      "costo_ars": 101952000000.0,
+      "tc_compra": 1416.0,
+      "precio_lista": 72000000.0,
+      "precio_minimo": 79000000.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-02-09",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-046",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "TOYOTA",
+      "modelo": "HILUX 4X2 DC SR MT",
+      "version": "4X2",
+      "anio": 2024,
+      "color": "GRIS",
+      "km": 27700,
+      "combustible": "Diesel",
+      "transmision": "Manual",
+      "vin": "AG335DU",
+      "patente": "AG335DU",
+      "proveedor": "YANUZZI RAFAEL",
+      "costo_usd": 39600000.0,
+      "costo_ars": 54489600000.0,
+      "tc_compra": 1376.0,
+      "precio_lista": 39600000.0,
+      "precio_minimo": 39600000.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-02-20",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-047",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "CHEVROLET",
+      "modelo": "CAPTIVA LTZ 2,0 AT",
+      "version": "4X4",
+      "anio": 2018,
+      "color": "GRIS",
+      "km": 130000,
+      "combustible": "Diesel",
+      "transmision": "Automática",
+      "vin": "AC747UN",
+      "patente": "AC747UN",
+      "proveedor": "MURATORE DANIEL",
+      "costo_usd": 20000000.0,
+      "costo_ars": 28000000000.0,
+      "tc_compra": 1400.0,
+      "precio_lista": 26000000.0,
+      "precio_minimo": 23500000.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-13",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-048",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "CITROEN",
+      "modelo": "C4 CACTUS NOIR",
+      "version": "AUTO",
+      "anio": 2024,
+      "color": "GRIS OSCURO",
+      "km": 19500,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AG610ZA",
+      "patente": "AG610ZA",
+      "proveedor": "AVILA JOSE",
+      "costo_usd": 24500000.0,
+      "costo_ars": 34202000000.0,
+      "tc_compra": 1396.0,
+      "precio_lista": 24500000.0,
+      "precio_minimo": 24500000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-17",
+      "fecha_venta": "2026-03-19",
+      "gastos_acum": 0.0,
+      "ganancia_real": 0.0,
+      "rentabilidad": 0.0
+    },
+    {
+      "id": "INV-049",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "PEUGEOT",
+      "modelo": "3008 ALLURE",
+      "version": "AUTO",
+      "anio": 2018,
+      "color": "BLANCO",
+      "km": 94000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AC249XZ",
+      "patente": "AC249XZ",
+      "proveedor": "MERA EMILIO",
+      "costo_usd": 20000000.0,
+      "costo_ars": 27880000000.0,
+      "tc_compra": 1394.0,
+      "precio_lista": 26500000.0,
+      "precio_minimo": 25500000.0,
+      "estado": "Disponible",
+      "fecha_ingreso": "2026-03-18",
+      "fecha_venta": null,
+      "gastos_acum": 0.0,
+      "ganancia_real": null,
+      "rentabilidad": null
+    },
+    {
+      "id": "INV-050",
+      "empresa": "INVEXUS",
+      "tipo": "usado",
+      "marca": "CHEVROLET",
+      "modelo": "CRUZE 5P AT PREMIER",
+      "version": "AUTO",
+      "anio": 2020,
+      "color": "BLANCO",
+      "km": 59000,
+      "combustible": "Nafta",
+      "transmision": "Automática",
+      "vin": "AE457DW",
+      "patente": "AE457DW",
+      "proveedor": "CEJAS RAUL AROLDO",
+      "costo_usd": 21900000.0,
+      "costo_ars": 30539550000.0,
+      "tc_compra": 1394.5,
+      "precio_lista": 25000000.0,
+      "precio_minimo": 25000000.0,
+      "estado": "Vendido",
+      "fecha_ingreso": "2026-03-19",
+      "fecha_venta": "2026-03-26",
+      "gastos_acum": 0.0,
+      "ganancia_real": 2850000.0,
+      "rentabilidad": 0.13013698630136986
+    }
+  ],
+  "ventas": [
+    {
+      "id": "20260205-001",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-001",
+      "fecha": "2026-02-05",
+      "cliente": "ALANIS MARIA CANDELKA",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 53800000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 538000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 700.0,
+      "ganancia_neta": 53229550.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1442.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260205-002",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-002",
+      "fecha": "2026-02-05",
+      "cliente": "SAAD JORGE",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 53100000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 531000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 52537250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1442.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260211-003",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-003",
+      "fecha": "2026-02-11",
+      "cliente": "ANTENOR FELICITAS",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 55400000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 554000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 54814250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "ENTREGA AMAROK V6 OKM, VENDIDA MATTAR RAMIRO",
+      "tc_bna_snapshot": 1400.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260116-004",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-004",
+      "fecha": "2026-01-16",
+      "cliente": "LORENZO MELINA",
+      "vendedor_nombre": "LUCAS",
+      "precio_venta": 55400000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 554000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 54814250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "ENTREGA TAOS",
+      "tc_bna_snapshot": 1430.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260127-005",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-005",
+      "fecha": "2026-01-27",
+      "cliente": "ENLEOCAT SRL",
+      "vendedor_nombre": "LUCAS",
+      "precio_venta": 58000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 580000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 57388250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1442.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260121-006",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-006",
+      "fecha": "2026-01-21",
+      "cliente": "JURE SERGIO",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 55000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 550000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 54418250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1430.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260123-007",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-007",
+      "fecha": "2026-01-23",
+      "cliente": "RAGONE GRACIELA",
+      "vendedor_nombre": "CARLITOS",
+      "precio_venta": 65000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 650000.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 64311850.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1433.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260116-008",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-009",
+      "fecha": "2026-01-16",
+      "cliente": "YUNES VICTOR",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 65000000.0,
+      "forma_pago": "Financiado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 64961850.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "ENTREGA YARIS (VENDIDO)",
+      "tc_bna_snapshot": 1430.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260312-009",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-015",
+      "fecha": "2026-03-12",
+      "cliente": "GALVEZ JORGE JOSE",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 38000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 380000.0,
+      "costo_compra": 19950.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 37600050.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1394.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260203-010",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-016",
+      "fecha": "2026-02-03",
+      "cliente": "BRACAMONTE MAURICIO",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 65000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 650000.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 64311850.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1446.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260210-011",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-017",
+      "fecha": "2026-02-10",
+      "cliente": "DE MARCO PAOLO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 52800000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 528000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 52240250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "ENTREGA COROLLA",
+      "tc_bna_snapshot": 1406.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260220-012",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-018",
+      "fecha": "2026-02-20",
+      "cliente": "YANUZZI RAFAEK",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 52600000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 526000.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 52035850.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "HILUX (QUEDA SALDO MA)",
+      "tc_bna_snapshot": 1376.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260309-013",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-026",
+      "fecha": "2026-03-09",
+      "cliente": "FURTH TOMATIS",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 53000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 530000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 52438250.0,
+      "estado_cobro": "Parcial",
+      "observaciones": "CRUZE 4PTS ENTREGADO",
+      "tc_bna_snapshot": 1416.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260311-014",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-032",
+      "fecha": "2026-03-11",
+      "cliente": "CORTINA",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 48735000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 48703250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1396.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260313-015",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-022",
+      "fecha": "2026-03-13",
+      "cliente": "MURATORE",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 38000000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 380000.0,
+      "costo_compra": 19500.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 37600500.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "CAPTIVA LTZ 2.0 D",
+      "tc_bna_snapshot": 1400.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260316-016",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-031",
+      "fecha": "2026-03-16",
+      "cliente": "RODRIGUEZ",
+      "vendedor_nombre": "SAYAGO",
+      "precio_venta": 50232500.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 502325.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 49698425.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1396.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260317-017",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-024",
+      "fecha": "2026-03-17",
+      "cliente": "AVILA JOSE ANTONIO",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 62300000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 623000.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 61638850.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "C4 CATUS VENDIDO",
+      "tc_bna_snapshot": 1396.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260319-018",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-028",
+      "fecha": "2026-03-19",
+      "cliente": "GIRAUDO CYNTHIA (CEJAS)",
+      "vendedor_nombre": "SAYAGO",
+      "precio_venta": 52900000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 529000.0,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 52339250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "CRUZE 5PTAS",
+      "tc_bna_snapshot": 1394.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260319-019",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-019",
+      "fecha": "2026-03-19",
+      "cliente": "MERA EMILIO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 74989000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 749890.0,
+      "costo_compra": 48450.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 74190660.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "USARO PEUGEOT 3008",
+      "tc_bna_snapshot": 1394.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260326-020",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-025",
+      "fecha": "2026-03-26",
+      "cliente": "SANDOVAL NORA",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 56573000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 565730.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 55969120.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1368.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260327-021",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-023",
+      "fecha": "2026-03-27",
+      "cliente": "BELTRAN VIRGINIA",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 61000000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 610000.0,
+      "costo_compra": 38150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 60351850.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "ENTREGA TCROS",
+      "tc_bna_snapshot": 1382.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260329-022",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-020",
+      "fecha": "2026-03-29",
+      "cliente": "ALVAREZ LISANDRO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 77000000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 48450.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 76951550.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "ENTREGA NISSA FRONTIER",
+      "tc_bna_snapshot": 1382.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260401-023",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-013",
+      "fecha": "2026-04-01",
+      "cliente": "KANCYPER LEANDRO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 52560000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 525600.0,
+      "costo_compra": 33150.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 52001250.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "COBRADO EN LA PRUIMERA OP",
+      "tc_bna_snapshot": 1394.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260401-024",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-029",
+      "fecha": "2026-04-01",
+      "cliente": "BARRIONUEVO RODRIGO",
+      "vendedor_nombre": "CARLITOS",
+      "precio_venta": 52027590.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 520275.9,
+      "costo_compra": 31750.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 51475564.1,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1394.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260326-025",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-050",
+      "fecha": "2026-03-26",
+      "cliente": "MORELLINI",
+      "vendedor_nombre": "GIULIANA",
+      "precio_venta": 25000000.0,
+      "forma_pago": "Mixto",
+      "comision_pct": 0.01,
+      "comision_ars": 250000.0,
+      "costo_compra": 21900000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 2850000.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "entrega fiesta 2015",
+      "tc_bna_snapshot": 1368.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260305-026",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-042",
+      "fecha": "2026-03-05",
+      "cliente": "CAMPOS LEANDRO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 20000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.01,
+      "comision_ars": 200000.0,
+      "costo_compra": 18000000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 1800000.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1407.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260119-027",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-037",
+      "fecha": "2026-01-19",
+      "cliente": "BUSTOS NOELIA",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 38900000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 38900000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 0.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1434.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260319-028",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-048",
+      "fecha": "2026-03-19",
+      "cliente": "PEREZ CARLETTI",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 24500000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 24500000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 0.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1394.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260311-029",
+      "empresa": "INVEXUS",
+      "inv_id": null,
+      "fecha": "2026-03-11",
+      "cliente": "MATTAR RAMIRO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 81200000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": null,
+      "gastos_auto": 0,
+      "ganancia_neta": 81200000.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1396.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260312-030",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-039",
+      "fecha": "2026-03-12",
+      "cliente": "CAMPOS ENRIQUE",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 37300000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 33000000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 4300000.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1394.5,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260211-031",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-040",
+      "fecha": "2026-02-11",
+      "cliente": "CAMPOS ENRIQUE",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 43000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 43000000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 0.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1400.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260211-032",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-038",
+      "fecha": "2026-02-11",
+      "cliente": "CAMPOS ENRIQUE",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 27000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 27000000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 0.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1400.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260219-033",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-041",
+      "fecha": "2026-02-19",
+      "cliente": "HERRERA BEATRIZ",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 35000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 35000000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 0.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": null,
+      "tc_bna_snapshot": 1389.0,
+      "tc_blue_snapshot": null
+    },
+    {
+      "id": "20260212-034",
+      "empresa": "INVEXUS",
+      "inv_id": "INV-043",
+      "fecha": "2026-02-12",
+      "cliente": "MORALES EMILIO",
+      "vendedor_nombre": "GERENCIA",
+      "precio_venta": 26000000.0,
+      "forma_pago": "Contado",
+      "comision_pct": 0.0,
+      "comision_ars": 0.0,
+      "costo_compra": 26000000.0,
+      "gastos_auto": 0.0,
+      "ganancia_neta": 0.0,
+      "estado_cobro": "Cobrado",
+      "observaciones": "VER FIESTA PHW916",
+      "tc_bna_snapshot": 1395.0,
+      "tc_blue_snapshot": null
+    }
+  ],
+  "tipo_cambio": [
+    {
+      "fecha": "2026-04-07",
+      "tc_bna_venta": 1392.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-04-06",
+      "tc_bna_venta": 1393.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-04-01",
+      "tc_bna_venta": 1394.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-31",
+      "tc_bna_venta": 1382.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-30",
+      "tc_bna_venta": 1398.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-27",
+      "tc_bna_venta": 1382.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-26",
+      "tc_bna_venta": 1368.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-25",
+      "tc_bna_venta": 1377.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-20",
+      "tc_bna_venta": 1390.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-19",
+      "tc_bna_venta": 1394.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-18",
+      "tc_bna_venta": 1394.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-17",
+      "tc_bna_venta": 1396.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-16",
+      "tc_bna_venta": 1396.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-13",
+      "tc_bna_venta": 1400.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-12",
+      "tc_bna_venta": 1394.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-11",
+      "tc_bna_venta": 1396.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-10",
+      "tc_bna_venta": 1400.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-09",
+      "tc_bna_venta": 1416.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-06",
+      "tc_bna_venta": 1416.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-05",
+      "tc_bna_venta": 1407.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-04",
+      "tc_bna_venta": 1400.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-03",
+      "tc_bna_venta": 1415.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-03-02",
+      "tc_bna_venta": 1395.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-27",
+      "tc_bna_venta": 1397.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-26",
+      "tc_bna_venta": 1408.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-25",
+      "tc_bna_venta": 1399.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-24",
+      "tc_bna_venta": 1380.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-23",
+      "tc_bna_venta": 1370.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-20",
+      "tc_bna_venta": 1376.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-19",
+      "tc_bna_venta": 1389.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-18",
+      "tc_bna_venta": 1396.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-13",
+      "tc_bna_venta": 1399.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-12",
+      "tc_bna_venta": 1395.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-11",
+      "tc_bna_venta": 1400.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-10",
+      "tc_bna_venta": 1406.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-09",
+      "tc_bna_venta": 1416.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-06",
+      "tc_bna_venta": 1432.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-05",
+      "tc_bna_venta": 1442.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-04",
+      "tc_bna_venta": 1447.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-03",
+      "tc_bna_venta": 1446.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-02-02",
+      "tc_bna_venta": 1451.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-30",
+      "tc_bna_venta": 1447.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-29",
+      "tc_bna_venta": 1444.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-28",
+      "tc_bna_venta": 1444.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-27",
+      "tc_bna_venta": 1442.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-26",
+      "tc_bna_venta": 1437.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-23",
+      "tc_bna_venta": 1433.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-22",
+      "tc_bna_venta": 1429.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-21",
+      "tc_bna_venta": 1430.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-20",
+      "tc_bna_venta": 1434.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-19",
+      "tc_bna_venta": 1434.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-16",
+      "tc_bna_venta": 1430.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-15",
+      "tc_bna_venta": 1441.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-14",
+      "tc_bna_venta": 1453.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-13",
+      "tc_bna_venta": 1457.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-12",
+      "tc_bna_venta": 1467.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-09",
+      "tc_bna_venta": 1465.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-08",
+      "tc_bna_venta": 1464.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-07",
+      "tc_bna_venta": 1460.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-06",
+      "tc_bna_venta": 1467.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-05",
+      "tc_bna_venta": 1470.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2026-01-02",
+      "tc_bna_venta": 1475.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-31",
+      "tc_bna_venta": 1455.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-30",
+      "tc_bna_venta": 1455.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-29",
+      "tc_bna_venta": 1457.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-26",
+      "tc_bna_venta": 1452.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-23",
+      "tc_bna_venta": 1451.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-22",
+      "tc_bna_venta": 1452.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-19",
+      "tc_bna_venta": 1450.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-18",
+      "tc_bna_venta": 1451.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-17",
+      "tc_bna_venta": 1451.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-16",
+      "tc_bna_venta": 1451.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-15",
+      "tc_bna_venta": 1438.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-12",
+      "tc_bna_venta": 1441.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-11",
+      "tc_bna_venta": 1436.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-10",
+      "tc_bna_venta": 1437.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-09",
+      "tc_bna_venta": 1442.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-05",
+      "tc_bna_venta": 1435.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-04",
+      "tc_bna_venta": 1444.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-03",
+      "tc_bna_venta": 1453.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-02",
+      "tc_bna_venta": 1455.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-12-01",
+      "tc_bna_venta": 1451.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-28",
+      "tc_bna_venta": 1451.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-27",
+      "tc_bna_venta": 1450.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-26",
+      "tc_bna_venta": 1453.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-25",
+      "tc_bna_venta": 1447.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-20",
+      "tc_bna_venta": 1425.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-19",
+      "tc_bna_venta": 1406.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-18",
+      "tc_bna_venta": 1400.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-17",
+      "tc_bna_venta": 1387.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-14",
+      "tc_bna_venta": 1403.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-13",
+      "tc_bna_venta": 1406.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-12",
+      "tc_bna_venta": 1412.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-11",
+      "tc_bna_venta": 1413.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-10",
+      "tc_bna_venta": 1420.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-07",
+      "tc_bna_venta": 1415.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-05",
+      "tc_bna_venta": 1452.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-04",
+      "tc_bna_venta": 1454.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-11-03",
+      "tc_bna_venta": 1482.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-31",
+      "tc_bna_venta": 1445.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-30",
+      "tc_bna_venta": 1438.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-29",
+      "tc_bna_venta": 1436.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-28",
+      "tc_bna_venta": 1470.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-27",
+      "tc_bna_venta": 1435.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-24",
+      "tc_bna_venta": 1492.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-23",
+      "tc_bna_venta": 1479.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-22",
+      "tc_bna_venta": 1489.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-21",
+      "tc_bna_venta": 1490.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-20",
+      "tc_bna_venta": 1475.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-17",
+      "tc_bna_venta": 1450.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-16",
+      "tc_bna_venta": 1402.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-15",
+      "tc_bna_venta": 1380.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-14",
+      "tc_bna_venta": 1360.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-13",
+      "tc_bna_venta": 1349.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-09",
+      "tc_bna_venta": 1420.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-08",
+      "tc_bna_venta": 1430.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-07",
+      "tc_bna_venta": 1429.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-06",
+      "tc_bna_venta": 1430.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-03",
+      "tc_bna_venta": 1424.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-02",
+      "tc_bna_venta": 1424.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-10-01",
+      "tc_bna_venta": 1423.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-30",
+      "tc_bna_venta": 1380.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-29",
+      "tc_bna_venta": 1360.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-26",
+      "tc_bna_venta": 1326.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-25",
+      "tc_bna_venta": 1337.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-24",
+      "tc_bna_venta": 1337.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-23",
+      "tc_bna_venta": 1369.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-22",
+      "tc_bna_venta": 1408.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-19",
+      "tc_bna_venta": 1475.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-18",
+      "tc_bna_venta": 1474.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-17",
+      "tc_bna_venta": 1474.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-16",
+      "tc_bna_venta": 1469.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-15",
+      "tc_bna_venta": 1467.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-12",
+      "tc_bna_venta": 1453.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-11",
+      "tc_bna_venta": 1432.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-10",
+      "tc_bna_venta": 1423.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-09",
+      "tc_bna_venta": 1416.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-08",
+      "tc_bna_venta": 1409.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-05",
+      "tc_bna_venta": 1355.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-04",
+      "tc_bna_venta": 1362.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-03",
+      "tc_bna_venta": 1361.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-02",
+      "tc_bna_venta": 1361.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-09-01",
+      "tc_bna_venta": 1372.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-29",
+      "tc_bna_venta": 1342.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-28",
+      "tc_bna_venta": 1333.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-27",
+      "tc_bna_venta": 1349.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-26",
+      "tc_bna_venta": 1356.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-25",
+      "tc_bna_venta": 1362.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-22",
+      "tc_bna_venta": 1321.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-21",
+      "tc_bna_venta": 1315.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-20",
+      "tc_bna_venta": 1301.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-19",
+      "tc_bna_venta": 1292.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-18",
+      "tc_bna_venta": 1293.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-14",
+      "tc_bna_venta": 1300.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-13",
+      "tc_bna_venta": 1313.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-12",
+      "tc_bna_venta": 1317.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-11",
+      "tc_bna_venta": 1322.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-08",
+      "tc_bna_venta": 1326.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-07",
+      "tc_bna_venta": 1326.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-06",
+      "tc_bna_venta": 1332.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-05",
+      "tc_bna_venta": 1338.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-04",
+      "tc_bna_venta": 1360.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-08-01",
+      "tc_bna_venta": 1364.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-31",
+      "tc_bna_venta": 1374.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-30",
+      "tc_bna_venta": 1315.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-29",
+      "tc_bna_venta": 1291.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-28",
+      "tc_bna_venta": 1295.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-25",
+      "tc_bna_venta": 1280.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-24",
+      "tc_bna_venta": 1272.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-23",
+      "tc_bna_venta": 1258.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-22",
+      "tc_bna_venta": 1256.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-21",
+      "tc_bna_venta": 1275.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-18",
+      "tc_bna_venta": 1286.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-17",
+      "tc_bna_venta": 1274.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-16",
+      "tc_bna_venta": 1261.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-15",
+      "tc_bna_venta": 1260.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-14",
+      "tc_bna_venta": 1280.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-11",
+      "tc_bna_venta": 1261.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-10",
+      "tc_bna_venta": 1255.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-08",
+      "tc_bna_venta": 1255.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-07",
+      "tc_bna_venta": 1264.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-04",
+      "tc_bna_venta": 1240.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-03",
+      "tc_bna_venta": 1231.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-02",
+      "tc_bna_venta": 1229.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-07-01",
+      "tc_bna_venta": 1222.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-30",
+      "tc_bna_venta": 1205.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-27",
+      "tc_bna_venta": 1189.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-26",
+      "tc_bna_venta": 1189.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-25",
+      "tc_bna_venta": 1191.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-24",
+      "tc_bna_venta": 1174.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-23",
+      "tc_bna_venta": 1171.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-19",
+      "tc_bna_venta": 1162.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-18",
+      "tc_bna_venta": 1142.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-17",
+      "tc_bna_venta": 1160.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-13",
+      "tc_bna_venta": 1182.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-12",
+      "tc_bna_venta": 1185.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-11",
+      "tc_bna_venta": 1182.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-10",
+      "tc_bna_venta": 1188.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-09",
+      "tc_bna_venta": 1185.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-06",
+      "tc_bna_venta": 1185.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-05",
+      "tc_bna_venta": 1191.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-04",
+      "tc_bna_venta": 1185.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-03",
+      "tc_bna_venta": 1184.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-06-02",
+      "tc_bna_venta": 1180.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-30",
+      "tc_bna_venta": 1188.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-29",
+      "tc_bna_venta": 1183.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-28",
+      "tc_bna_venta": 1160.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-27",
+      "tc_bna_venta": 1156.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-26",
+      "tc_bna_venta": 1143.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-23",
+      "tc_bna_venta": 1133.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-22",
+      "tc_bna_venta": 1135.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-21",
+      "tc_bna_venta": 1146.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-20",
+      "tc_bna_venta": 1142.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-19",
+      "tc_bna_venta": 1141.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-16",
+      "tc_bna_venta": 1142.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-15",
+      "tc_bna_venta": 1138.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-14",
+      "tc_bna_venta": 1132.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-13",
+      "tc_bna_venta": 1125.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-12",
+      "tc_bna_venta": 1132.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-09",
+      "tc_bna_venta": 1136.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-08",
+      "tc_bna_venta": 1114.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-07",
+      "tc_bna_venta": 1124.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-06",
+      "tc_bna_venta": 1194.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-05-05",
+      "tc_bna_venta": 1200.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-30",
+      "tc_bna_venta": 1170.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-29",
+      "tc_bna_venta": 1165.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-28",
+      "tc_bna_venta": 1178.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-25",
+      "tc_bna_venta": 1169.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-24",
+      "tc_bna_venta": 1174.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-23",
+      "tc_bna_venta": 1160.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-22",
+      "tc_bna_venta": 1104.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-21",
+      "tc_bna_venta": 1094.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-16",
+      "tc_bna_venta": 1135.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-15",
+      "tc_bna_venta": 1200.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-14",
+      "tc_bna_venta": 1198.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-11",
+      "tc_bna_venta": 1078.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-10",
+      "tc_bna_venta": 1077.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-09",
+      "tc_bna_venta": 1077.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-08",
+      "tc_bna_venta": 1076.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-07",
+      "tc_bna_venta": 1076.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-04",
+      "tc_bna_venta": 1076.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-03",
+      "tc_bna_venta": 1075.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-04-01",
+      "tc_bna_venta": 1074.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-31",
+      "tc_bna_venta": 1074.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-28",
+      "tc_bna_venta": 1073.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-27",
+      "tc_bna_venta": 1072.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-26",
+      "tc_bna_venta": 1071.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-25",
+      "tc_bna_venta": 1071.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-21",
+      "tc_bna_venta": 1071.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-20",
+      "tc_bna_venta": 1069.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-19",
+      "tc_bna_venta": 1069.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-18",
+      "tc_bna_venta": 1069.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-17",
+      "tc_bna_venta": 1068.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-14",
+      "tc_bna_venta": 1068.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-13",
+      "tc_bna_venta": 1067.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-12",
+      "tc_bna_venta": 1066.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-11",
+      "tc_bna_venta": 1066.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-10",
+      "tc_bna_venta": 1066.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-07",
+      "tc_bna_venta": 1066.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-06",
+      "tc_bna_venta": 1064.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-03-05",
+      "tc_bna_venta": 1064.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-28",
+      "tc_bna_venta": 1064.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-27",
+      "tc_bna_venta": 1062.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-26",
+      "tc_bna_venta": 1061.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-25",
+      "tc_bna_venta": 1061.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-24",
+      "tc_bna_venta": 1061.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-21",
+      "tc_bna_venta": 1060.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-20",
+      "tc_bna_venta": 1059.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-19",
+      "tc_bna_venta": 1059.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-18",
+      "tc_bna_venta": 1059.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-17",
+      "tc_bna_venta": 1059.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-14",
+      "tc_bna_venta": 1058.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-13",
+      "tc_bna_venta": 1057.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-12",
+      "tc_bna_venta": 1056.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-11",
+      "tc_bna_venta": 1056.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-10",
+      "tc_bna_venta": 1056.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-07",
+      "tc_bna_venta": 1055.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-06",
+      "tc_bna_venta": 1054.75,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-05",
+      "tc_bna_venta": 1054.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-04",
+      "tc_bna_venta": 1054.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-02-03",
+      "tc_bna_venta": 1054.25,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-31",
+      "tc_bna_venta": 1053.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-30",
+      "tc_bna_venta": 1052.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-29",
+      "tc_bna_venta": 1051.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-28",
+      "tc_bna_venta": 1051.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-27",
+      "tc_bna_venta": 1050.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-24",
+      "tc_bna_venta": 1049.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-23",
+      "tc_bna_venta": 1048.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-22",
+      "tc_bna_venta": 1048.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-21",
+      "tc_bna_venta": 1047.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-20",
+      "tc_bna_venta": 1046.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-17",
+      "tc_bna_venta": 1044.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-16",
+      "tc_bna_venta": 1042.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-15",
+      "tc_bna_venta": 1042.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-14",
+      "tc_bna_venta": 1041.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-13",
+      "tc_bna_venta": 1040.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-10",
+      "tc_bna_venta": 1039.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-09",
+      "tc_bna_venta": 1037.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-08",
+      "tc_bna_venta": 1036.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-07",
+      "tc_bna_venta": 1036.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-06",
+      "tc_bna_venta": 1035.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-03",
+      "tc_bna_venta": 1035.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2025-01-02",
+      "tc_bna_venta": 1032.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-31",
+      "tc_bna_venta": 1032.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-30",
+      "tc_bna_venta": 1032.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-27",
+      "tc_bna_venta": 1031.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-26",
+      "tc_bna_venta": 1029.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-23",
+      "tc_bna_venta": 1028.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-20",
+      "tc_bna_venta": 1025.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-19",
+      "tc_bna_venta": 1023.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-18",
+      "tc_bna_venta": 1022.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-17",
+      "tc_bna_venta": 1021.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-16",
+      "tc_bna_venta": 1022.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-13",
+      "tc_bna_venta": 1020.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-12",
+      "tc_bna_venta": 1019.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-11",
+      "tc_bna_venta": 1017.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-10",
+      "tc_bna_venta": 1017.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-09",
+      "tc_bna_venta": 1016.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-06",
+      "tc_bna_venta": 1015.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-05",
+      "tc_bna_venta": 1013.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-04",
+      "tc_bna_venta": 1013.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-03",
+      "tc_bna_venta": 1012.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-12-02",
+      "tc_bna_venta": 1012.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-29",
+      "tc_bna_venta": 1011.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-28",
+      "tc_bna_venta": 1009.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-27",
+      "tc_bna_venta": 1008.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-26",
+      "tc_bna_venta": 1008.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-25",
+      "tc_bna_venta": 1007.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-22",
+      "tc_bna_venta": 1007.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-21",
+      "tc_bna_venta": 1005.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-20",
+      "tc_bna_venta": 1003.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-19",
+      "tc_bna_venta": 1003.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-15",
+      "tc_bna_venta": 1002.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-14",
+      "tc_bna_venta": 999.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-13",
+      "tc_bna_venta": 999.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-12",
+      "tc_bna_venta": 998.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-11",
+      "tc_bna_venta": 998.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-08",
+      "tc_bna_venta": 997.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-07",
+      "tc_bna_venta": 995.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-05",
+      "tc_bna_venta": 994.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-04",
+      "tc_bna_venta": 993.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-11-01",
+      "tc_bna_venta": 993.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-31",
+      "tc_bna_venta": 992.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-30",
+      "tc_bna_venta": 990.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-29",
+      "tc_bna_venta": 989.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-28",
+      "tc_bna_venta": 988.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-25",
+      "tc_bna_venta": 988.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-24",
+      "tc_bna_venta": 986.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-23",
+      "tc_bna_venta": 985.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-22",
+      "tc_bna_venta": 984.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-21",
+      "tc_bna_venta": 984.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-18",
+      "tc_bna_venta": 984.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-17",
+      "tc_bna_venta": 981.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-16",
+      "tc_bna_venta": 981.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-15",
+      "tc_bna_venta": 980.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-14",
+      "tc_bna_venta": 980.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-10",
+      "tc_bna_venta": 979.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-09",
+      "tc_bna_venta": 976.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-08",
+      "tc_bna_venta": 975.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-07",
+      "tc_bna_venta": 975.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-04",
+      "tc_bna_venta": 974.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-03",
+      "tc_bna_venta": 973.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-02",
+      "tc_bna_venta": 971.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-10-01",
+      "tc_bna_venta": 971.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-30",
+      "tc_bna_venta": 970.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-27",
+      "tc_bna_venta": 970.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-26",
+      "tc_bna_venta": 968.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-25",
+      "tc_bna_venta": 969.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-24",
+      "tc_bna_venta": 966.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-23",
+      "tc_bna_venta": 966.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-20",
+      "tc_bna_venta": 965.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-19",
+      "tc_bna_venta": 963.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-18",
+      "tc_bna_venta": 963.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-17",
+      "tc_bna_venta": 962.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-16",
+      "tc_bna_venta": 962.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-13",
+      "tc_bna_venta": 962.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-12",
+      "tc_bna_venta": 960.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-11",
+      "tc_bna_venta": 958.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-10",
+      "tc_bna_venta": 958.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-09",
+      "tc_bna_venta": 958.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-06",
+      "tc_bna_venta": 958.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-05",
+      "tc_bna_venta": 954.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-04",
+      "tc_bna_venta": 954.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-03",
+      "tc_bna_venta": 953.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-09-02",
+      "tc_bna_venta": 953.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-30",
+      "tc_bna_venta": 953.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-29",
+      "tc_bna_venta": 951.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-28",
+      "tc_bna_venta": 949.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-27",
+      "tc_bna_venta": 950.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-26",
+      "tc_bna_venta": 950.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-23",
+      "tc_bna_venta": 948.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-22",
+      "tc_bna_venta": 946.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-21",
+      "tc_bna_venta": 945.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-20",
+      "tc_bna_venta": 944.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-19",
+      "tc_bna_venta": 944.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-16",
+      "tc_bna_venta": 944.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-15",
+      "tc_bna_venta": 941.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-14",
+      "tc_bna_venta": 941.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-13",
+      "tc_bna_venta": 940.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-12",
+      "tc_bna_venta": 939.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-09",
+      "tc_bna_venta": 939.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-08",
+      "tc_bna_venta": 937.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-07",
+      "tc_bna_venta": 936.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-06",
+      "tc_bna_venta": 936.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-05",
+      "tc_bna_venta": 935.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-02",
+      "tc_bna_venta": 935.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-08-01",
+      "tc_bna_venta": 933.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-31",
+      "tc_bna_venta": 932.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-30",
+      "tc_bna_venta": 932.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-29",
+      "tc_bna_venta": 932.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-26",
+      "tc_bna_venta": 931.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-25",
+      "tc_bna_venta": 930.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-24",
+      "tc_bna_venta": 928.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-23",
+      "tc_bna_venta": 927.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-22",
+      "tc_bna_venta": 926.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-19",
+      "tc_bna_venta": 927.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-18",
+      "tc_bna_venta": 925.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-17",
+      "tc_bna_venta": 924.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-16",
+      "tc_bna_venta": 923.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-15",
+      "tc_bna_venta": 923.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-12",
+      "tc_bna_venta": 921.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-11",
+      "tc_bna_venta": 920.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-10",
+      "tc_bna_venta": 919.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-08",
+      "tc_bna_venta": 918.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-05",
+      "tc_bna_venta": 918.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-04",
+      "tc_bna_venta": 916.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-03",
+      "tc_bna_venta": 915.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-02",
+      "tc_bna_venta": 914.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-07-01",
+      "tc_bna_venta": 914.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-28",
+      "tc_bna_venta": 912.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-27",
+      "tc_bna_venta": 911.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-26",
+      "tc_bna_venta": 911.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-25",
+      "tc_bna_venta": 909.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-24",
+      "tc_bna_venta": 908.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-19",
+      "tc_bna_venta": 907.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-18",
+      "tc_bna_venta": 905.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-14",
+      "tc_bna_venta": 903.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-13",
+      "tc_bna_venta": 902.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-12",
+      "tc_bna_venta": 901.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-11",
+      "tc_bna_venta": 902.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-10",
+      "tc_bna_venta": 902.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-07",
+      "tc_bna_venta": 899.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-06",
+      "tc_bna_venta": 898.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-05",
+      "tc_bna_venta": 898.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-04",
+      "tc_bna_venta": 897.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-06-03",
+      "tc_bna_venta": 897.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-31",
+      "tc_bna_venta": 895.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-30",
+      "tc_bna_venta": 894.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-29",
+      "tc_bna_venta": 893.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-28",
+      "tc_bna_venta": 893.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-27",
+      "tc_bna_venta": 893.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-24",
+      "tc_bna_venta": 890.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-23",
+      "tc_bna_venta": 890.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-22",
+      "tc_bna_venta": 889.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-21",
+      "tc_bna_venta": 889.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-20",
+      "tc_bna_venta": 888.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-17",
+      "tc_bna_venta": 886.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-16",
+      "tc_bna_venta": 886.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-15",
+      "tc_bna_venta": 885.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-14",
+      "tc_bna_venta": 885.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-13",
+      "tc_bna_venta": 884.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-10",
+      "tc_bna_venta": 882.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-09",
+      "tc_bna_venta": 882.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-08",
+      "tc_bna_venta": 881.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-07",
+      "tc_bna_venta": 880.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-06",
+      "tc_bna_venta": 880.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-03",
+      "tc_bna_venta": 878.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-05-02",
+      "tc_bna_venta": 878.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-30",
+      "tc_bna_venta": 876.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-29",
+      "tc_bna_venta": 876.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-26",
+      "tc_bna_venta": 875.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-25",
+      "tc_bna_venta": 874.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-24",
+      "tc_bna_venta": 873.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-23",
+      "tc_bna_venta": 872.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-22",
+      "tc_bna_venta": 872.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-19",
+      "tc_bna_venta": 871.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-18",
+      "tc_bna_venta": 870.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-17",
+      "tc_bna_venta": 869.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-16",
+      "tc_bna_venta": 868.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-15",
+      "tc_bna_venta": 868.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-12",
+      "tc_bna_venta": 866.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-11",
+      "tc_bna_venta": 865.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-10",
+      "tc_bna_venta": 865.0,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-09",
+      "tc_bna_venta": 864.5,
+      "tc_blue_venta": null
+    },
+    {
+      "fecha": "2024-04-08",
+      "tc_bna_venta": 864.0,
+      "tc_blue_venta": null
+    }
+  ],
+  "leads": [
+    {
+      "empresa": "INVEXUS",
+      "nombre": "LORENZO MELINA",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "YUNES VICTOR",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "JURE SERGIO",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "RAGONE GABRIELA",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "ENLEOCAT SRL",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "BRACAMONTE MAURICIO",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "JORGE SAAD MARIA",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "ALANIS MARIA CANDELA",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "MARCO PAOLO FEDERICO",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "ATENOR FELICITAS",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "KANCYPER LEANDRO",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "YANUZZI, RAFAEL",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "FURTH TOMATIS ERNESTO",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "CORTINA EZEQUIEL",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "GALVEZ JORGE JOSE",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "MURATORE",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "RODRIGUEZ",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "AVILA JOSE ANTONIO",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "CEJAS RAUL",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    },
+    {
+      "empresa": "INVEXUS",
+      "nombre": "EMILIO MERA",
+      "telefono": null,
+      "email": null,
+      "ciudad": "SGO DEL ESTERO",
+      "vehiculo_interes": null,
+      "estado": "Nuevo",
+      "vendedor_nombre": null,
+      "fuente": null,
+      "notas": null
+    }
+  ]
+}
