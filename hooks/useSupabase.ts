@@ -103,7 +103,7 @@ export function useTipoCambio() {
       const supabase = createClient()
       const today = new Date().toISOString().split('T')[0]
 
-      // 1 — Siempre consultar Bluelytics para el Blue del día
+      // 1 — Siempre consultar Bluelytics para el Blue del día (v2)
       try {
         const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
         if (r.ok) {
