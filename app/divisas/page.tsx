@@ -9,26 +9,23 @@ export default function DivisasPage() {
   const [historial, setHistorial] = useState<any[]>([])
   const [monto, setMonto] = useState('38150')
   const [origen, setOrigen] = useState('USD')
-  const [tcBlueRT, setTcBlueRT] = useState<number>(1462)
   useEffect(() => {
     const cargar = async () => {
       const supabase = createClient()
       const { data } = await supabase.from('tipo_cambio').select('*').order('fecha',{ascending:false}).limit(30)
       setHistorial(data??[])
-      // Siempre buscar Blue en tiempo real desde Bluelytics
-      try {
-        const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
-        if (r.ok) {
-          const d = await r.json()
-          if (d.blue?.value_sell) setTcBlueRT(d.blue.value_sell)
-        }
-      } catch(e) { console.warn('Bluelytics error:', e) }
     }
     cargar()
   }, [])
+  const [tcBlue, setTcBlue] = useState<number>(1462)
+  useEffect(() => {
+    window.fetch('https://api.bluelytics.com.ar/v2/latest')
+      .then(r=>r.json())
+      .then(d=>{ if(d.blue?.value_sell) setTcBlue(d.blue.value_sell) })
+      .catch(e=>console.warn('Bluelytics error:',e))
+  }, [])
   const tc = historial[0]
   const tcBna = tc?.tc_bna_venta??1392.5
-  const tcBlue = tcBlueRT
   const fmtN = (n:number) => new Intl.NumberFormat('es-AR').format(n)
   const fmt = (n:number) => new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
   const m = parseFloat(monto)||0
