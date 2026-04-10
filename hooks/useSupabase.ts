@@ -98,13 +98,53 @@ export function useTipoCambio() {
   const [tcBna, setTcBna] = useState<number>(1392.5)
   const [tcBlue, setTcBlue] = useState<number>(1462)
   const [fecha, setFecha] = useState<string>('')
+  const [fuenteBlue, setFuenteBlue] = useState<'supabase'|'bluelytics'|'default'>('default')
   useEffect(() => {
-    const fetch = async () => {
+    const cargarTC = async () => {
       const supabase = createClient()
-      const { data } = await supabase.from('tipo_cambio').select('*').order('fecha', { ascending: false }).limit(1).single()
-      if (data) { setTcBna(data.tc_bna_venta ?? 1392.5); setTcBlue(data.tc_blue_venta ?? 1462); setFecha(data.fecha) }
+      const today = new Date().toISOString().split('T')[0]
+
+      // 1 — Intentar leer de Supabase (registro del día o el más reciente)
+      const { data } = await supabase
+        .from('tipo_cambio')
+        .select('*')
+        .order('fecha', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (data) {
+        setTcBna(data.tc_bna_venta ?? 1392.5)
+        setFecha(data.fecha)
+
+        // Si el registro es de hoy y tiene Blue, usarlo
+        if (data.fecha === today && data.tc_blue_venta) {
+          setTcBlue(data.tc_blue_venta)
+          setFuenteBlue('supabase')
+          return
+        }
+
+        // Si tiene Blue aunque no sea de hoy, usarlo como base
+        if (data.tc_blue_venta) {
+          setTcBlue(data.tc_blue_venta)
+          setFuenteBlue('supabase')
+        }
+      }
+
+      // 2 — Fallback: consultar Bluelytics en tiempo real
+      try {
+        const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
+        if (r.ok) {
+          const d = await r.json()
+          const blueVenta = d.blue?.value_sell ?? null
+          const bnaVenta = d.oficial?.value_sell ?? null
+          if (blueVenta) { setTcBlue(blueVenta); setFuenteBlue('bluelytics') }
+          if (bnaVenta && !data) setTcBna(bnaVenta)
+        }
+      } catch(e) {
+        console.warn('Bluelytics fallback falló:', e)
+      }
     }
-    fetch()
+    cargarTC()
   }, [])
-  return { tcBna, tcBlue, fecha }
+  return { tcBna, tcBlue, fecha, fuenteBlue }
 }
