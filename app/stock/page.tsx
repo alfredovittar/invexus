@@ -11,6 +11,8 @@ export default function StockPage() {
   const [busqueda, setBusqueda] = useState('')
   const [filtroMarca, setFiltroMarca] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [editando, setEditando] = useState<any>(null)
+  const [editForm, setEditForm] = useState<any>({})
   const [toast, setToast] = useState('')
   const { stock, loading, refresh } = useStock(empresa)
   const { tcBna, tcBlue } = useTipoCambio()
@@ -48,6 +50,35 @@ export default function StockPage() {
     const { error } = await supabase.from('inventario').insert({ id:newId, empresa:form.empresa, tipo:form.tipo, marca:form.marca, modelo:form.modelo, version:form.version, color:form.color, anio:form.anio, km:form.km, costo_usd:form.moneda_costo==='USD'?parseFloat(form.costo_usd||'0'):null, costo_ars:costoArs, tc_compra:form.tc_usado, precio_lista:parseFloat(form.precio_lista||'0'), precio_minimo:parseFloat(form.precio_lista||'0'), vin:form.vin, proveedor:form.proveedor, combustible:form.combustible, transmision:form.transmision, estado:'Disponible', fecha_ingreso:new Date().toISOString().split('T')[0] })
     if (error) { alert('Error: '+error.message); return }
     setToast('Vehículo '+newId+' cargado'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
+  }
+  const handleEditar = (s:any) => {
+    setEditando(s.id)
+    setEditForm({
+      modelo: s.modelo||'', version: s.version||'', color: s.color||'',
+      anio: s.anio||2026, km: s.km||0,
+      costo_usd: s.costo_usd||'', costo_ars: s.costo_ars||'',
+      precio_lista: s.precio_lista||'', precio_minimo: s.precio_minimo||'',
+      vin: s.vin||'', patente: s.patente||'', proveedor: s.proveedor||'',
+      estado: s.estado||'Disponible', observaciones: s.observaciones||''
+    })
+  }
+  const handleGuardarEdicion = async (id:string) => {
+    const supabase = createClient()
+    const { error } = await supabase.from('inventario').update({
+      modelo: editForm.modelo, version: editForm.version, color: editForm.color,
+      anio: parseInt(editForm.anio), km: parseInt(editForm.km),
+      costo_usd: editForm.costo_usd ? parseFloat(editForm.costo_usd) : null,
+      costo_ars: editForm.costo_ars ? parseFloat(editForm.costo_ars) : null,
+      precio_lista: parseFloat(editForm.precio_lista),
+      precio_minimo: parseFloat(editForm.precio_minimo),
+      vin: editForm.vin, patente: editForm.patente, proveedor: editForm.proveedor,
+      estado: editForm.estado,
+    }).eq('id', id)
+    if (error) { alert('Error: '+error.message); return }
+    setToast('Vehículo '+id+' actualizado')
+    setTimeout(()=>setToast(''),3000)
+    setEditando(null)
+    refresh()
   }
   return (
     <div style={{ minHeight:'100vh', background:'#0f172a', color:'#e2e8f0' }}>
@@ -97,7 +128,7 @@ export default function StockPage() {
         {loading ? <div style={{ color:'#475569', padding:40, textAlign:'center' }}>Cargando stock...</div> : (
           <div style={{ overflowX:'auto' }}>
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
-              <thead><tr style={{ borderBottom:'1px solid #334155' }}>{['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Días','Estado'].map(h=><th key={h} style={{ textAlign:'left', padding:'7px 8px', color:'#475569', fontWeight:500, fontSize:11, whiteSpace:'nowrap' }}>{h}</th>)}</tr></thead>
+              <thead><tr style={{ borderBottom:'1px solid #334155' }}>{['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Días','Estado',''].map(h=><th key={h} style={{ textAlign:'left', padding:'7px 8px', color:'#475569', fontWeight:500, fontSize:11, whiteSpace:'nowrap' }}>{h}</th>)}</tr></thead>
               <tbody>{filtered.map((s:any)=>{ const ca = s.tipo?.toLowerCase()==='usado' ? (s.costo_ars||0) : (s.costo_usd ? s.costo_usd*tc : s.costo_ars||0); const mg=(s.precio_lista||0)-ca; const d=s.dias_stock||0; return (
                 <tr key={s.id} style={{ borderBottom:'1px solid #0f172a' }}>
                   <td style={{ padding:'7px 8px', color:'#94a3b8', fontFamily:'monospace', fontSize:11 }}>{s.id}</td>
@@ -112,7 +143,52 @@ export default function StockPage() {
                   <td style={{ padding:'7px 8px', color:mg>=0?'#4ade80':'#f87171', fontFamily:'monospace', fontSize:11 }}>{fmt(mg)}</td>
                   <td style={{ padding:'7px 8px' }}><span style={{ color:riskColor(d), fontFamily:'monospace', fontSize:12, fontWeight:600 }}>{d}d</span></td>
                   <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, fontWeight:600, background:d>=60?`rgba(${d>=90?'239,68,68':'249,115,22'},.15)`:'rgba(34,197,94,.15)', color:riskColor(d), border:`1px solid ${riskColor(d)}44` }}>{d>=60?riskLabel(d):s.estado}</span></td>
+                  <td style={{ padding:'7px 8px' }}>
+                    <button onClick={()=>editando===s.id?setEditando(null):handleEditar(s)} style={{ padding:'3px 10px', borderRadius:6, border:`1px solid ${editando===s.id?'#f97316':'#334155'}`, background:editando===s.id?'rgba(249,115,22,.15)':'transparent', color:editando===s.id?'#fb923c':'#64748b', fontSize:11, cursor:'pointer' }}>
+                      {editando===s.id?'✕ Cerrar':'✎ Editar'}
+                    </button>
+                  </td>
                 </tr>
+                {editando===s.id && (
+                  <tr key={s.id+'-edit'} style={{ background:'#1e293b', borderBottom:'2px solid #f97316' }}>
+                    <td colSpan={13} style={{ padding:'16px' }}>
+                      <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:12 }}>
+                        {[['modelo','Modelo'],['version','Versión'],['color','Color'],['anio','Año'],['km','Km']].map(([k,l])=>(
+                          <div key={k}>
+                            <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
+                            <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:12 }}>
+                        {[['costo_usd','Costo USD'],['costo_ars','Costo ARS'],['precio_lista','Precio lista'],['precio_minimo','Precio mínimo'],['proveedor','Proveedor']].map(([k,l])=>(
+                          <div key={k}>
+                            <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
+                            <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:14 }}>
+                        {[['vin','VIN/Motor'],['patente','Patente']].map(([k,l])=>(
+                          <div key={k}>
+                            <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
+                            <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                          </div>
+                        ))}
+                        <div>
+                          <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Estado</label>
+                          <select value={editForm.estado} onChange={e=>setEditForm({...editForm,estado:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }}>
+                            {['Disponible','Reservado','Vendido'].map(o=><option key={o}>{o}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                      <div style={{ display:'flex', gap:8 }}>
+                        <button onClick={()=>handleGuardarEdicion(s.id)} style={{ padding:'6px 18px', borderRadius:7, background:'#16a34a', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600 }}>Guardar cambios</button>
+                        <button onClick={()=>setEditando(null)} style={{ padding:'6px 14px', borderRadius:7, background:'transparent', color:'#64748b', border:'1px solid #334155', fontSize:12, cursor:'pointer' }}>Cancelar</button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               )})}
               </tbody>
             </table>

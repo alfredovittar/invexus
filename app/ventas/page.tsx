@@ -12,6 +12,8 @@ export default function VentasPage() {
   const [desde, setDesde] = useState('')
   const [hasta, setHasta] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [editando, setEditando] = useState<any>(null)
+  const [editForm, setEditForm] = useState<any>({})
   const [toast, setToast] = useState('')
   const { ventas, loading, refresh } = useVentas(empresa, desde||undefined, hasta||undefined)
   const { tcBna, tcBlue } = useTipoCambio()
@@ -30,6 +32,41 @@ export default function VentasPage() {
     const { error } = await supabase.from('ventas').insert({ id:newId, empresa:form.empresa, inv_id:form.inv_id||null, fecha:hoy, cliente:form.cliente, vendedor_nombre:form.vendedor_nombre, precio_venta:parseFloat(form.precio_venta), forma_pago:form.forma_pago, cobro_efectivo:form.cobro_efectivo, cobro_transfer:form.cobro_transfer, cobro_usd:form.cobro_usd, cobro_usd_tc:form.cobro_usd_tc, cobro_pagare:form.cobro_pagare, cobro_pxp:form.cobro_pxp, estado_cobro:form.estado_cobro, tc_bna_snapshot:tcBna, tc_blue_snapshot:tcBlue, observaciones:form.observaciones })
     if(error){alert('Error: '+error.message);return}
     setToast('Venta registrada'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
+  }
+  const handleEditar = (v:any) => {
+    setEditando(v.id)
+    setEditForm({
+      cliente: v.cliente||'', vendedor_nombre: v.vendedor_nombre||'',
+      precio_venta: v.precio_venta||'', forma_pago: v.forma_pago||'Contado',
+      cobro_efectivo: v.cobro_efectivo||0, cobro_transfer: v.cobro_transfer||0,
+      cobro_usd: v.cobro_usd||0, cobro_usd_tc: v.cobro_usd_tc||tcBna,
+      cobro_pagare: v.cobro_pagare||0, cobro_pxp: v.cobro_pxp||0,
+      ganancia_neta: v.ganancia_neta||'', costo_compra: v.costo_compra||'',
+      estado_cobro: v.estado_cobro||'Cobrado', observaciones: v.observaciones||''
+    })
+  }
+  const handleGuardarEdicion = async (id:string) => {
+    const supabase = createClient()
+    const { error } = await supabase.from('ventas').update({
+      cliente: editForm.cliente, vendedor_nombre: editForm.vendedor_nombre,
+      precio_venta: parseFloat(editForm.precio_venta),
+      forma_pago: editForm.forma_pago,
+      cobro_efectivo: parseFloat(editForm.cobro_efectivo)||0,
+      cobro_transfer: parseFloat(editForm.cobro_transfer)||0,
+      cobro_usd: parseFloat(editForm.cobro_usd)||0,
+      cobro_usd_tc: parseFloat(editForm.cobro_usd_tc)||tcBna,
+      cobro_pagare: parseFloat(editForm.cobro_pagare)||0,
+      cobro_pxp: parseFloat(editForm.cobro_pxp)||0,
+      ganancia_neta: editForm.ganancia_neta ? parseFloat(editForm.ganancia_neta) : null,
+      costo_compra: editForm.costo_compra ? parseFloat(editForm.costo_compra) : null,
+      estado_cobro: editForm.estado_cobro,
+      observaciones: editForm.observaciones
+    }).eq('id', id)
+    if (error) { alert('Error: '+error.message); return }
+    setToast('Venta '+id+' actualizada')
+    setTimeout(()=>setToast(''),3000)
+    setEditando(null)
+    refresh()
   }
   return (
     <div style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0'}}>
@@ -91,7 +128,7 @@ export default function VentasPage() {
         {loading?<div style={{color:'#475569',padding:40,textAlign:'center'}}>Cargando...</div>:(
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',overflowX:'auto'}}>
             <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-              <thead><tr style={{borderBottom:'1px solid #334155'}}>{['Fecha','Empresa','Cliente','Vendedor','Vehículo','Precio','Ganancia','Pago','TC BNA','Estado'].map(h=><th key={h} style={{textAlign:'left',padding:'9px 10px',color:'#475569',fontWeight:500,fontSize:11,whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
+              <thead><tr style={{borderBottom:'1px solid #334155'}}>{['Fecha','Empresa','Cliente','Vendedor','Vehículo','Precio','Ganancia','Pago','TC BNA','Estado',''].map(h=><th key={h} style={{textAlign:'left',padding:'9px 10px',color:'#475569',fontWeight:500,fontSize:11,whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
               <tbody>{ventas.map((v:any)=>(
                 <tr key={v.id} style={{borderBottom:'1px solid #0f172a'}}>
                   <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{v.fecha}</td>
@@ -104,7 +141,64 @@ export default function VentasPage() {
                   <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.forma_pago}</td>
                   <td style={{padding:'8px 10px',color:'#60a5fa',fontFamily:'monospace',fontSize:11}}>{v.tc_bna_snapshot?'$'+fmtN(v.tc_bna_snapshot):'—'}</td>
                   <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 8px',borderRadius:4,fontWeight:600,background:v.estado_cobro==='Cobrado'?'rgba(34,197,94,.15)':v.estado_cobro==='Parcial'?'rgba(234,179,8,.15)':'rgba(249,115,22,.15)',color:v.estado_cobro==='Cobrado'?'#4ade80':v.estado_cobro==='Parcial'?'#facc15':'#fb923c',border:`1px solid ${v.estado_cobro==='Cobrado'?'rgba(34,197,94,.3)':v.estado_cobro==='Parcial'?'rgba(234,179,8,.3)':'rgba(249,115,22,.3)'}`}}>{v.estado_cobro}</span></td>
+                  <td style={{padding:'8px 10px'}}>
+                    <button onClick={()=>editando===v.id?setEditando(null):handleEditar(v)} style={{padding:'3px 10px',borderRadius:6,border:`1px solid ${editando===v.id?'#f97316':'#334155'}`,background:editando===v.id?'rgba(249,115,22,.15)':'transparent',color:editando===v.id?'#fb923c':'#64748b',fontSize:11,cursor:'pointer'}}>
+                      {editando===v.id?'✕ Cerrar':'✎ Editar'}
+                    </button>
+                  </td>
                 </tr>
+                {editando===v.id && (
+                  <tr key={v.id+'-edit'} style={{background:'#1e293b',borderBottom:'2px solid #f97316'}}>
+                    <td colSpan={11} style={{padding:'16px'}}>
+                      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:12}}>
+                        {[['cliente','Cliente'],['vendedor_nombre','Vendedor'],['precio_venta','Precio venta'],['ganancia_neta','Ganancia neta']].map(([k,l])=>(
+                          <div key={k}>
+                            <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>{l}</label>
+                            <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:12}}>
+                        {[['cobro_efectivo','Efectivo'],['cobro_transfer','Transferencia'],['cobro_pagare','Pagaré'],['cobro_pxp','Parte de pago']].map(([k,l])=>(
+                          <div key={k}>
+                            <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>{l}</label>
+                            <input type="number" value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:14}}>
+                        <div>
+                          <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>USD cobrado</label>
+                          <input type="number" value={editForm.cobro_usd} onChange={e=>setEditForm({...editForm,cobro_usd:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                        </div>
+                        <div>
+                          <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>TC pactado</label>
+                          <input type="number" value={editForm.cobro_usd_tc} onChange={e=>setEditForm({...editForm,cobro_usd_tc:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#fb923c',fontSize:11}} />
+                        </div>
+                        <div>
+                          <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Forma de pago</label>
+                          <select value={editForm.forma_pago} onChange={e=>setEditForm({...editForm,forma_pago:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
+                            {['Contado','Transferencia','Financiado','Mixto','Permuta'].map(o=><option key={o}>{o}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Estado cobro</label>
+                          <select value={editForm.estado_cobro} onChange={e=>setEditForm({...editForm,estado_cobro:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
+                            {['Cobrado','Parcial','Pendiente','Seña'].map(o=><option key={o}>{o}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                      <div style={{marginBottom:12}}>
+                        <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Observaciones</label>
+                        <input value={editForm.observaciones} onChange={e=>setEditForm({...editForm,observaciones:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                      </div>
+                      <div style={{display:'flex',gap:8}}>
+                        <button onClick={()=>handleGuardarEdicion(v.id)} style={{padding:'6px 18px',borderRadius:7,background:'#16a34a',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600}}>Guardar cambios</button>
+                        <button onClick={()=>setEditando(null)} style={{padding:'6px 14px',borderRadius:7,background:'transparent',color:'#64748b',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}>Cancelar</button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               ))}</tbody>
             </table>
             {ventas.length===0&&<div style={{color:'#475569',padding:24,textAlign:'center'}}>Sin ventas en el período seleccionado</div>}
