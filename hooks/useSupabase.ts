@@ -116,18 +116,14 @@ export function useTipoCambio() {
         setTcBna(data.tc_bna_venta ?? 1392.5)
         setFecha(data.fecha)
 
-        // Si el registro es de hoy y tiene Blue, usarlo
+        // Si el registro es de hoy y tiene Blue, usarlo y no ir a Bluelytics
         if (data.fecha === today && data.tc_blue_venta) {
           setTcBlue(data.tc_blue_venta)
           setFuenteBlue('supabase')
           return
         }
-
-        // Si tiene Blue aunque no sea de hoy, usarlo como base
-        if (data.tc_blue_venta) {
-          setTcBlue(data.tc_blue_venta)
-          setFuenteBlue('supabase')
-        }
+        // Si NO es de hoy, NO usar el Blue de Supabase como base
+        // Dejar que Bluelytics lo sobreescriba con el valor actual
       }
 
       // 2 — Fallback: consultar Bluelytics en tiempo real
