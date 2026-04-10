@@ -9,6 +9,7 @@ export default function StockPage() {
   const [moneda, setMoneda] = useState('ARS')
   const [filtro, setFiltro] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
+  const [filtroMarca, setFiltroMarca] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [toast, setToast] = useState('')
   const { stock, loading, refresh } = useStock(empresa)
@@ -19,11 +20,13 @@ export default function StockPage() {
   const fmtN = (n:number) => new Intl.NumberFormat('es-AR').format(n)
   const riskColor = (d:number) => d>=90?'#ef4444':d>=60?'#f97316':d>=30?'#eab308':'#22c55e'
   const riskLabel = (d:number) => d>=90?'CRÍTICO':d>=60?'ALERTA':d>=30?'VIGILAR':'OK'
+  const marcas = ['', ...Array.from(new Set(stock.map((s:any)=>s.marca).filter(Boolean))).sort()] as string[]
   const filtered = stock.filter((s:any) => {
     if (filtro==='0km' && s.tipo?.toLowerCase()!=='0km') return false
     if (filtro==='usado' && s.tipo?.toLowerCase()!=='usado') return false
     if (filtro==='critico' && (s.dias_stock||0)<60) return false
-    if (busqueda) { const q=busqueda.toLowerCase(); return s.modelo?.toLowerCase().includes(q)||s.id?.toLowerCase().includes(q)||s.color?.toLowerCase().includes(q) }
+    if (filtroMarca && s.marca?.toLowerCase()!==filtroMarca.toLowerCase()) return false
+    if (busqueda) { const q=busqueda.toLowerCase(); return s.modelo?.toLowerCase().includes(q)||s.id?.toLowerCase().includes(q)||s.color?.toLowerCase().includes(q)||s.marca?.toLowerCase().includes(q) }
     return true
   })
   const handleGuardar = async () => {
@@ -60,7 +63,10 @@ export default function StockPage() {
             ))}
           </div>
           <div style={{ display:'flex', gap:8 }}>
-            <input value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar modelo, ID, color..." style={{ padding:'6px 12px', borderRadius:8, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:12, width:220 }} />
+            <select value={filtroMarca} onChange={e=>setFiltroMarca(e.target.value)} style={{ padding:'6px 10px', borderRadius:8, border:'1px solid #334155', background:'#0f172a', color:filtroMarca?'#e2e8f0':'#64748b', fontSize:12 }}>
+              {marcas.map((m:string)=><option key={m} value={m}>{m||'Todas las marcas'}</option>)}
+            </select>
+            <input value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar modelo, ID, color..." style={{ padding:'6px 12px', borderRadius:8, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:12, width:200 }} />
             <button onClick={()=>setShowForm(true)} style={{ padding:'6px 16px', borderRadius:8, background:'#3b82f6', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600 }}>+ Cargar vehículo</button>
           </div>
         </div>
@@ -92,7 +98,7 @@ export default function StockPage() {
           <div style={{ overflowX:'auto' }}>
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
               <thead><tr style={{ borderBottom:'1px solid #334155' }}>{['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Días','Estado'].map(h=><th key={h} style={{ textAlign:'left', padding:'7px 8px', color:'#475569', fontWeight:500, fontSize:11, whiteSpace:'nowrap' }}>{h}</th>)}</tr></thead>
-              <tbody>{filtered.map((s:any)=>{ const ca=s.costo_ars||(s.costo_usd*tc); const mg=(s.precio_lista||0)-ca; const d=s.dias_stock||0; return (
+              <tbody>{filtered.map((s:any)=>{ const ca = s.costo_ars ? (s.costo_usd ? Math.min(s.costo_ars, s.costo_usd*tc) : s.costo_ars) : (s.costo_usd*tc); const mg=(s.precio_lista||0)-ca; const d=s.dias_stock||0; return (
                 <tr key={s.id} style={{ borderBottom:'1px solid #0f172a' }}>
                   <td style={{ padding:'7px 8px', color:'#94a3b8', fontFamily:'monospace', fontSize:11 }}>{s.id}</td>
                   <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, background:s.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)', color:s.empresa==='INVEXUS'?'#60a5fa':'#a78bfa', border:`1px solid ${s.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}` }}>{s.empresa}</span></td>
