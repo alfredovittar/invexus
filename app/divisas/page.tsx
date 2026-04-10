@@ -19,10 +19,17 @@ export default function DivisasPage() {
   }, [])
   const [tcBlue, setTcBlue] = useState<number>(1462)
   useEffect(() => {
+    let cancelled = false
     window.fetch('https://api.bluelytics.com.ar/v2/latest')
       .then(r=>r.json())
-      .then(d=>{ if(d.blue?.value_sell) setTcBlue(d.blue.value_sell) })
+      .then(d=>{ 
+        if(!cancelled && d.blue?.value_sell) {
+          console.log('Bluelytics setTcBlue:', d.blue.value_sell)
+          setTcBlue(Number(d.blue.value_sell))
+        }
+      })
       .catch(e=>console.warn('Bluelytics error:',e))
+    return () => { cancelled = true }
   }, [])
   const tc = historial[0]
   const tcBna = tc?.tc_bna_venta??1392.5
