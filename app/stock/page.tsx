@@ -29,7 +29,19 @@ export default function StockPage() {
   const handleGuardar = async () => {
     const supabase = createClient()
     const costoArs = form.moneda_costo==='USD' ? parseFloat(form.costo_usd||'0')*form.tc_usado : parseFloat(form.costo_usd||'0')
-    const newId = `${form.empresa.substring(0,3)}-${Date.now().toString().slice(-6)}`
+    const prefix = form.empresa === 'INVEXUS' ? 'INV' : 'MAX'
+    const { data: ultimos } = await supabase
+      .from('inventario')
+      .select('id')
+      .like('id', `${prefix}-%`)
+      .order('id', { ascending: false })
+      .limit(1)
+    let nextNum = 1
+    if (ultimos && ultimos.length > 0) {
+      const lastNum = parseInt(ultimos[0].id.split('-')[1])
+      if (!isNaN(lastNum)) nextNum = lastNum + 1
+    }
+    const newId = `${prefix}-${String(nextNum).padStart(3, '0')}`
     const { error } = await supabase.from('inventario').insert({ id:newId, empresa:form.empresa, tipo:form.tipo, marca:form.marca, modelo:form.modelo, version:form.version, color:form.color, anio:form.anio, km:form.km, costo_usd:form.moneda_costo==='USD'?parseFloat(form.costo_usd||'0'):null, costo_ars:costoArs, tc_compra:form.tc_usado, precio_lista:parseFloat(form.precio_lista||'0'), precio_minimo:parseFloat(form.precio_lista||'0'), vin:form.vin, proveedor:form.proveedor, combustible:form.combustible, transmision:form.transmision, estado:'Disponible', fecha_ingreso:new Date().toISOString().split('T')[0] })
     if (error) { alert('Error: '+error.message); return }
     setToast('Vehículo '+newId+' cargado'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
