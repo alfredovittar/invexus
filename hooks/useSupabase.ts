@@ -98,13 +98,24 @@ export function useTipoCambio() {
   const [tcBna, setTcBna] = useState<number>(1392.5)
   const [tcBlue, setTcBlue] = useState<number>(1462)
   const [fecha, setFecha] = useState<string>('')
-  const [fuenteBlue, setFuenteBlue] = useState<'supabase'|'bluelytics'|'default'>('default')
   useEffect(() => {
     const cargarTC = async () => {
       const supabase = createClient()
       const today = new Date().toISOString().split('T')[0]
 
-      // 1 — Intentar leer de Supabase (registro del día o el más reciente)
+      // 1 — Siempre consultar Bluelytics para el Blue del día
+      try {
+        const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
+        if (r.ok) {
+          const d = await r.json()
+          const blueVenta = d.blue?.value_sell ?? null
+          if (blueVenta) setTcBlue(blueVenta)
+        }
+      } catch(e) {
+        console.warn('Bluelytics error:', e)
+      }
+
+      // 2 — Supabase para BNA (fuente oficial del cron)
       const { data } = await supabase
         .from('tipo_cambio')
         .select('*')
@@ -115,32 +126,13 @@ export function useTipoCambio() {
       if (data) {
         setTcBna(data.tc_bna_venta ?? 1392.5)
         setFecha(data.fecha)
-
-        // Si el registro es de hoy y tiene Blue, usarlo y no ir a Bluelytics
+        // Solo usar Blue de Supabase si Bluelytics falló y el registro es de hoy
         if (data.fecha === today && data.tc_blue_venta) {
-          setTcBlue(data.tc_blue_venta)
-          setFuenteBlue('supabase')
-          return
+          setTcBlue(prev => prev === 1462 ? data.tc_blue_venta : prev)
         }
-        // Si NO es de hoy, NO usar el Blue de Supabase como base
-        // Dejar que Bluelytics lo sobreescriba con el valor actual
-      }
-
-      // 2 — Fallback: consultar Bluelytics en tiempo real
-      try {
-        const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
-        if (r.ok) {
-          const d = await r.json()
-          const blueVenta = d.blue?.value_sell ?? null
-          const bnaVenta = d.oficial?.value_sell ?? null
-          if (blueVenta) { setTcBlue(blueVenta); setFuenteBlue('bluelytics') }
-          if (bnaVenta && !data) setTcBna(bnaVenta)
-        }
-      } catch(e) {
-        console.warn('Bluelytics fallback falló:', e)
       }
     }
     cargarTC()
   }, [])
-  return { tcBna, tcBlue, fecha, fuenteBlue }
+  return { tcBna, tcBlue, fecha }
 }
