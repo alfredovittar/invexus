@@ -9,7 +9,7 @@ export default function DivisasPage() {
   const [historial, setHistorial] = useState<any[]>([])
   const [monto, setMonto] = useState('38150')
   const [origen, setOrigen] = useState('USD')
-  const [tcBlueRT, setTcBlueRT] = useState<number|null>(null)
+  const [tcBlueRT, setTcBlueRT] = useState<number>(1462)
   useEffect(() => {
     const cargar = async () => {
       const supabase = createClient()
@@ -28,7 +28,7 @@ export default function DivisasPage() {
   }, [])
   const tc = historial[0]
   const tcBna = tc?.tc_bna_venta??1392.5
-  const tcBlue = tcBlueRT !== null ? tcBlueRT : (tc?.tc_blue_venta ?? 1462)
+  const tcBlue = tcBlueRT
   const fmtN = (n:number) => new Intl.NumberFormat('es-AR').format(n)
   const fmt = (n:number) => new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
   const m = parseFloat(monto)||0
