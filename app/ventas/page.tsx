@@ -130,6 +130,7 @@ export default function VentasPage() {
             <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
               <thead><tr style={{borderBottom:'1px solid #334155'}}>{['Fecha','Empresa','Cliente','Vendedor','Vehículo','Precio','Ganancia','Pago','TC BNA','Estado',''].map(h=><th key={h} style={{textAlign:'left',padding:'9px 10px',color:'#475569',fontWeight:500,fontSize:11,whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
               <tbody>{ventas.map((v:any)=>(
+                <>
                 <tr key={v.id} style={{borderBottom:'1px solid #0f172a'}}>
                   <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{v.fecha}</td>
                   <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:v.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)',color:v.empresa==='INVEXUS'?'#60a5fa':'#a78bfa',border:`1px solid ${v.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}`}}>{v.empresa}</span></td>
@@ -199,7 +200,7 @@ export default function VentasPage() {
                     </td>
                   </tr>
                 )}
-              ))}</tbody>
+              </>))}</tbody>
             </table>
             {ventas.length===0&&<div style={{color:'#475569',padding:24,textAlign:'center'}}>Sin ventas en el período seleccionado</div>}
           </div>

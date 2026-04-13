@@ -130,6 +130,7 @@ export default function StockPage() {
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
               <thead><tr style={{ borderBottom:'1px solid #334155' }}>{['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Días','Estado',''].map(h=><th key={h} style={{ textAlign:'left', padding:'7px 8px', color:'#475569', fontWeight:500, fontSize:11, whiteSpace:'nowrap' }}>{h}</th>)}</tr></thead>
               <tbody>{filtered.map((s:any)=>{ const ca = s.tipo?.toLowerCase()==='usado' ? (s.costo_ars||0) : (s.costo_usd ? s.costo_usd*tc : s.costo_ars||0); const mg=(s.precio_lista||0)-ca; const d=s.dias_stock||0; return (
+                <>
                 <tr key={s.id} style={{ borderBottom:'1px solid #0f172a' }}>
                   <td style={{ padding:'7px 8px', color:'#94a3b8', fontFamily:'monospace', fontSize:11 }}>{s.id}</td>
                   <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, background:s.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)', color:s.empresa==='INVEXUS'?'#60a5fa':'#a78bfa', border:`1px solid ${s.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}` }}>{s.empresa}</span></td>
@@ -189,6 +190,7 @@ export default function StockPage() {
                     </td>
                   </tr>
                 )}
+              </>
               )})}
               </tbody>
             </table>
