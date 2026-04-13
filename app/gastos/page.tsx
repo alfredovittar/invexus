@@ -27,6 +27,12 @@ export default function GastosPage() {
     ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc)
     : new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
 
+  const fmtFecha = (f:string|null|undefined) => {
+    if (!f) return '—'
+    const [y,m,d] = f.split('T')[0].split('-')
+    return `${d}/${m}/${y.slice(2)}`
+  }
+
   const filtered = gastos.filter((g:any) => tab==='todos'?true:g.tipo===tab)
   const totalFilt = filtered.reduce((a:number,g:any)=>a+(g.monto||0),0)
   const totalOp = gastos.filter((g:any)=>g.tipo==='operativo').reduce((a:number,g:any)=>a+(g.monto||0),0)
@@ -142,7 +148,7 @@ export default function GastosPage() {
                   <thead><tr style={{borderBottom:'1px solid #334155'}}>{['Fecha','Tipo','Categoría','Vehículo','Descripción','Proveedor','Monto','Estado'].map(h=><th key={h} style={{textAlign:'left',padding:'8px 10px',color:'#475569',fontWeight:500,fontSize:11,whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
                   <tbody>{filtered.map((g:any)=>(
                     <tr key={g.id} style={{borderBottom:'1px solid #0f172a'}}>
-                      <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{g.fecha}</td>
+                      <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11,whiteSpace:'nowrap'}}>{fmtFecha(g.fecha)}</td>
                       <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:g.tipo==='por_unidad'?'rgba(234,179,8,.15)':'rgba(249,115,22,.15)',color:g.tipo==='por_unidad'?'#facc15':'#fb923c',border:`1px solid ${g.tipo==='por_unidad'?'rgba(234,179,8,.3)':'rgba(249,115,22,.3)'}`}}>{g.tipo==='por_unidad'?'Unidad':'Operativo'}</span></td>
                       <td style={{padding:'8px 10px',color:'#94a3b8'}}>{g.categoria}</td>
                       <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{g.inv_id||'—'}</td>
@@ -177,7 +183,10 @@ export default function GastosPage() {
                 <div style={{fontSize:11,color:'#fb923c',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:10}}>⚠ Pendientes</div>
                 {pendientes.slice(0,4).map((g:any)=>(
                   <div key={g.id} style={{padding:'6px 0',borderBottom:'1px solid #0f172a',display:'flex',justifyContent:'space-between'}}>
-                    <div><div style={{fontSize:11,color:'#e2e8f0'}}>{g.descripcion}</div><div style={{fontSize:10,color:'#64748b'}}>{g.fecha}</div></div>
+                    <div>
+                      <div style={{fontSize:11,color:'#e2e8f0'}}>{g.descripcion}</div>
+                      <div style={{fontSize:10,color:'#64748b'}}>{fmtFecha(g.fecha)}</div>
+                    </div>
                     <span style={{fontSize:11,color:'#fb923c',fontFamily:'monospace',fontWeight:600}}>{fmt(g.monto||0)}</span>
                   </div>
                 ))}
