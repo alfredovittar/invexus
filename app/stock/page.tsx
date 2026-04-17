@@ -3,13 +3,18 @@ import { useState } from 'react'
 import Nav from '@/components/Nav'
 import { useStock, useTipoCambio } from '@/hooks/useSupabase'
 import { createClient } from '@/utils/supabase/client'
+import FiltroVehiculos, { FiltroVehiculosState, aplicarFiltroVehiculos } from '@/components/FiltroVehiculos'
 
 export default function StockPage() {
   const [empresa, setEmpresa] = useState('AMBAS')
   const [moneda, setMoneda] = useState('ARS')
-  const [filtro, setFiltro] = useState('todos')
-  const [busqueda, setBusqueda] = useState('')
-  const [filtroMarca, setFiltroMarca] = useState('')
+  const [filtro, setFiltro] = useState<FiltroVehiculosState>({
+    estado: 'Todos',
+    marca: 'Todas',
+    tipo: 'Todos',
+    busqueda: '',
+    diasStock: 'Todos',
+  })
   const [showForm, setShowForm] = useState(false)
   const [editando, setEditando] = useState<any>(null)
   const [editForm, setEditForm] = useState<any>({})
@@ -28,15 +33,9 @@ export default function StockPage() {
   }
   const riskColor = (d:number) => d>=90?'#ef4444':d>=60?'#f97316':d>=30?'#eab308':'#22c55e'
   const riskLabel = (d:number) => d>=90?'CRÍTICO':d>=60?'ALERTA':d>=30?'VIGILAR':'OK'
-  const marcas = ['', ...Array.from(new Set(stock.map((s:any)=>s.marca).filter(Boolean))).sort()] as string[]
-  const filtered = stock.filter((s:any) => {
-    if (filtro==='0km' && s.tipo?.toLowerCase()!=='0km') return false
-    if (filtro==='usado' && s.tipo?.toLowerCase()!=='usado') return false
-    if (filtro==='critico' && (s.dias_stock||0)<60) return false
-    if (filtroMarca && s.marca?.toLowerCase()!==filtroMarca.toLowerCase()) return false
-    if (busqueda) { const q=busqueda.toLowerCase(); return s.modelo?.toLowerCase().includes(q)||s.id?.toLowerCase().includes(q)||s.color?.toLowerCase().includes(q)||s.marca?.toLowerCase().includes(q) }
-    return true
-  })
+
+  const filtered = aplicarFiltroVehiculos(stock, filtro)
+
   const handleGuardar = async () => {
     const supabase = createClient()
     const costoArs = form.moneda_costo==='USD' ? parseFloat(form.costo_usd||'0')*form.tc_usado : parseFloat(form.costo_usd||'0')
@@ -62,27 +61,31 @@ export default function StockPage() {
     if (error) { alert('Error: '+error.message); return }
     setToast('Vehículo '+id+' actualizado'); setTimeout(()=>setToast(''),3000); setEditando(null); refresh()
   }
+
   return (
     <div style={{ minHeight:'100vh', background:'#0f172a', color:'#e2e8f0' }}>
       <Nav empresa={empresa} onEmpresaChange={setEmpresa} moneda={moneda} onMonedaChange={()=>setMoneda(m=>m==='ARS'?'USD':'ARS')} />
       {toast && <div style={{ position:'fixed', top:20, right:20, background:'#166534', color:'#4ade80', border:'1px solid #16a34a', borderRadius:10, padding:'10px 18px', fontSize:13, zIndex:1000, fontWeight:500 }}>✓ {toast}</div>}
       <div style={{ padding:'24px', maxWidth:1400, margin:'0 auto' }}>
+
+        {/* ── BARRA DE FILTROS ── */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16, flexWrap:'wrap', gap:10 }}>
-          <div style={{ display:'flex', gap:6 }}>
-            {[['todos','Todos',stock.length],['0km','0km',stock.filter((s:any)=>s.tipo?.toLowerCase()==='0km').length],['usado','Usados',stock.filter((s:any)=>s.tipo?.toLowerCase()==='usado').length],['critico','Alertas',stock.filter((s:any)=>(s.dias_stock||0)>=60).length]].map(([k,l,c]:any)=>(
-              <button key={k} onClick={()=>setFiltro(k)} style={{ padding:'5px 14px', borderRadius:8, border:`1px solid ${filtro===k?'#3b82f6':'#334155'}`, background:filtro===k?'rgba(59,130,246,.15)':'transparent', color:filtro===k?'#60a5fa':'#64748b', fontSize:12, cursor:'pointer' }}>
-                {l} <span style={{ fontSize:10, opacity:.7 }}>({c})</span>
-              </button>
-            ))}
+          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+            <span style={{ fontSize:16, fontWeight:600, color:'#e2e8f0' }}>Stock</span>
+            <span style={{ fontSize:12, color:'#475569' }}>{filtered.length} vehículos</span>
           </div>
-          <div style={{ display:'flex', gap:8 }}>
-            <select value={filtroMarca} onChange={e=>setFiltroMarca(e.target.value)} style={{ padding:'6px 10px', borderRadius:8, border:'1px solid #334155', background:'#0f172a', color:filtroMarca?'#e2e8f0':'#64748b', fontSize:12 }}>
-              {marcas.map((m:string)=><option key={m} value={m}>{m||'Todas las marcas'}</option>)}
-            </select>
-            <input value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar modelo, ID, color..." style={{ padding:'6px 12px', borderRadius:8, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:12, width:200 }} />
-            <button onClick={()=>setShowForm(true)} style={{ padding:'6px 16px', borderRadius:8, background:'#3b82f6', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600 }}>+ Cargar vehículo</button>
+          <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+            <FiltroVehiculos
+              value={filtro}
+              onChange={setFiltro}
+              mostrarDiasStock={true}
+              mostrarBusqueda={true}
+            />
+            <button onClick={()=>setShowForm(true)} style={{ padding:'6px 16px', borderRadius:8, background:'#3b82f6', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600, whiteSpace:'nowrap' }}>+ Cargar vehículo</button>
           </div>
         </div>
+
+        {/* ── FORMULARIO NUEVO VEHÍCULO ── */}
         {showForm && (
           <div style={{ background:'#1e293b', border:'1px solid #3b82f6', borderRadius:12, padding:20, marginBottom:20 }}>
             <div style={{ fontSize:14, fontWeight:600, color:'#e2e8f0', marginBottom:16 }}>Nuevo ingreso</div>
@@ -111,6 +114,8 @@ export default function StockPage() {
             </div>
           </div>
         )}
+
+        {/* ── TABLA ── */}
         {loading ? <div style={{ color:'#475569', padding:40, textAlign:'center' }}>Cargando stock...</div> : (
           <div style={{ overflowX:'auto' }}>
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
@@ -209,3 +214,4 @@ export default function StockPage() {
     </div>
   )
 }
+
