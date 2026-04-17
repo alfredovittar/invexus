@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Nav from '@/components/Nav'
+import FiltroVehiculos, { FiltroVehiculosState, aplicarFiltroVehiculos } from '@/components/FiltroVehiculos'
 import { useLeads } from '@/hooks/useSupabase'
 import { createClient } from '@/utils/supabase/client'
 
@@ -15,8 +16,28 @@ export default function CRMPage() {
   const [showForm, setShowForm] = useState(false)
   const [toast, setToast] = useState('')
   const { leads, loading, refresh } = useLeads(empresa)
-  const [form, setForm] = useState({ empresa:'INVEXUS', nombre:'', telefono:'', email:'', ciudad:'', vehiculo_interes:'BJ30', estado:'Nuevo', vendedor_nombre:'GIULIANA', fuente:'WhatsApp', proximo_contacto:'' })
+  const [form, setForm] = useState({ empresa:'INVEXUS', nombre:'', telefono:'', email:'', ciudad:'', vehiculo_interes:'BJ30', estado:'Nuevo', vendedor_nombre:'GIULIANA', fuente:'WhatsApp', proximo_contacto:'', inv_id:'' })
   const ec: Record<string,string> = { Nuevo:'#60a5fa', Contactado:'#a78bfa', Seguimiento:'#facc15', Negociación:'#fb923c', Cerrado:'#4ade80', Perdido:'#f87171' }
+
+  // Filtro de vehículos para asignar al lead
+  const [filtroVehiculo, setFiltroVehiculo] = useState<FiltroVehiculosState>({
+    estado: 'Disponible',
+    marca: 'Todas',
+    tipo: 'Todos',
+    busqueda: '',
+    diasStock: 'Todos',
+  })
+  const [inventario, setInventario] = useState<any[]>([])
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('inventario_view')
+      .select('id, empresa, marca, modelo, version, color, tipo, estado, dias_stock')
+      .then(({ data }) => { if (data) setInventario(data) })
+  }, [])
+
+  const vehiculosDisponibles = aplicarFiltroVehiculos(inventario, filtroVehiculo)
 
   const fmtFecha = (f:string|null|undefined) => {
     if (!f) return null
@@ -26,10 +47,18 @@ export default function CRMPage() {
 
   const handleGuardar = async () => {
     const supabase = createClient()
-    const { error } = await supabase.from('leads').insert({ empresa:form.empresa, nombre:form.nombre, telefono:form.telefono, email:form.email, ciudad:form.ciudad, vehiculo_interes:form.vehiculo_interes, estado:form.estado, vendedor_nombre:form.vendedor_nombre, fuente:form.fuente, proximo_contacto:form.proximo_contacto||null })
+    const { error } = await supabase.from('leads').insert({
+      empresa:form.empresa, nombre:form.nombre, telefono:form.telefono,
+      email:form.email, ciudad:form.ciudad, vehiculo_interes:form.vehiculo_interes,
+      estado:form.estado, vendedor_nombre:form.vendedor_nombre, fuente:form.fuente,
+      proximo_contacto:form.proximo_contacto||null,
+      inv_id: form.inv_id || null,
+    })
     if (error) { alert('Error: '+error.message); return }
     setToast('Lead '+form.nombre+' registrado'); setTimeout(()=>setToast(''),3000)
-    setShowForm(false); setForm({ empresa:'INVEXUS', nombre:'', telefono:'', email:'', ciudad:'', vehiculo_interes:'BJ30', estado:'Nuevo', vendedor_nombre:'GIULIANA', fuente:'WhatsApp', proximo_contacto:'' }); refresh()
+    setShowForm(false)
+    setForm({ empresa:'INVEXUS', nombre:'', telefono:'', email:'', ciudad:'', vehiculo_interes:'BJ30', estado:'Nuevo', vendedor_nombre:'GIULIANA', fuente:'WhatsApp', proximo_contacto:'', inv_id:'' })
+    refresh()
   }
 
   return (
@@ -37,6 +66,8 @@ export default function CRMPage() {
       <Nav empresa={empresa} onEmpresaChange={setEmpresa} moneda={moneda} onMonedaChange={()=>setMoneda(m=>m==='ARS'?'USD':'ARS')} />
       {toast && <div style={{ position:'fixed', top:20, right:20, background:'#166534', color:'#4ade80', border:'1px solid #16a34a', borderRadius:10, padding:'10px 18px', fontSize:13, zIndex:1000, fontWeight:500 }}>✓ {toast}</div>}
       <div style={{ padding:'24px', maxWidth:1400, margin:'0 auto' }}>
+
+        {/* ── KPIs PIPELINE ── */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16, flexWrap:'wrap', gap:10 }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(4,minmax(0,1fr))', gap:10, flex:1, marginRight:12 }}>
             {['Nuevo','Contactado','Seguimiento','Negociación'].map(e=>(
@@ -46,9 +77,10 @@ export default function CRMPage() {
               </div>
             ))}
           </div>
-          <button onClick={()=>setShowForm(true)} style={{ padding:'8px 18px', borderRadius:8, background:'#3b82f6', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600, whiteSpace:'nowrap' }}>+ Nuevo lead</button>
+          <button onClick={()=>setShowForm(v=>!v)} style={{ padding:'8px 18px', borderRadius:8, background:'#3b82f6', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600, whiteSpace:'nowrap' }}>+ Nuevo lead</button>
         </div>
 
+        {/* ── FORMULARIO NUEVO LEAD ── */}
         {showForm && (
           <div style={{ background:'#1e293b', border:'1px solid #3b82f6', borderRadius:12, padding:20, marginBottom:20 }}>
             <div style={{ fontSize:14, fontWeight:600, color:'#e2e8f0', marginBottom:16 }}>Registrar lead</div>
@@ -60,6 +92,37 @@ export default function CRMPage() {
                 </div>
               ))}
             </div>
+
+            {/* ── ASIGNAR VEHÍCULO AL LEAD ── */}
+            <div style={{ background:'#0f172a', border:'1px solid #334155', borderRadius:10, padding:'12px 14px', marginTop:16 }}>
+              <div style={{ fontSize:11, color:'#64748b', fontWeight:600, textTransform:'uppercase', letterSpacing:'.06em', marginBottom:10 }}>
+                Vehículo de interés en stock
+                <span style={{ fontWeight:400, marginLeft:6, color:'#334155' }}>(opcional)</span>
+              </div>
+              <div style={{ marginBottom:10 }}>
+                <FiltroVehiculos
+                  value={filtroVehiculo}
+                  onChange={setFiltroVehiculo}
+                  mostrarDiasStock={false}
+                  mostrarBusqueda={true}
+                  compacto={true}
+                />
+              </div>
+              <select
+                value={form.inv_id}
+                onChange={e=>setForm({...form, inv_id:e.target.value})}
+                style={{ width:'100%', padding:'7px 10px', borderRadius:8, border:'1px solid #334155', background:'#1e293b', color:'#e2e8f0', fontSize:12 }}
+              >
+                <option value="">— Sin vehículo asignado ({vehiculosDisponibles.length} disponibles) —</option>
+                {vehiculosDisponibles.map((v:any)=>(
+                  <option key={v.id} value={v.id}>
+                    [{v.id}] {v.marca} {v.modelo} {v.version} — {v.color}
+                    {v.dias_stock ? ` (${v.dias_stock}d en stock)` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div style={{ display:'flex', gap:8, marginTop:16 }}>
               <button onClick={handleGuardar} style={{ padding:'7px 20px', borderRadius:8, background:'#16a34a', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600 }}>Guardar</button>
               <button onClick={()=>setShowForm(false)} style={{ padding:'7px 16px', borderRadius:8, background:'transparent', color:'#64748b', border:'1px solid #334155', fontSize:12, cursor:'pointer' }}>Cancelar</button>
@@ -67,6 +130,7 @@ export default function CRMPage() {
           </div>
         )}
 
+        {/* ── CARDS LEADS ── */}
         {loading ? <div style={{ color:'#475569', padding:40, textAlign:'center' }}>Cargando leads...</div> : (
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:12 }}>
             {leads.map((l:any)=>(
@@ -75,7 +139,6 @@ export default function CRMPage() {
                   <div>
                     <div style={{ fontSize:13, fontWeight:600, color:'#e2e8f0' }}>{l.nombre}</div>
                     <div style={{ fontSize:11, color:'#475569', marginTop:2 }}>{l.ciudad||'—'} · {l.fuente||'—'}</div>
-                    {/* FECHA INGRESO DEL LEAD */}
                     {l.created_at && (
                       <div style={{ fontSize:10, color:'#334155', marginTop:2 }}>Ingresó: {fmtFecha(l.created_at)}</div>
                     )}
@@ -93,9 +156,13 @@ export default function CRMPage() {
                     <div style={{ fontSize:11, color:'#94a3b8' }}>{l.vendedor_nombre}</div>
                   </div>
                 </div>
-                {/* PRÓXIMO CONTACTO FORMATEADO */}
+                {l.inv_id && (
+                  <div style={{ marginTop:8, fontSize:11, color:'#60a5fa', background:'rgba(96,165,250,.08)', border:'1px solid rgba(96,165,250,.2)', borderRadius:6, padding:'4px 8px' }}>
+                    🚗 {l.inv_id}
+                  </div>
+                )}
                 {l.proximo_contacto && (
-                  <div style={{ marginTop:8, fontSize:11, color:'#fb923c' }}>
+                  <div style={{ marginTop:6, fontSize:11, color:'#fb923c' }}>
                     ⏰ {fmtFecha(l.proximo_contacto)}
                   </div>
                 )}
@@ -108,3 +175,4 @@ export default function CRMPage() {
     </div>
   )
 }
+
