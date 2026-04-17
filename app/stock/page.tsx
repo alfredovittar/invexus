@@ -9,14 +9,11 @@ export default function StockPage() {
   const [empresa, setEmpresa] = useState('AMBAS')
   const [moneda, setMoneda] = useState('ARS')
   const [filtro, setFiltro] = useState<FiltroVehiculosState>({
-    estado: 'Todos',
-    marca: 'Todas',
-    tipo: 'Todos',
-    busqueda: '',
-    diasStock: 'Todos',
+    estado: 'Todos', marca: 'Todas', tipo: 'Todos', busqueda: '', diasStock: 'Todos',
   })
   const [showForm, setShowForm] = useState(false)
-  const [editando, setEditando] = useState<any>(null)
+  const [detalle, setDetalle] = useState<string|null>(null)
+  const [editando, setEditando] = useState<string|null>(null)
   const [editForm, setEditForm] = useState<any>({})
   const [toast, setToast] = useState('')
   const { stock, loading, refresh } = useStock(empresa)
@@ -24,6 +21,7 @@ export default function StockPage() {
   const tc = tcBna
   const hoy = new Date().toISOString().split('T')[0]
   const [form, setForm] = useState({ empresa:'INVEXUS', tipo:'0km', marca:'BAIC', modelo:'BJ30', version:'4X2', color:'', anio:2026, km:0, costo_usd:'', precio_lista:'', vin:'', proveedor:'BAIC ARGENTINA', combustible:'Híbrido', transmision:'Automática', moneda_costo:'USD', tc_usado:tcBna, fecha_ingreso:hoy })
+
   const fmt = (n:number) => moneda==='USD' ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc) : new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
   const fmtN = (n:number) => new Intl.NumberFormat('es-AR').format(n)
   const fmtFecha = (f:string|null|undefined) => {
@@ -35,6 +33,16 @@ export default function StockPage() {
   const riskLabel = (d:number) => d>=90?'CRÍTICO':d>=60?'ALERTA':d>=30?'VIGILAR':'OK'
 
   const filtered = aplicarFiltroVehiculos(stock, filtro)
+
+  const handleClickFila = (id:string) => {
+    if (detalle === id) { setDetalle(null); setEditando(null) }
+    else { setDetalle(id); setEditando(null) }
+  }
+
+  const handleEditar = (s:any) => {
+    setEditando(s.id)
+    setEditForm({ modelo: s.modelo||'', version: s.version||'', color: s.color||'', anio: s.anio||2026, km: s.km||0, costo_usd: s.costo_usd||'', costo_ars: s.costo_ars||'', precio_lista: s.precio_lista||'', precio_minimo: s.precio_minimo||'', vin: s.vin||'', patente: s.patente||'', proveedor: s.proveedor||'', estado: s.estado||'Disponible', observaciones: s.observaciones||'', fecha_ingreso: s.fecha_ingreso ? s.fecha_ingreso.split('T')[0] : hoy, fecha_venta: s.fecha_venta ? s.fecha_venta.split('T')[0] : '' })
+  }
 
   const handleGuardar = async () => {
     const supabase = createClient()
@@ -51,16 +59,20 @@ export default function StockPage() {
     if (error) { alert('Error: '+error.message); return }
     setToast('Vehículo '+newId+' cargado'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
   }
-  const handleEditar = (s:any) => {
-    setEditando(s.id)
-    setEditForm({ modelo: s.modelo||'', version: s.version||'', color: s.color||'', anio: s.anio||2026, km: s.km||0, costo_usd: s.costo_usd||'', costo_ars: s.costo_ars||'', precio_lista: s.precio_lista||'', precio_minimo: s.precio_minimo||'', vin: s.vin||'', patente: s.patente||'', proveedor: s.proveedor||'', estado: s.estado||'Disponible', observaciones: s.observaciones||'', fecha_ingreso: s.fecha_ingreso ? s.fecha_ingreso.split('T')[0] : hoy, fecha_venta: s.fecha_venta ? s.fecha_venta.split('T')[0] : '' })
-  }
+
   const handleGuardarEdicion = async (id:string) => {
     const supabase = createClient()
     const { error } = await supabase.from('inventario').update({ modelo: editForm.modelo, version: editForm.version, color: editForm.color, anio: parseInt(editForm.anio), km: parseInt(editForm.km), costo_usd: editForm.costo_usd ? parseFloat(editForm.costo_usd) : null, costo_ars: editForm.costo_ars ? parseFloat(editForm.costo_ars) : null, precio_lista: parseFloat(editForm.precio_lista), precio_minimo: parseFloat(editForm.precio_minimo), vin: editForm.vin, patente: editForm.patente, proveedor: editForm.proveedor, estado: editForm.estado, fecha_ingreso: editForm.fecha_ingreso || null, fecha_venta: editForm.fecha_venta || null }).eq('id', id)
     if (error) { alert('Error: '+error.message); return }
-    setToast('Vehículo '+id+' actualizado'); setTimeout(()=>setToast(''),3000); setEditando(null); refresh()
+    setToast('Vehículo '+id+' actualizado'); setTimeout(()=>setToast(''),3000); setEditando(null); setDetalle(null); refresh()
   }
+
+  const campo = (label:string, value:any) => (
+    <div key={label}>
+      <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>{label}</div>
+      <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{value||'—'}</div>
+    </div>
+  )
 
   return (
     <div style={{ minHeight:'100vh', background:'#0f172a', color:'#e2e8f0' }}>
@@ -68,19 +80,14 @@ export default function StockPage() {
       {toast && <div style={{ position:'fixed', top:20, right:20, background:'#166534', color:'#4ade80', border:'1px solid #16a34a', borderRadius:10, padding:'10px 18px', fontSize:13, zIndex:1000, fontWeight:500 }}>✓ {toast}</div>}
       <div style={{ padding:'24px', maxWidth:1400, margin:'0 auto' }}>
 
-        {/* ── BARRA DE FILTROS ── */}
+        {/* ── BARRA FILTROS ── */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16, flexWrap:'wrap', gap:10 }}>
           <div style={{ display:'flex', alignItems:'center', gap:12 }}>
             <span style={{ fontSize:16, fontWeight:600, color:'#e2e8f0' }}>Stock</span>
             <span style={{ fontSize:12, color:'#475569' }}>{filtered.length} vehículos</span>
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
-            <FiltroVehiculos
-              value={filtro}
-              onChange={setFiltro}
-              mostrarDiasStock={true}
-              mostrarBusqueda={true}
-            />
+            <FiltroVehiculos value={filtro} onChange={setFiltro} mostrarDiasStock={true} mostrarBusqueda={true} />
             <button onClick={()=>setShowForm(true)} style={{ padding:'6px 16px', borderRadius:8, background:'#3b82f6', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600, whiteSpace:'nowrap' }}>+ Cargar vehículo</button>
           </div>
         </div>
@@ -121,7 +128,7 @@ export default function StockPage() {
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
               <thead>
                 <tr style={{ borderBottom:'1px solid #334155' }}>
-                  {['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Ingreso','Venta','Días','Estado',''].map(h=>(
+                  {['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Ingreso','Días','Estado',''].map(h=>(
                     <th key={h} style={{ textAlign:'left', padding:'7px 8px', color:'#475569', fontWeight:500, fontSize:11, whiteSpace:'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -129,11 +136,19 @@ export default function StockPage() {
               <tbody>
                 {filtered.map((s:any)=>{
                   const ca = s.tipo?.toLowerCase()==='usado' ? (s.costo_ars||0) : (s.costo_usd ? s.costo_usd*tc : s.costo_ars||0)
-                  const mg=(s.precio_lista||0)-ca
-                  const d=s.dias_stock||0
+                  const mg = (s.precio_lista||0) - ca
+                  const d = s.dias_stock||0
+                  const isOpen = detalle === s.id
+                  const isEditing = editando === s.id
                   return (
                     <>
-                      <tr key={s.id} style={{ borderBottom:'1px solid #0f172a' }}>
+                      <tr
+                        key={s.id}
+                        onClick={()=>handleClickFila(s.id)}
+                        style={{borderBottom:isOpen?'none':'1px solid #0f172a',background:isOpen?'#1a2744':'transparent',cursor:'pointer',transition:'background .15s'}}
+                        onMouseEnter={e=>{if(!isOpen)(e.currentTarget as HTMLElement).style.background='#16213a'}}
+                        onMouseLeave={e=>{if(!isOpen)(e.currentTarget as HTMLElement).style.background='transparent'}}
+                      >
                         <td style={{ padding:'7px 8px', color:'#94a3b8', fontFamily:'monospace', fontSize:11 }}>{s.id}</td>
                         <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, background:s.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)', color:s.empresa==='INVEXUS'?'#60a5fa':'#a78bfa', border:`1px solid ${s.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}` }}>{s.empresa}</span></td>
                         <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, background:s.tipo?.toLowerCase()==='0km'?'rgba(34,197,94,.15)':'rgba(100,116,139,.15)', color:s.tipo?.toLowerCase()==='0km'?'#4ade80':'#94a3b8', border:`1px solid ${s.tipo?.toLowerCase()==='0km'?'rgba(34,197,94,.3)':'rgba(100,116,139,.3)'}` }}>{s.tipo}</span></td>
@@ -145,59 +160,125 @@ export default function StockPage() {
                         <td style={{ padding:'7px 8px', color:'#e2e8f0', fontFamily:'monospace', fontSize:11 }}>{fmt(s.precio_lista||0)}</td>
                         <td style={{ padding:'7px 8px', color:mg>=0?'#4ade80':'#f87171', fontFamily:'monospace', fontSize:11 }}>{fmt(mg)}</td>
                         <td style={{ padding:'7px 8px', color:'#64748b', fontFamily:'monospace', fontSize:11, whiteSpace:'nowrap' }}>{fmtFecha(s.fecha_ingreso)}</td>
-                        <td style={{ padding:'7px 8px', color:s.fecha_venta?'#a78bfa':'#334155', fontFamily:'monospace', fontSize:11, whiteSpace:'nowrap' }}>{fmtFecha(s.fecha_venta)}</td>
                         <td style={{ padding:'7px 8px' }}><span style={{ color:riskColor(d), fontFamily:'monospace', fontSize:12, fontWeight:600 }}>{d}d</span></td>
                         <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, fontWeight:600, background:d>=60?`rgba(${d>=90?'239,68,68':'249,115,22'},.15)`:'rgba(34,197,94,.15)', color:riskColor(d), border:`1px solid ${riskColor(d)}44` }}>{d>=60?riskLabel(d):s.estado}</span></td>
-                        <td style={{ padding:'7px 8px' }}>
-                          <button onClick={()=>editando===s.id?setEditando(null):handleEditar(s)} style={{ padding:'3px 10px', borderRadius:6, border:`1px solid ${editando===s.id?'#f97316':'#334155'}`, background:editando===s.id?'rgba(249,115,22,.15)':'transparent', color:editando===s.id?'#fb923c':'#64748b', fontSize:11, cursor:'pointer' }}>
-                            {editando===s.id?'✕ Cerrar':'✎ Editar'}
-                          </button>
-                        </td>
+                        <td style={{ padding:'7px 8px', color:isOpen?'#60a5fa':'#475569', fontSize:13 }}>{isOpen?'▲':'▼'}</td>
                       </tr>
-                      {editando===s.id && (
-                        <tr key={s.id+'-edit'} style={{ background:'#1e293b', borderBottom:'2px solid #f97316' }}>
-                          <td colSpan={15} style={{ padding:'16px' }}>
-                            <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:12 }}>
-                              {[['modelo','Modelo'],['version','Versión'],['color','Color'],['anio','Año'],['km','Km']].map(([k,l])=>(
-                                <div key={k}>
-                                  <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
-                                  <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+
+                      {/* ── PANEL DETALLE / EDICIÓN ── */}
+                      {isOpen && (
+                        <tr key={s.id+'-detalle'} style={{borderBottom:'2px solid #3b82f6'}}>
+                          <td colSpan={14} style={{padding:0}}>
+                            <div style={{background:'#0f1f3d',borderTop:'1px solid #1e3a5f',padding:'20px 24px'}}>
+                              {!isEditing ? (
+                                <>
+                                  {/* HEADER */}
+                                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:18}}>
+                                    <div>
+                                      <div style={{fontSize:15,fontWeight:700,color:'#e2e8f0'}}>{s.marca} {s.modelo} {s.version}</div>
+                                      <div style={{fontSize:11,color:'#475569',marginTop:2}}>{s.id} · Ingresó {fmtFecha(s.fecha_ingreso)} · {d} días en stock</div>
+                                    </div>
+                                    <div style={{display:'flex',gap:8}}>
+                                      <button onClick={e=>{e.stopPropagation();handleEditar(s)}} style={{padding:'6px 16px',borderRadius:8,background:'rgba(59,130,246,.15)',color:'#60a5fa',border:'1px solid rgba(59,130,246,.3)',fontSize:12,cursor:'pointer',fontWeight:600}}>✎ Editar</button>
+                                      <button onClick={e=>{e.stopPropagation();setDetalle(null)}} style={{padding:'6px 14px',borderRadius:8,background:'transparent',color:'#475569',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}>✕ Cerrar</button>
+                                    </div>
+                                  </div>
+
+                                  {/* DATOS VEHÍCULO */}
+                                  <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:16,marginBottom:16}}>
+                                    {campo('ID', s.id)}
+                                    {campo('Empresa', s.empresa)}
+                                    {campo('Tipo', s.tipo)}
+                                    {campo('Marca', s.marca)}
+                                    {campo('Modelo', s.modelo)}
+                                    {campo('Versión', s.version)}
+                                    {campo('Color', s.color)}
+                                    {campo('Año', s.anio)}
+                                    {campo('Km', s.km ? fmtN(s.km) : null)}
+                                    {campo('Combustible', s.combustible)}
+                                    {campo('Transmisión', s.transmision)}
+                                    {campo('VIN / Motor', s.vin)}
+                                    {campo('Patente', s.patente)}
+                                    {campo('Proveedor', s.proveedor)}
+                                    {campo('Estado', s.estado)}
+                                  </div>
+
+                                  {/* FINANCIERO */}
+                                  <div style={{background:'#0a1628',border:'1px solid #1e3a5f',borderRadius:10,padding:'14px 16px',marginBottom:16}}>
+                                    <div style={{fontSize:10,color:'#475569',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:12}}>Financiero</div>
+                                    <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12}}>
+                                      {campo('Costo USD', s.costo_usd ? 'USD '+fmtN(s.costo_usd) : null)}
+                                      {campo('Costo ARS', s.costo_ars ? fmt(s.costo_ars) : null)}
+                                      {campo('TC compra', s.tc_compra ? '$'+fmtN(s.tc_compra) : null)}
+                                      {campo('Precio lista', fmt(s.precio_lista||0))}
+                                      {campo('Precio mínimo', fmt(s.precio_minimo||0))}
+                                    </div>
+                                  </div>
+
+                                  {/* FECHAS */}
+                                  <div style={{display:'flex',gap:24,marginBottom:s.observaciones?14:0}}>
+                                    <div>{campo('Fecha ingreso', fmtFecha(s.fecha_ingreso))}</div>
+                                    {s.fecha_venta && <div>{campo('Fecha venta', fmtFecha(s.fecha_venta))}</div>}
+                                    <div>
+                                      <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>Días en stock</div>
+                                      <div style={{fontSize:13,fontWeight:700,color:riskColor(d)}}>{d}d — {riskLabel(d)}</div>
+                                    </div>
+                                  </div>
+
+                                  {s.observaciones && (
+                                    <div style={{background:'#12223d',borderRadius:8,padding:'10px 14px',fontSize:12,color:'#94a3b8',border:'1px solid #1e3a5f',marginTop:14}}>
+                                      <span style={{color:'#475569',marginRight:8}}>Obs:</span>{s.observaciones}
+                                    </div>
+                                  )}
+                                </>
+                              ) : (
+                                /* ── MODO EDICIÓN ── */
+                                <div onClick={e=>e.stopPropagation()}>
+                                  <div style={{fontSize:13,fontWeight:600,color:'#60a5fa',marginBottom:16}}>Editando {s.id}</div>
+                                  <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:12 }}>
+                                    {[['modelo','Modelo'],['version','Versión'],['color','Color'],['anio','Año'],['km','Km']].map(([k,l])=>(
+                                      <div key={k}>
+                                        <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
+                                        <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:12 }}>
+                                    {[['costo_usd','Costo USD'],['costo_ars','Costo ARS'],['precio_lista','Precio lista'],['precio_minimo','Precio mínimo'],['proveedor','Proveedor']].map(([k,l])=>(
+                                      <div key={k}>
+                                        <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
+                                        <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:14 }}>
+                                    {[['vin','VIN/Motor'],['patente','Patente']].map(([k,l])=>(
+                                      <div key={k}>
+                                        <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
+                                        <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                                      </div>
+                                    ))}
+                                    <div>
+                                      <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Estado</label>
+                                      <select value={editForm.estado} onChange={e=>setEditForm({...editForm,estado:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }}>
+                                        {['Disponible','Reservado','Vendido'].map(o=><option key={o}>{o}</option>)}
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Fecha ingreso</label>
+                                      <input type="date" value={editForm.fecha_ingreso} onChange={e=>setEditForm({...editForm,fecha_ingreso:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Fecha venta</label>
+                                      <input type="date" value={editForm.fecha_venta} onChange={e=>setEditForm({...editForm,fecha_venta:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
+                                    </div>
+                                  </div>
+                                  <div style={{display:'flex',gap:8}}>
+                                    <button onClick={()=>handleGuardarEdicion(s.id)} style={{ padding:'6px 18px', borderRadius:7, background:'#16a34a', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600 }}>Guardar cambios</button>
+                                    <button onClick={()=>setEditando(null)} style={{ padding:'6px 14px', borderRadius:7, background:'transparent', color:'#64748b', border:'1px solid #334155', fontSize:12, cursor:'pointer' }}>Cancelar</button>
+                                  </div>
                                 </div>
-                              ))}
-                            </div>
-                            <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:12 }}>
-                              {[['costo_usd','Costo USD'],['costo_ars','Costo ARS'],['precio_lista','Precio lista'],['precio_minimo','Precio mínimo'],['proveedor','Proveedor']].map(([k,l])=>(
-                                <div key={k}>
-                                  <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
-                                  <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
-                                </div>
-                              ))}
-                            </div>
-                            <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:14 }}>
-                              {[['vin','VIN/Motor'],['patente','Patente']].map(([k,l])=>(
-                                <div key={k}>
-                                  <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>{l}</label>
-                                  <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
-                                </div>
-                              ))}
-                              <div>
-                                <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Estado</label>
-                                <select value={editForm.estado} onChange={e=>setEditForm({...editForm,estado:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }}>
-                                  {['Disponible','Reservado','Vendido'].map(o=><option key={o}>{o}</option>)}
-                                </select>
-                              </div>
-                              <div>
-                                <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Fecha ingreso</label>
-                                <input type="date" value={editForm.fecha_ingreso} onChange={e=>setEditForm({...editForm,fecha_ingreso:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
-                              </div>
-                              <div>
-                                <label style={{ fontSize:10, color:'#64748b', display:'block', marginBottom:3 }}>Fecha venta</label>
-                                <input type="date" value={editForm.fecha_venta} onChange={e=>setEditForm({...editForm,fecha_venta:e.target.value})} style={{ width:'100%', padding:'5px 8px', borderRadius:6, border:'1px solid #334155', background:'#0f172a', color:'#e2e8f0', fontSize:11 }} />
-                              </div>
-                            </div>
-                            <div style={{ display:'flex', gap:8 }}>
-                              <button onClick={()=>handleGuardarEdicion(s.id)} style={{ padding:'6px 18px', borderRadius:7, background:'#16a34a', color:'white', border:'none', fontSize:12, cursor:'pointer', fontWeight:600 }}>Guardar cambios</button>
-                              <button onClick={()=>setEditando(null)} style={{ padding:'6px 14px', borderRadius:7, background:'transparent', color:'#64748b', border:'1px solid #334155', fontSize:12, cursor:'pointer' }}>Cancelar</button>
+                              )}
                             </div>
                           </td>
                         </tr>

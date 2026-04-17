@@ -13,8 +13,8 @@ export default function VentasPage() {
   const [desde, setDesde] = useState('')
   const [hasta, setHasta] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [detalle, setDetalle] = useState<string|null>(null)   // ID de fila con detalle abierto
-  const [editando, setEditando] = useState<string|null>(null) // ID de fila en modo edición
+  const [detalle, setDetalle] = useState<string|null>(null)
+  const [editando, setEditando] = useState<string|null>(null)
   const [editForm, setEditForm] = useState<any>({})
   const [toast, setToast] = useState('')
 
@@ -31,11 +31,14 @@ export default function VentasPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.from('inventario_view').select('id, empresa, marca, modelo, version, color, tipo, estado, dias_stock')
+    supabase.from('inventario_view').select('*')
       .then(({ data }) => { if (data) setInventario(data) })
   }, [empresa])
 
   const vehiculosParaVenta = aplicarFiltroVehiculos(inventario, filtroVehiculo)
+
+  // Busca datos del vehículo por ID
+  const getVehiculo = (inv_id:string) => inventario.find((v:any) => v.id === inv_id)
 
   const fmt = (n:number) => moneda==='USD'
     ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc)
@@ -54,13 +57,8 @@ export default function VentasPage() {
   const diff = precioVenta - totalCobrado
 
   const handleClickFila = (id:string) => {
-    if (detalle === id) {
-      setDetalle(null)
-      setEditando(null)
-    } else {
-      setDetalle(id)
-      setEditando(null)
-    }
+    if (detalle === id) { setDetalle(null); setEditando(null) }
+    else { setDetalle(id); setEditando(null) }
   }
 
   const handleEditar = (v:any) => {
@@ -117,6 +115,13 @@ export default function VentasPage() {
     }
     return map[e] ?? map['Pendiente']
   }
+
+  const campo = (label:string, value:any) => (
+    <div key={label}>
+      <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>{label}</div>
+      <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{value||'—'}</div>
+    </div>
+  )
 
   return (
     <div style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0'}}>
@@ -214,18 +219,13 @@ export default function VentasPage() {
                   const isOpen = detalle === v.id
                   const isEditing = editando === v.id
                   const ec = estadoCobro(v.estado_cobro)
+                  const vehiculo = v.inv_id ? getVehiculo(v.inv_id) : null
                   return (
                     <>
-                      {/* ── FILA PRINCIPAL ── */}
                       <tr
                         key={v.id}
                         onClick={()=>handleClickFila(v.id)}
-                        style={{
-                          borderBottom: isOpen ? 'none' : '1px solid #0f172a',
-                          background: isOpen ? '#1a2744' : 'transparent',
-                          cursor: 'pointer',
-                          transition: 'background .15s',
-                        }}
+                        style={{borderBottom:isOpen?'none':'1px solid #0f172a',background:isOpen?'#1a2744':'transparent',cursor:'pointer',transition:'background .15s'}}
                         onMouseEnter={e=>{if(!isOpen)(e.currentTarget as HTMLElement).style.background='#16213a'}}
                         onMouseLeave={e=>{if(!isOpen)(e.currentTarget as HTMLElement).style.background='transparent'}}
                       >
@@ -233,65 +233,67 @@ export default function VentasPage() {
                         <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:v.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)',color:v.empresa==='INVEXUS'?'#60a5fa':'#a78bfa',border:`1px solid ${v.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}`}}>{v.empresa}</span></td>
                         <td style={{padding:'8px 10px',color:'#cbd5e1',fontWeight:500}}>{v.cliente}</td>
                         <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.vendedor_nombre}</td>
-                        <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{v.inv_id||'—'}</td>
+                        <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>
+                          {vehiculo ? `${vehiculo.marca} ${vehiculo.modelo}` : (v.inv_id||'—')}
+                        </td>
                         <td style={{padding:'8px 10px',color:'#e2e8f0',fontFamily:'monospace',fontWeight:600}}>{fmt(v.precio_venta||0)}</td>
                         <td style={{padding:'8px 10px',color:v.ganancia_neta>0?'#4ade80':'#f87171',fontFamily:'monospace'}}>{v.ganancia_neta?fmt(v.ganancia_neta):'—'}</td>
                         <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.forma_pago}</td>
                         <td style={{padding:'8px 10px',color:'#60a5fa',fontFamily:'monospace',fontSize:11}}>{v.tc_bna_snapshot?'$'+fmtN(v.tc_bna_snapshot):'—'}</td>
                         <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 8px',borderRadius:4,fontWeight:600,background:ec.bg,color:ec.color,border:`1px solid ${ec.border}`}}>{v.estado_cobro}</span></td>
-                        <td style={{padding:'8px 10px',color:isOpen?'#60a5fa':'#475569',fontSize:13}}>
-                          {isOpen ? '▲' : '▼'}
-                        </td>
+                        <td style={{padding:'8px 10px',color:isOpen?'#60a5fa':'#475569',fontSize:13}}>{isOpen?'▲':'▼'}</td>
                       </tr>
 
-                      {/* ── PANEL DETALLE / EDICIÓN ── */}
                       {isOpen && (
                         <tr key={v.id+'-detalle'} style={{borderBottom:'2px solid #3b82f6'}}>
                           <td colSpan={11} style={{padding:0}}>
                             <div style={{background:'#0f1f3d',borderTop:'1px solid #1e3a5f',padding:'20px 24px'}}>
-
                               {!isEditing ? (
-                                /* ── VISTA DETALLE ── */
                                 <>
+                                  {/* HEADER */}
                                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:18}}>
                                     <div>
                                       <div style={{fontSize:15,fontWeight:700,color:'#e2e8f0'}}>{v.cliente}</div>
                                       <div style={{fontSize:11,color:'#475569',marginTop:2}}>{v.id} · {fmtFecha(v.fecha)}</div>
                                     </div>
                                     <div style={{display:'flex',gap:8}}>
-                                      <button
-                                        onClick={e=>{e.stopPropagation();handleEditar(v)}}
-                                        style={{padding:'6px 16px',borderRadius:8,background:'rgba(59,130,246,.15)',color:'#60a5fa',border:'1px solid rgba(59,130,246,.3)',fontSize:12,cursor:'pointer',fontWeight:600}}
-                                      >
-                                        ✎ Editar
-                                      </button>
-                                      <button
-                                        onClick={e=>{e.stopPropagation();setDetalle(null)}}
-                                        style={{padding:'6px 14px',borderRadius:8,background:'transparent',color:'#475569',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}
-                                      >
-                                        ✕ Cerrar
-                                      </button>
+                                      <button onClick={e=>{e.stopPropagation();handleEditar(v)}} style={{padding:'6px 16px',borderRadius:8,background:'rgba(59,130,246,.15)',color:'#60a5fa',border:'1px solid rgba(59,130,246,.3)',fontSize:12,cursor:'pointer',fontWeight:600}}>✎ Editar</button>
+                                      <button onClick={e=>{e.stopPropagation();setDetalle(null)}} style={{padding:'6px 14px',borderRadius:8,background:'transparent',color:'#475569',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}>✕ Cerrar</button>
                                     </div>
                                   </div>
 
+                                  {/* DATOS VENTA */}
                                   <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:16}}>
-                                    {[
-                                      ['Vendedor', v.vendedor_nombre||'—'],
-                                      ['Empresa', v.empresa],
-                                      ['Forma de pago', v.forma_pago||'—'],
-                                      ['Estado cobro', v.estado_cobro||'—'],
-                                      ['Vehículo', v.inv_id||'—'],
-                                      ['Precio de venta', fmt(v.precio_venta||0)],
-                                      ['Ganancia neta', v.ganancia_neta?fmt(v.ganancia_neta):'—'],
-                                      ['Costo compra', v.costo_compra?fmt(v.costo_compra):'—'],
-                                    ].map(([label,val])=>(
-                                      <div key={label}>
-                                        <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>{label}</div>
-                                        <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{val}</div>
-                                      </div>
-                                    ))}
+                                    {campo('Vendedor', v.vendedor_nombre)}
+                                    {campo('Empresa', v.empresa)}
+                                    {campo('Forma de pago', v.forma_pago)}
+                                    {campo('Estado cobro', v.estado_cobro)}
+                                    {campo('Precio de venta', fmt(v.precio_venta||0))}
+                                    {campo('Ganancia neta', v.ganancia_neta?fmt(v.ganancia_neta):null)}
+                                    {campo('Costo compra', v.costo_compra?fmt(v.costo_compra):null)}
+                                    {campo('TC BNA snapshot', v.tc_bna_snapshot?'$'+fmtN(v.tc_bna_snapshot):null)}
                                   </div>
 
+                                  {/* VEHÍCULO */}
+                                  {vehiculo && (
+                                    <div style={{background:'#0a1628',border:'1px solid #1e3a5f',borderRadius:10,padding:'14px 16px',marginBottom:16}}>
+                                      <div style={{fontSize:10,color:'#475569',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:12}}>Vehículo vendido</div>
+                                      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12}}>
+                                        {campo('ID', vehiculo.id)}
+                                        {campo('Marca', vehiculo.marca)}
+                                        {campo('Modelo', vehiculo.modelo)}
+                                        {campo('Versión', vehiculo.version)}
+                                        {campo('Color', vehiculo.color)}
+                                        {campo('Tipo', vehiculo.tipo)}
+                                        {campo('Año', vehiculo.anio)}
+                                        {campo('Km', vehiculo.km ? fmtN(vehiculo.km) : null)}
+                                        {campo('VIN / Motor', vehiculo.vin)}
+                                        {campo('Patente', vehiculo.patente)}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* DESGLOSE COBRO */}
                                   <div style={{borderTop:'1px solid #1e3a5f',paddingTop:14,marginBottom:14}}>
                                     <div style={{fontSize:10,color:'#475569',marginBottom:10,textTransform:'uppercase',letterSpacing:'.05em'}}>Desglose de cobro</div>
                                     <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
@@ -311,21 +313,6 @@ export default function VentasPage() {
                                       ))}
                                     </div>
                                   </div>
-
-                                  {v.tc_bna_snapshot && (
-                                    <div style={{display:'flex',gap:16,marginBottom:14}}>
-                                      <div>
-                                        <div style={{fontSize:10,color:'#475569',marginBottom:2}}>TC BNA al momento</div>
-                                        <div style={{fontSize:12,color:'#60a5fa',fontFamily:'monospace'}}>${fmtN(v.tc_bna_snapshot)}</div>
-                                      </div>
-                                      {v.tc_blue_snapshot && (
-                                        <div>
-                                          <div style={{fontSize:10,color:'#475569',marginBottom:2}}>TC Blue al momento</div>
-                                          <div style={{fontSize:12,color:'#fb923c',fontFamily:'monospace'}}>${fmtN(v.tc_blue_snapshot)}</div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
 
                                   {v.observaciones && (
                                     <div style={{background:'#12223d',borderRadius:8,padding:'10px 14px',fontSize:12,color:'#94a3b8',border:'1px solid #1e3a5f'}}>
@@ -354,30 +341,11 @@ export default function VentasPage() {
                                     ))}
                                   </div>
                                   <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:10,marginBottom:14}}>
-                                    <div>
-                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>USD cobrado</label>
-                                      <input type="number" value={editForm.cobro_usd} onChange={e=>setEditForm({...editForm,cobro_usd:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                                    </div>
-                                    <div>
-                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>TC pactado</label>
-                                      <input type="number" value={editForm.cobro_usd_tc} onChange={e=>setEditForm({...editForm,cobro_usd_tc:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#fb923c',fontSize:11}} />
-                                    </div>
-                                    <div>
-                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Forma de pago</label>
-                                      <select value={editForm.forma_pago} onChange={e=>setEditForm({...editForm,forma_pago:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
-                                        {['Contado','Transferencia','Financiado','Mixto','Permuta'].map(o=><option key={o}>{o}</option>)}
-                                      </select>
-                                    </div>
-                                    <div>
-                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Estado cobro</label>
-                                      <select value={editForm.estado_cobro} onChange={e=>setEditForm({...editForm,estado_cobro:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
-                                        {['Cobrado','Parcial','Pendiente','Seña'].map(o=><option key={o}>{o}</option>)}
-                                      </select>
-                                    </div>
-                                    <div>
-                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Fecha operación</label>
-                                      <input type="date" value={editForm.fecha} onChange={e=>setEditForm({...editForm,fecha:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                                    </div>
+                                    <div><label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>USD cobrado</label><input type="number" value={editForm.cobro_usd} onChange={e=>setEditForm({...editForm,cobro_usd:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} /></div>
+                                    <div><label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>TC pactado</label><input type="number" value={editForm.cobro_usd_tc} onChange={e=>setEditForm({...editForm,cobro_usd_tc:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#fb923c',fontSize:11}} /></div>
+                                    <div><label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Forma de pago</label><select value={editForm.forma_pago} onChange={e=>setEditForm({...editForm,forma_pago:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>{['Contado','Transferencia','Financiado','Mixto','Permuta'].map(o=><option key={o}>{o}</option>)}</select></div>
+                                    <div><label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Estado cobro</label><select value={editForm.estado_cobro} onChange={e=>setEditForm({...editForm,estado_cobro:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>{['Cobrado','Parcial','Pendiente','Seña'].map(o=><option key={o}>{o}</option>)}</select></div>
+                                    <div><label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Fecha operación</label><input type="date" value={editForm.fecha} onChange={e=>setEditForm({...editForm,fecha:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} /></div>
                                   </div>
                                   <div style={{marginBottom:12}}>
                                     <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Observaciones</label>
