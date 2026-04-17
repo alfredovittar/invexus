@@ -13,17 +13,13 @@ export default function VentasPage() {
   const [desde, setDesde] = useState('')
   const [hasta, setHasta] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [editando, setEditando] = useState<any>(null)
+  const [detalle, setDetalle] = useState<string|null>(null)   // ID de fila con detalle abierto
+  const [editando, setEditando] = useState<string|null>(null) // ID de fila en modo edición
   const [editForm, setEditForm] = useState<any>({})
   const [toast, setToast] = useState('')
 
-  // Filtro para el selector de vehículo en el formulario de nueva venta
   const [filtroVehiculo, setFiltroVehiculo] = useState<FiltroVehiculosState>({
-    estado: 'Disponible',
-    marca: 'Todas',
-    tipo: 'Todos',
-    busqueda: '',
-    diasStock: 'Todos',
+    estado: 'Disponible', marca: 'Todas', tipo: 'Todos', busqueda: '', diasStock: 'Todos',
   })
   const [inventario, setInventario] = useState<any[]>([])
 
@@ -33,18 +29,17 @@ export default function VentasPage() {
 
   const [form, setForm] = useState({ empresa:'INVEXUS', inv_id:'', cliente:'', vendedor_nombre:'', precio_venta:'', forma_pago:'Contado', cobro_efectivo:0, cobro_transfer:0, cobro_usd:0, cobro_usd_tc:tcBna, cobro_pagare:0, cobro_pxp:0, estado_cobro:'Cobrado', observaciones:'', fecha:hoy })
 
-  // Cargar inventario para el selector de vehículo
   useEffect(() => {
     const supabase = createClient()
-    supabase
-      .from('inventario_view')
-      .select('id, empresa, marca, modelo, version, color, tipo, estado, dias_stock')
+    supabase.from('inventario_view').select('id, empresa, marca, modelo, version, color, tipo, estado, dias_stock')
       .then(({ data }) => { if (data) setInventario(data) })
   }, [empresa])
 
   const vehiculosParaVenta = aplicarFiltroVehiculos(inventario, filtroVehiculo)
 
-  const fmt = (n:number) => moneda==='USD' ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc) : new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
+  const fmt = (n:number) => moneda==='USD'
+    ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc)
+    : new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
   const fmtN = (n:number) => new Intl.NumberFormat('es-AR').format(n)
   const fmtFecha = (f:string|null|undefined) => {
     if (!f) return '—'
@@ -58,12 +53,14 @@ export default function VentasPage() {
   const precioVenta = parseFloat(form.precio_venta)||0
   const diff = precioVenta - totalCobrado
 
-  const handleGuardar = async () => {
-    const supabase = createClient()
-    const newId = 'VTA-'+Date.now().toString().slice(-8)
-    const { error } = await supabase.from('ventas').insert({ id:newId, empresa:form.empresa, inv_id:form.inv_id||null, fecha:form.fecha||hoy, cliente:form.cliente, vendedor_nombre:form.vendedor_nombre, precio_venta:parseFloat(form.precio_venta), forma_pago:form.forma_pago, cobro_efectivo:form.cobro_efectivo, cobro_transfer:form.cobro_transfer, cobro_usd:form.cobro_usd, cobro_usd_tc:form.cobro_usd_tc, cobro_pagare:form.cobro_pagare, cobro_pxp:form.cobro_pxp, estado_cobro:form.estado_cobro, tc_bna_snapshot:tcBna, tc_blue_snapshot:tcBlue, observaciones:form.observaciones })
-    if(error){alert('Error: '+error.message);return}
-    setToast('Venta registrada'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
+  const handleClickFila = (id:string) => {
+    if (detalle === id) {
+      setDetalle(null)
+      setEditando(null)
+    } else {
+      setDetalle(id)
+      setEditando(null)
+    }
   }
 
   const handleEditar = (v:any) => {
@@ -78,6 +75,14 @@ export default function VentasPage() {
       estado_cobro: v.estado_cobro||'Cobrado', observaciones: v.observaciones||'',
       fecha: v.fecha ? v.fecha.split('T')[0] : hoy
     })
+  }
+
+  const handleGuardar = async () => {
+    const supabase = createClient()
+    const newId = 'VTA-'+Date.now().toString().slice(-8)
+    const { error } = await supabase.from('ventas').insert({ id:newId, empresa:form.empresa, inv_id:form.inv_id||null, fecha:form.fecha||hoy, cliente:form.cliente, vendedor_nombre:form.vendedor_nombre, precio_venta:parseFloat(form.precio_venta), forma_pago:form.forma_pago, cobro_efectivo:form.cobro_efectivo, cobro_transfer:form.cobro_transfer, cobro_usd:form.cobro_usd, cobro_usd_tc:form.cobro_usd_tc, cobro_pagare:form.cobro_pagare, cobro_pxp:form.cobro_pxp, estado_cobro:form.estado_cobro, tc_bna_snapshot:tcBna, tc_blue_snapshot:tcBlue, observaciones:form.observaciones })
+    if(error){alert('Error: '+error.message);return}
+    setToast('Venta registrada'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
   }
 
   const handleGuardarEdicion = async (id:string) => {
@@ -99,10 +104,18 @@ export default function VentasPage() {
       fecha: editForm.fecha || hoy
     }).eq('id', id)
     if (error) { alert('Error: '+error.message); return }
-    setToast('Venta '+id+' actualizada')
-    setTimeout(()=>setToast(''),3000)
-    setEditando(null)
-    refresh()
+    setToast('Venta '+id+' actualizada'); setTimeout(()=>setToast(''),3000)
+    setEditando(null); setDetalle(null); refresh()
+  }
+
+  const estadoCobro = (e:string) => {
+    const map:Record<string,{bg:string,color:string,border:string}> = {
+      Cobrado:  {bg:'rgba(34,197,94,.15)',  color:'#4ade80', border:'rgba(34,197,94,.3)'},
+      Parcial:  {bg:'rgba(234,179,8,.15)',  color:'#facc15', border:'rgba(234,179,8,.3)'},
+      Pendiente:{bg:'rgba(249,115,22,.15)', color:'#fb923c', border:'rgba(249,115,22,.3)'},
+      Seña:     {bg:'rgba(96,165,250,.15)', color:'#60a5fa', border:'rgba(96,165,250,.3)'},
+    }
+    return map[e] ?? map['Pendiente']
   }
 
   return (
@@ -147,35 +160,18 @@ export default function VentasPage() {
                 <input type="date" value={form.fecha} onChange={e=>setForm({...form,fecha:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
             </div>
-
-            {/* ── SELECTOR DE VEHÍCULO CON FILTRO ── */}
             <div style={{background:'#0f172a',border:'1px solid #334155',borderRadius:10,padding:'12px 14px',marginBottom:12}}>
               <div style={{fontSize:11,color:'#64748b',fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:10}}>Vehículo</div>
               <div style={{marginBottom:10}}>
-                <FiltroVehiculos
-                  value={filtroVehiculo}
-                  onChange={setFiltroVehiculo}
-                  mostrarDiasStock={false}
-                  mostrarBusqueda={true}
-                  compacto={true}
-                />
+                <FiltroVehiculos value={filtroVehiculo} onChange={setFiltroVehiculo} mostrarDiasStock={false} mostrarBusqueda={true} compacto={true} />
               </div>
-              <select
-                value={form.inv_id}
-                onChange={e=>setForm({...form,inv_id:e.target.value})}
-                style={{width:'100%',padding:'7px 10px',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0',fontSize:12}}
-              >
+              <select value={form.inv_id} onChange={e=>setForm({...form,inv_id:e.target.value})} style={{width:'100%',padding:'7px 10px',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0',fontSize:12}}>
                 <option value="">— Seleccioná un vehículo ({vehiculosParaVenta.length} disponibles) —</option>
                 {vehiculosParaVenta.map((v:any)=>(
-                  <option key={v.id} value={v.id}>
-                    [{v.id}] {v.marca} {v.modelo} {v.version} — {v.color}
-                    {v.dias_stock ? ` (${v.dias_stock}d en stock)` : ''}
-                  </option>
+                  <option key={v.id} value={v.id}>[{v.id}] {v.marca} {v.modelo} {v.version} — {v.color}{v.dias_stock?` (${v.dias_stock}d)`:''}</option>
                 ))}
               </select>
             </div>
-
-            {/* ── DESGLOSE DE COBRO ── */}
             <div style={{fontSize:12,fontWeight:600,color:'#94a3b8',marginBottom:10,paddingBottom:8,borderBottom:'1px solid #334155'}}>Desglose de cobro</div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
               {[['cobro_efectivo','Efectivo ARS'],['cobro_transfer','Transferencia ARS'],['cobro_pagare','Pagaré ARS'],['cobro_pxp','Parte de pago ARS']].map(([k,l])=>(
@@ -214,83 +210,192 @@ export default function VentasPage() {
                 </tr>
               </thead>
               <tbody>
-                {ventas.map((v:any)=>(
-                  <>
-                    <tr key={v.id} style={{borderBottom:'1px solid #0f172a'}}>
-                      <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11,whiteSpace:'nowrap'}}>{fmtFecha(v.fecha)}</td>
-                      <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:v.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)',color:v.empresa==='INVEXUS'?'#60a5fa':'#a78bfa',border:`1px solid ${v.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}`}}>{v.empresa}</span></td>
-                      <td style={{padding:'8px 10px',color:'#cbd5e1',fontWeight:500}}>{v.cliente}</td>
-                      <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.vendedor_nombre}</td>
-                      <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{v.inv_id||'—'}</td>
-                      <td style={{padding:'8px 10px',color:'#e2e8f0',fontFamily:'monospace',fontWeight:600}}>{fmt(v.precio_venta||0)}</td>
-                      <td style={{padding:'8px 10px',color:v.ganancia_neta>0?'#4ade80':'#f87171',fontFamily:'monospace'}}>{v.ganancia_neta?fmt(v.ganancia_neta):'—'}</td>
-                      <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.forma_pago}</td>
-                      <td style={{padding:'8px 10px',color:'#60a5fa',fontFamily:'monospace',fontSize:11}}>{v.tc_bna_snapshot?'$'+fmtN(v.tc_bna_snapshot):'—'}</td>
-                      <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 8px',borderRadius:4,fontWeight:600,background:v.estado_cobro==='Cobrado'?'rgba(34,197,94,.15)':v.estado_cobro==='Parcial'?'rgba(234,179,8,.15)':'rgba(249,115,22,.15)',color:v.estado_cobro==='Cobrado'?'#4ade80':v.estado_cobro==='Parcial'?'#facc15':'#fb923c',border:`1px solid ${v.estado_cobro==='Cobrado'?'rgba(34,197,94,.3)':v.estado_cobro==='Parcial'?'rgba(234,179,8,.3)':'rgba(249,115,22,.3)'}`}}>{v.estado_cobro}</span></td>
-                      <td style={{padding:'8px 10px'}}>
-                        <button onClick={()=>editando===v.id?setEditando(null):handleEditar(v)} style={{padding:'3px 10px',borderRadius:6,border:`1px solid ${editando===v.id?'#f97316':'#334155'}`,background:editando===v.id?'rgba(249,115,22,.15)':'transparent',color:editando===v.id?'#fb923c':'#64748b',fontSize:11,cursor:'pointer'}}>
-                          {editando===v.id?'✕ Cerrar':'✎ Editar'}
-                        </button>
-                      </td>
-                    </tr>
-                    {editando===v.id && (
-                      <tr key={v.id+'-edit'} style={{background:'#1e293b',borderBottom:'2px solid #f97316'}}>
-                        <td colSpan={11} style={{padding:'16px'}}>
-                          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:12}}>
-                            {[['cliente','Cliente'],['vendedor_nombre','Vendedor'],['precio_venta','Precio venta'],['ganancia_neta','Ganancia neta']].map(([k,l])=>(
-                              <div key={k}>
-                                <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>{l}</label>
-                                <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                              </div>
-                            ))}
-                          </div>
-                          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:12}}>
-                            {[['cobro_efectivo','Efectivo'],['cobro_transfer','Transferencia'],['cobro_pagare','Pagaré'],['cobro_pxp','Parte de pago']].map(([k,l])=>(
-                              <div key={k}>
-                                <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>{l}</label>
-                                <input type="number" value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                              </div>
-                            ))}
-                          </div>
-                          <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:10,marginBottom:14}}>
-                            <div>
-                              <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>USD cobrado</label>
-                              <input type="number" value={editForm.cobro_usd} onChange={e=>setEditForm({...editForm,cobro_usd:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                            </div>
-                            <div>
-                              <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>TC pactado</label>
-                              <input type="number" value={editForm.cobro_usd_tc} onChange={e=>setEditForm({...editForm,cobro_usd_tc:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#fb923c',fontSize:11}} />
-                            </div>
-                            <div>
-                              <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Forma de pago</label>
-                              <select value={editForm.forma_pago} onChange={e=>setEditForm({...editForm,forma_pago:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
-                                {['Contado','Transferencia','Financiado','Mixto','Permuta'].map(o=><option key={o}>{o}</option>)}
-                              </select>
-                            </div>
-                            <div>
-                              <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Estado cobro</label>
-                              <select value={editForm.estado_cobro} onChange={e=>setEditForm({...editForm,estado_cobro:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
-                                {['Cobrado','Parcial','Pendiente','Seña'].map(o=><option key={o}>{o}</option>)}
-                              </select>
-                            </div>
-                            <div>
-                              <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Fecha operación</label>
-                              <input type="date" value={editForm.fecha} onChange={e=>setEditForm({...editForm,fecha:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                            </div>
-                          </div>
-                          <div style={{marginBottom:12}}>
-                            <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Observaciones</label>
-                            <input value={editForm.observaciones} onChange={e=>setEditForm({...editForm,observaciones:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
-                          </div>
-                          <div style={{display:'flex',gap:8}}>
-                            <button onClick={()=>handleGuardarEdicion(v.id)} style={{padding:'6px 18px',borderRadius:7,background:'#16a34a',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600}}>Guardar cambios</button>
-                            <button onClick={()=>setEditando(null)} style={{padding:'6px 14px',borderRadius:7,background:'transparent',color:'#64748b',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}>Cancelar</button>
-                          </div>
+                {ventas.map((v:any)=>{
+                  const isOpen = detalle === v.id
+                  const isEditing = editando === v.id
+                  const ec = estadoCobro(v.estado_cobro)
+                  return (
+                    <>
+                      {/* ── FILA PRINCIPAL ── */}
+                      <tr
+                        key={v.id}
+                        onClick={()=>handleClickFila(v.id)}
+                        style={{
+                          borderBottom: isOpen ? 'none' : '1px solid #0f172a',
+                          background: isOpen ? '#1a2744' : 'transparent',
+                          cursor: 'pointer',
+                          transition: 'background .15s',
+                        }}
+                        onMouseEnter={e=>{if(!isOpen)(e.currentTarget as HTMLElement).style.background='#16213a'}}
+                        onMouseLeave={e=>{if(!isOpen)(e.currentTarget as HTMLElement).style.background='transparent'}}
+                      >
+                        <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11,whiteSpace:'nowrap'}}>{fmtFecha(v.fecha)}</td>
+                        <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:v.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)',color:v.empresa==='INVEXUS'?'#60a5fa':'#a78bfa',border:`1px solid ${v.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}`}}>{v.empresa}</span></td>
+                        <td style={{padding:'8px 10px',color:'#cbd5e1',fontWeight:500}}>{v.cliente}</td>
+                        <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.vendedor_nombre}</td>
+                        <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{v.inv_id||'—'}</td>
+                        <td style={{padding:'8px 10px',color:'#e2e8f0',fontFamily:'monospace',fontWeight:600}}>{fmt(v.precio_venta||0)}</td>
+                        <td style={{padding:'8px 10px',color:v.ganancia_neta>0?'#4ade80':'#f87171',fontFamily:'monospace'}}>{v.ganancia_neta?fmt(v.ganancia_neta):'—'}</td>
+                        <td style={{padding:'8px 10px',color:'#94a3b8'}}>{v.forma_pago}</td>
+                        <td style={{padding:'8px 10px',color:'#60a5fa',fontFamily:'monospace',fontSize:11}}>{v.tc_bna_snapshot?'$'+fmtN(v.tc_bna_snapshot):'—'}</td>
+                        <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 8px',borderRadius:4,fontWeight:600,background:ec.bg,color:ec.color,border:`1px solid ${ec.border}`}}>{v.estado_cobro}</span></td>
+                        <td style={{padding:'8px 10px',color:isOpen?'#60a5fa':'#475569',fontSize:13}}>
+                          {isOpen ? '▲' : '▼'}
                         </td>
                       </tr>
-                    )}
-                  </>
-                ))}
+
+                      {/* ── PANEL DETALLE / EDICIÓN ── */}
+                      {isOpen && (
+                        <tr key={v.id+'-detalle'} style={{borderBottom:'2px solid #3b82f6'}}>
+                          <td colSpan={11} style={{padding:0}}>
+                            <div style={{background:'#0f1f3d',borderTop:'1px solid #1e3a5f',padding:'20px 24px'}}>
+
+                              {!isEditing ? (
+                                /* ── VISTA DETALLE ── */
+                                <>
+                                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:18}}>
+                                    <div>
+                                      <div style={{fontSize:15,fontWeight:700,color:'#e2e8f0'}}>{v.cliente}</div>
+                                      <div style={{fontSize:11,color:'#475569',marginTop:2}}>{v.id} · {fmtFecha(v.fecha)}</div>
+                                    </div>
+                                    <div style={{display:'flex',gap:8}}>
+                                      <button
+                                        onClick={e=>{e.stopPropagation();handleEditar(v)}}
+                                        style={{padding:'6px 16px',borderRadius:8,background:'rgba(59,130,246,.15)',color:'#60a5fa',border:'1px solid rgba(59,130,246,.3)',fontSize:12,cursor:'pointer',fontWeight:600}}
+                                      >
+                                        ✎ Editar
+                                      </button>
+                                      <button
+                                        onClick={e=>{e.stopPropagation();setDetalle(null)}}
+                                        style={{padding:'6px 14px',borderRadius:8,background:'transparent',color:'#475569',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}
+                                      >
+                                        ✕ Cerrar
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:16}}>
+                                    {[
+                                      ['Vendedor', v.vendedor_nombre||'—'],
+                                      ['Empresa', v.empresa],
+                                      ['Forma de pago', v.forma_pago||'—'],
+                                      ['Estado cobro', v.estado_cobro||'—'],
+                                      ['Vehículo', v.inv_id||'—'],
+                                      ['Precio de venta', fmt(v.precio_venta||0)],
+                                      ['Ganancia neta', v.ganancia_neta?fmt(v.ganancia_neta):'—'],
+                                      ['Costo compra', v.costo_compra?fmt(v.costo_compra):'—'],
+                                    ].map(([label,val])=>(
+                                      <div key={label}>
+                                        <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>{label}</div>
+                                        <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{val}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+
+                                  <div style={{borderTop:'1px solid #1e3a5f',paddingTop:14,marginBottom:14}}>
+                                    <div style={{fontSize:10,color:'#475569',marginBottom:10,textTransform:'uppercase',letterSpacing:'.05em'}}>Desglose de cobro</div>
+                                    <div style={{display:'flex',gap:24,flexWrap:'wrap'}}>
+                                      {[
+                                        ['Efectivo', v.cobro_efectivo],
+                                        ['Transferencia', v.cobro_transfer],
+                                        ['USD', v.cobro_usd ? `USD ${fmtN(v.cobro_usd)} × $${fmtN(v.cobro_usd_tc)}` : null],
+                                        ['Pagaré', v.cobro_pagare],
+                                        ['Parte de pago', v.cobro_pxp],
+                                      ].filter(([,val])=>val && val!==0).map(([label,val])=>(
+                                        <div key={label as string}>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:2}}>{label}</div>
+                                          <div style={{fontSize:12,color:'#cbd5e1',fontFamily:'monospace'}}>
+                                            {typeof val === 'number' ? fmt(val) : val}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {v.tc_bna_snapshot && (
+                                    <div style={{display:'flex',gap:16,marginBottom:14}}>
+                                      <div>
+                                        <div style={{fontSize:10,color:'#475569',marginBottom:2}}>TC BNA al momento</div>
+                                        <div style={{fontSize:12,color:'#60a5fa',fontFamily:'monospace'}}>${fmtN(v.tc_bna_snapshot)}</div>
+                                      </div>
+                                      {v.tc_blue_snapshot && (
+                                        <div>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:2}}>TC Blue al momento</div>
+                                          <div style={{fontSize:12,color:'#fb923c',fontFamily:'monospace'}}>${fmtN(v.tc_blue_snapshot)}</div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
+                                  {v.observaciones && (
+                                    <div style={{background:'#12223d',borderRadius:8,padding:'10px 14px',fontSize:12,color:'#94a3b8',border:'1px solid #1e3a5f'}}>
+                                      <span style={{color:'#475569',marginRight:8}}>Obs:</span>{v.observaciones}
+                                    </div>
+                                  )}
+                                </>
+                              ) : (
+                                /* ── MODO EDICIÓN ── */
+                                <div onClick={e=>e.stopPropagation()}>
+                                  <div style={{fontSize:13,fontWeight:600,color:'#60a5fa',marginBottom:16}}>Editando {v.id}</div>
+                                  <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:12}}>
+                                    {[['cliente','Cliente'],['vendedor_nombre','Vendedor'],['precio_venta','Precio venta'],['ganancia_neta','Ganancia neta']].map(([k,l])=>(
+                                      <div key={k}>
+                                        <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>{l}</label>
+                                        <input value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:12}}>
+                                    {[['cobro_efectivo','Efectivo'],['cobro_transfer','Transferencia'],['cobro_pagare','Pagaré'],['cobro_pxp','Parte de pago']].map(([k,l])=>(
+                                      <div key={k}>
+                                        <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>{l}</label>
+                                        <input type="number" value={editForm[k]} onChange={e=>setEditForm({...editForm,[k]:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:10,marginBottom:14}}>
+                                    <div>
+                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>USD cobrado</label>
+                                      <input type="number" value={editForm.cobro_usd} onChange={e=>setEditForm({...editForm,cobro_usd:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                                    </div>
+                                    <div>
+                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>TC pactado</label>
+                                      <input type="number" value={editForm.cobro_usd_tc} onChange={e=>setEditForm({...editForm,cobro_usd_tc:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#fb923c',fontSize:11}} />
+                                    </div>
+                                    <div>
+                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Forma de pago</label>
+                                      <select value={editForm.forma_pago} onChange={e=>setEditForm({...editForm,forma_pago:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
+                                        {['Contado','Transferencia','Financiado','Mixto','Permuta'].map(o=><option key={o}>{o}</option>)}
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Estado cobro</label>
+                                      <select value={editForm.estado_cobro} onChange={e=>setEditForm({...editForm,estado_cobro:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}}>
+                                        {['Cobrado','Parcial','Pendiente','Seña'].map(o=><option key={o}>{o}</option>)}
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Fecha operación</label>
+                                      <input type="date" value={editForm.fecha} onChange={e=>setEditForm({...editForm,fecha:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                                    </div>
+                                  </div>
+                                  <div style={{marginBottom:12}}>
+                                    <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Observaciones</label>
+                                    <input value={editForm.observaciones} onChange={e=>setEditForm({...editForm,observaciones:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
+                                  </div>
+                                  <div style={{display:'flex',gap:8}}>
+                                    <button onClick={()=>handleGuardarEdicion(v.id)} style={{padding:'6px 18px',borderRadius:7,background:'#16a34a',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600}}>Guardar cambios</button>
+                                    <button onClick={()=>setEditando(null)} style={{padding:'6px 14px',borderRadius:7,background:'transparent',color:'#64748b',border:'1px solid #334155',fontSize:12,cursor:'pointer'}}>Cancelar</button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  )
+                })}
               </tbody>
             </table>
             {ventas.length===0&&<div style={{color:'#475569',padding:24,textAlign:'center'}}>Sin ventas en el período seleccionado</div>}
