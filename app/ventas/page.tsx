@@ -1,7 +1,8 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Nav from '@/components/Nav'
 import FiltroFechas from '@/components/FiltroFechas'
+import FiltroVehiculos, { FiltroVehiculosState, aplicarFiltroVehiculos } from '@/components/FiltroVehiculos'
 import { useVentas, useTipoCambio } from '@/hooks/useSupabase'
 import { createClient } from '@/utils/supabase/client'
 
@@ -15,10 +16,34 @@ export default function VentasPage() {
   const [editando, setEditando] = useState<any>(null)
   const [editForm, setEditForm] = useState<any>({})
   const [toast, setToast] = useState('')
+
+  // Filtro para el selector de vehículo en el formulario de nueva venta
+  const [filtroVehiculo, setFiltroVehiculo] = useState<FiltroVehiculosState>({
+    estado: 'Disponible',
+    marca: 'Todas',
+    tipo: 'Todos',
+    busqueda: '',
+    diasStock: 'Todos',
+  })
+  const [inventario, setInventario] = useState<any[]>([])
+
   const { ventas, loading, refresh } = useVentas(empresa, desde||undefined, hasta||undefined)
   const { tcBna, tcBlue } = useTipoCambio()
   const tc = tcBna
+
   const [form, setForm] = useState({ empresa:'INVEXUS', inv_id:'', cliente:'', vendedor_nombre:'', precio_venta:'', forma_pago:'Contado', cobro_efectivo:0, cobro_transfer:0, cobro_usd:0, cobro_usd_tc:tcBna, cobro_pagare:0, cobro_pxp:0, estado_cobro:'Cobrado', observaciones:'', fecha:hoy })
+
+  // Cargar inventario para el selector de vehículo
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('inventario_view')
+      .select('id, empresa, marca, modelo, version, color, tipo, estado, dias_stock')
+      .then(({ data }) => { if (data) setInventario(data) })
+  }, [empresa])
+
+  const vehiculosParaVenta = aplicarFiltroVehiculos(inventario, filtroVehiculo)
+
   const fmt = (n:number) => moneda==='USD' ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc) : new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)
   const fmtN = (n:number) => new Intl.NumberFormat('es-AR').format(n)
   const fmtFecha = (f:string|null|undefined) => {
@@ -26,11 +51,13 @@ export default function VentasPage() {
     const [y,m,d] = f.split('T')[0].split('-')
     return `${d}/${m}/${y.slice(2)}`
   }
+
   const totalVentas = ventas.reduce((a:number,v:any)=>a+(v.precio_venta||0),0)
   const totalGanancia = ventas.reduce((a:number,v:any)=>a+(v.ganancia_neta||0),0)
   const totalCobrado = (parseFloat(String(form.cobro_efectivo))||0)+(parseFloat(String(form.cobro_transfer))||0)+(parseFloat(String(form.cobro_usd))||0)*form.cobro_usd_tc+(parseFloat(String(form.cobro_pagare))||0)+(parseFloat(String(form.cobro_pxp))||0)
   const precioVenta = parseFloat(form.precio_venta)||0
   const diff = precioVenta - totalCobrado
+
   const handleGuardar = async () => {
     const supabase = createClient()
     const newId = 'VTA-'+Date.now().toString().slice(-8)
@@ -38,6 +65,7 @@ export default function VentasPage() {
     if(error){alert('Error: '+error.message);return}
     setToast('Venta registrada'); setTimeout(()=>setToast(''),3000); setShowForm(false); refresh()
   }
+
   const handleEditar = (v:any) => {
     setEditando(v.id)
     setEditForm({
@@ -51,6 +79,7 @@ export default function VentasPage() {
       fecha: v.fecha ? v.fecha.split('T')[0] : hoy
     })
   }
+
   const handleGuardarEdicion = async (id:string) => {
     const supabase = createClient()
     const { error } = await supabase.from('ventas').update({
@@ -75,17 +104,22 @@ export default function VentasPage() {
     setEditando(null)
     refresh()
   }
+
   return (
     <div style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0'}}>
       <Nav empresa={empresa} onEmpresaChange={setEmpresa} moneda={moneda} onMonedaChange={()=>setMoneda(m=>m==='ARS'?'USD':'ARS')} />
       {toast&&<div style={{position:'fixed',top:20,right:20,background:'#166534',color:'#4ade80',border:'1px solid #16a34a',borderRadius:10,padding:'10px 18px',fontSize:13,zIndex:1000,fontWeight:500}}>✓ {toast}</div>}
       <div style={{padding:'20px 24px',maxWidth:1400,margin:'0 auto'}}>
+
+        {/* ── BARRA PERÍODO ── */}
         <div style={{background:'#1e293b',border:'1px solid #334155',borderRadius:10,padding:'10px 14px',marginBottom:16,display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
           <span style={{fontSize:11,color:'#475569',fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em',whiteSpace:'nowrap'}}>Período</span>
           <FiltroFechas desde={desde} hasta={hasta} onDesde={setDesde} onHasta={setHasta} />
           <span style={{fontSize:11,color:'#475569',marginLeft:'auto',whiteSpace:'nowrap'}}>{ventas.length} operaciones</span>
-          <button onClick={()=>setShowForm(true)} style={{padding:'6px 16px',borderRadius:8,background:'#3b82f6',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600}}>+ Registrar venta</button>
+          <button onClick={()=>setShowForm(v=>!v)} style={{padding:'6px 16px',borderRadius:8,background:'#3b82f6',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600}}>+ Registrar venta</button>
         </div>
+
+        {/* ── KPIs ── */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:12,marginBottom:16}}>
           {[['Total vendido',fmt(totalVentas),ventas.length+' operaciones','#3b82f6'],['Ganancia total',fmt(totalGanancia),totalVentas?((totalGanancia/totalVentas)*100).toFixed(1)+'% margen':'—','#22c55e'],['Ticket promedio',ventas.length>0?fmt(totalVentas/ventas.length):'—',ventas.length+' ops','#8b5cf6'],['Pendientes cobro',ventas.filter((v:any)=>v.estado_cobro!=='Cobrado').length+' ventas','Requieren seguimiento','#f97316']].map(([l,v,s,c])=>(
             <div key={l} style={{background:'#1e293b',border:`1px solid ${c}`,borderRadius:12,padding:'14px 16px',position:'relative',overflow:'hidden'}}>
@@ -96,22 +130,52 @@ export default function VentasPage() {
             </div>
           ))}
         </div>
+
+        {/* ── FORMULARIO NUEVA VENTA ── */}
         {showForm&&(
           <div style={{background:'#1e293b',border:'1px solid #3b82f6',borderRadius:12,padding:20,marginBottom:16}}>
             <div style={{fontSize:14,fontWeight:600,color:'#e2e8f0',marginBottom:16}}>Nueva operación</div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
-              {[['empresa','Empresa',['INVEXUS','MAXIAUTO']],['inv_id','ID Inventario',null],['cliente','Cliente',null],['vendedor_nombre','Vendedor',null],['precio_venta','Precio ARS',null],['forma_pago','Forma pago',['Contado','Transferencia','Financiado','Mixto','Permuta']],['estado_cobro','Estado',['Cobrado','Parcial','Pendiente','Seña']]].map(([k,l,opts]:any)=>(
+              {[['empresa','Empresa',['INVEXUS','MAXIAUTO']],['cliente','Cliente',null],['vendedor_nombre','Vendedor',null],['precio_venta','Precio ARS',null],['forma_pago','Forma pago',['Contado','Transferencia','Financiado','Mixto','Permuta']],['estado_cobro','Estado',['Cobrado','Parcial','Pendiente','Seña']]].map(([k,l,opts]:any)=>(
                 <div key={k}><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>{l}</label>
                 {opts?<select value={(form as any)[k]} onChange={e=>setForm({...form,[k]:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}}>{opts.map((o:string)=><option key={o}>{o}</option>)}</select>
                 :<input type={k==='precio_venta'?'number':'text'} value={(form as any)[k]} onChange={e=>setForm({...form,[k]:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />}
                 </div>
               ))}
-              {/* FECHA DE LA OPERACIÓN */}
               <div>
                 <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Fecha operación</label>
                 <input type="date" value={form.fecha} onChange={e=>setForm({...form,fecha:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
             </div>
+
+            {/* ── SELECTOR DE VEHÍCULO CON FILTRO ── */}
+            <div style={{background:'#0f172a',border:'1px solid #334155',borderRadius:10,padding:'12px 14px',marginBottom:12}}>
+              <div style={{fontSize:11,color:'#64748b',fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:10}}>Vehículo</div>
+              <div style={{marginBottom:10}}>
+                <FiltroVehiculos
+                  value={filtroVehiculo}
+                  onChange={setFiltroVehiculo}
+                  mostrarDiasStock={false}
+                  mostrarBusqueda={true}
+                  compacto={true}
+                />
+              </div>
+              <select
+                value={form.inv_id}
+                onChange={e=>setForm({...form,inv_id:e.target.value})}
+                style={{width:'100%',padding:'7px 10px',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0',fontSize:12}}
+              >
+                <option value="">— Seleccioná un vehículo ({vehiculosParaVenta.length} disponibles) —</option>
+                {vehiculosParaVenta.map((v:any)=>(
+                  <option key={v.id} value={v.id}>
+                    [{v.id}] {v.marca} {v.modelo} {v.version} — {v.color}
+                    {v.dias_stock ? ` (${v.dias_stock}d en stock)` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* ── DESGLOSE DE COBRO ── */}
             <div style={{fontSize:12,fontWeight:600,color:'#94a3b8',marginBottom:10,paddingBottom:8,borderBottom:'1px solid #334155'}}>Desglose de cobro</div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
               {[['cobro_efectivo','Efectivo ARS'],['cobro_transfer','Transferencia ARS'],['cobro_pagare','Pagaré ARS'],['cobro_pxp','Parte de pago ARS']].map(([k,l])=>(
@@ -137,6 +201,8 @@ export default function VentasPage() {
             </div>
           </div>
         )}
+
+        {/* ── TABLA VENTAS ── */}
         {loading?<div style={{color:'#475569',padding:40,textAlign:'center'}}>Cargando...</div>:(
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',overflowX:'auto'}}>
             <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
@@ -151,7 +217,6 @@ export default function VentasPage() {
                 {ventas.map((v:any)=>(
                   <>
                     <tr key={v.id} style={{borderBottom:'1px solid #0f172a'}}>
-                      {/* FECHA FORMATEADA dd/mm/yy */}
                       <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11,whiteSpace:'nowrap'}}>{fmtFecha(v.fecha)}</td>
                       <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:v.empresa==='INVEXUS'?'rgba(96,165,250,.15)':'rgba(167,139,250,.15)',color:v.empresa==='INVEXUS'?'#60a5fa':'#a78bfa',border:`1px solid ${v.empresa==='INVEXUS'?'rgba(96,165,250,.3)':'rgba(167,139,250,.3)'}`}}>{v.empresa}</span></td>
                       <td style={{padding:'8px 10px',color:'#cbd5e1',fontWeight:500}}>{v.cliente}</td>
@@ -208,7 +273,6 @@ export default function VentasPage() {
                                 {['Cobrado','Parcial','Pendiente','Seña'].map(o=><option key={o}>{o}</option>)}
                               </select>
                             </div>
-                            {/* FECHA EDITABLE */}
                             <div>
                               <label style={{fontSize:10,color:'#64748b',display:'block',marginBottom:3}}>Fecha operación</label>
                               <input type="date" value={editForm.fecha} onChange={e=>setEditForm({...editForm,fecha:e.target.value})} style={{width:'100%',padding:'5px 8px',borderRadius:6,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:11}} />
@@ -236,3 +300,4 @@ export default function VentasPage() {
     </div>
   )
 }
+
