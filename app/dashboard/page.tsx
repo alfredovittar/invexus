@@ -13,6 +13,9 @@ export default function DashboardPage() {
   const [desde, setDesde] = useState(primeroDeMes)
   const [hasta, setHasta] = useState(hoy)
 
+  // Toggle global: false = período filtrado, true = todos los datos
+  const [modoTodoGlobal, setModoTodoGlobal] = useState(false)
+
   const [filtroStock, setFiltroStock] = useState<FiltroVehiculosState>({
     estado: 'Disponible',
     marca: 'Todas',
@@ -25,18 +28,20 @@ export default function DashboardPage() {
   const [ventasModoTodo, setVentasModoTodo] = useState(false)
 
   const { stock } = useStock(empresa)
-  // Una sola llamada sin filtro de fechas — filtramos en cliente
   const { ventas: todasVentas } = useVentas(empresa, undefined, undefined)
   const { tcBna, tcBlue } = useTipoCambio()
   const tc = tcBna
 
-  // Filtro de fechas en cliente
-  const ventas = todasVentas.filter((v:any) => {
+  // Ventas filtradas por período
+  const ventasPeriodo = todasVentas.filter((v:any) => {
     if (!v.fecha) return false
     if (desde && v.fecha < desde) return false
     if (hasta && v.fecha > hasta) return false
     return true
   })
+
+  // Si toggle global activo → usa todas, si no → usa período
+  const ventas = modoTodoGlobal ? todasVentas : ventasPeriodo
 
   const fmt = (n:number) => moneda==='USD'
     ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc)
@@ -53,8 +58,9 @@ export default function DashboardPage() {
   const stockFiltradoCritico = stockFiltrado.filter((s:any)=>(s.dias_stock||0)>=60)
   const pendienteCobro = ventas.filter((v:any)=>v.estado_cobro==='Pendiente'||v.estado_cobro==='Parcial').length
 
-  const stockMostrado = stockModoTodo ? stock : stockFiltrado
-  const ventasMostradas = ventasModoTodo ? todasVentas : ventas
+  // Toggle global overrides toggles individuales
+  const stockMostrado = (stockModoTodo || modoTodoGlobal) ? stock : stockFiltrado
+  const ventasMostradas = (ventasModoTodo || modoTodoGlobal) ? todasVentas : ventas
 
   const masViejo = [...stock.filter((s:any)=>s.estado==='Disponible')].sort((a:any,b:any)=>(b.dias_stock||0)-(a.dias_stock||0))[0]
 
@@ -74,7 +80,7 @@ export default function DashboardPage() {
       script.onload = () => renderCharts()
       document.head.appendChild(script)
     }
-  }, [todasVentas, stock, desde, hasta])
+  }, [todasVentas, stock, desde, hasta, modoTodoGlobal])
 
   function destroyCharts() {
     if (chartStockRef.current) { chartStockRef.current.destroy(); chartStockRef.current = null }
@@ -148,13 +154,13 @@ export default function DashboardPage() {
     </div>
   )
 
-  const toggle = (activo:boolean, onToggle:()=>void, labelA:string, labelB:string) => (
+  const toggle = (activo:boolean, onToggle:()=>void, labelA:string, labelB:string, small=false) => (
     <div style={{display:'flex',background:'#0f172a',borderRadius:6,padding:2,gap:2}}>
-      <button onClick={()=>activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+      <button onClick={()=>activo&&onToggle()} style={{padding:small?'2px 8px':'3px 10px',borderRadius:4,fontSize:small?9:10,fontWeight:600,cursor:'pointer',border:'none',
         background:!activo?'#334155':'transparent', color:!activo?'#e2e8f0':'#475569'}}>
         {labelA}
       </button>
-      <button onClick={()=>!activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+      <button onClick={()=>!activo&&onToggle()} style={{padding:small?'2px 8px':'3px 10px',borderRadius:4,fontSize:small?9:10,fontWeight:600,cursor:'pointer',border:'none',
         background:activo?'#334155':'transparent', color:activo?'#e2e8f0':'#475569'}}>
         {labelB}
       </button>
@@ -166,16 +172,26 @@ export default function DashboardPage() {
       <Nav empresa={empresa} onEmpresaChange={setEmpresa} moneda={moneda} onMonedaChange={()=>setMoneda(m=>m==='ARS'?'USD':'ARS')} />
       <div style={{padding:'20px 24px',maxWidth:1400,margin:'0 auto'}}>
 
-        {/* FILTRO FECHAS */}
-        <div style={{background:'#1e293b',border:'1px solid #334155',borderRadius:10,padding:'10px 14px',marginBottom:16,display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+        {/* FILTRO FECHAS + TOGGLE GLOBAL */}
+        <div style={{background:'#1e293b',border:`1px solid ${modoTodoGlobal?'#3b82f6':'#334155'}`,borderRadius:10,padding:'10px 14px',marginBottom:16,display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
           <span style={{fontSize:11,color:'#475569',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',whiteSpace:'nowrap'}}>Período</span>
           <FiltroFechas desde={desde} hasta={hasta} onDesde={setDesde} onHasta={setHasta} />
-          <span style={{fontSize:11,color:'#475569',marginLeft:'auto',whiteSpace:'nowrap'}}>{ventas.length} operaciones</span>
+          <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:10}}>
+            {modoTodoGlobal && (
+              <span style={{fontSize:10,color:'#3b82f6',fontWeight:600,letterSpacing:'.04em'}}>
+                MOSTRANDO TODOS LOS DATOS
+              </span>
+            )}
+            <span style={{fontSize:11,color:'#475569',whiteSpace:'nowrap'}}>
+              {ventas.length} operaciones
+            </span>
+            {toggle(modoTodoGlobal, ()=>setModoTodoGlobal(v=>!v), 'Período', 'Todo')}
+          </div>
         </div>
 
         {/* KPIs FILA 1 */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:12,marginBottom:12}}>
-          {kpi('Ingresos del período',fmt(totalVentas),ventas.length+' operaciones','#3b82f6')}
+          {kpi(modoTodoGlobal?'Ingresos totales':'Ingresos del período',fmt(totalVentas),ventas.length+' operaciones','#3b82f6')}
           {kpi('Ganancia neta',fmt(totalGanancia),totalVentas?((totalGanancia/totalVentas)*100).toFixed(1)+'% margen':'—','#22c55e')}
           {kpi('Stock disponible',disponibles.length+' unidades',criticos.length+' con alerta · '+stock.length+' total',criticos.length>0?'#ef4444':'#334155')}
           {kpi('TC hoy','$'+fmtN(tcBna),'Blue: $'+fmtN(tcBlue)+' · spread '+((tcBlue/tcBna-1)*100).toFixed(1)+'%','#fb923c')}
@@ -213,7 +229,12 @@ export default function DashboardPage() {
           </div>
 
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'16px 18px'}}>
-            <div style={{fontSize:11,color:'#64748b',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>Evolución mensual</div>
+            <div style={{fontSize:11,color:'#64748b',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>
+              Evolución mensual
+              <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal',fontSize:10}}>
+                {modoTodoGlobal?'todos los datos':'período seleccionado'}
+              </span>
+            </div>
             <div style={{position:'relative',height:200}}>
               <canvas ref={mensualCanvasRef} role="img" aria-label="Evolución mensual ingresos y ganancia" />
             </div>
@@ -238,14 +259,15 @@ export default function DashboardPage() {
                 Stock
                 <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal'}}>
                   {stockMostrado.length} vehículos
-                  {!stockModoTodo && stockFiltradoCritico.length>0 && (
+                  {!(stockModoTodo||modoTodoGlobal) && stockFiltradoCritico.length>0 && (
                     <span style={{color:'#ef4444',marginLeft:4}}>· {stockFiltradoCritico.length} en alerta</span>
                   )}
                 </span>
               </span>
-              {toggle(stockModoTodo, ()=>setStockModoTodo(v=>!v), 'Filtrado', 'Todo')}
+              {!modoTodoGlobal && toggle(stockModoTodo, ()=>setStockModoTodo(v=>!v), 'Filtrado', 'Todo', true)}
+              {modoTodoGlobal && <span style={{fontSize:9,color:'#3b82f6',fontWeight:600}}>GLOBAL</span>}
             </div>
-            {!stockModoTodo && (
+            {!(stockModoTodo||modoTodoGlobal) && (
               <div style={{marginBottom:12}}>
                 <FiltroVehiculos value={filtroStock} onChange={setFiltroStock} mostrarDiasStock={true} mostrarBusqueda={false} compacto={true} />
               </div>
@@ -277,13 +299,14 @@ export default function DashboardPage() {
               <span style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase'}}>
                 Operaciones
                 <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal'}}>
-                  {ventasMostradas.length} {ventasModoTodo?'total':'en período'}
+                  {ventasMostradas.length} {(ventasModoTodo||modoTodoGlobal)?'total':'en período'}
                 </span>
               </span>
-              {toggle(ventasModoTodo, ()=>setVentasModoTodo(v=>!v), 'Período', 'Todas')}
+              {!modoTodoGlobal && toggle(ventasModoTodo, ()=>setVentasModoTodo(v=>!v), 'Período', 'Todas', true)}
+              {modoTodoGlobal && <span style={{fontSize:9,color:'#3b82f6',fontWeight:600}}>GLOBAL</span>}
             </div>
             {ventasMostradas.length===0
-              ?<div style={{color:'#475569',fontSize:13}}>Sin ventas{ventasModoTodo?'':' en el período seleccionado'}</div>
+              ?<div style={{color:'#475569',fontSize:13}}>Sin ventas{(ventasModoTodo||modoTodoGlobal)?'':' en el período seleccionado'}</div>
               :[...ventasMostradas].sort((a:any,b:any)=>(b.fecha||'').localeCompare(a.fecha||'')).slice(0,6).map((v:any)=>(
                 <div key={v.id} style={{display:'flex',justifyContent:'space-between',padding:'7px 0',borderBottom:'1px solid #0f172a'}}>
                   <div>
@@ -302,7 +325,12 @@ export default function DashboardPage() {
 
           {/* RANKING VENDEDORES */}
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'16px 18px'}}>
-            <div style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>Ranking vendedores · período</div>
+            <div style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>
+              Ranking vendedores
+              <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal',fontSize:10}}>
+                {modoTodoGlobal?'todos los datos':'período'}
+              </span>
+            </div>
             {(()=>{
               const by:Record<string,{ventas:number,total:number}> = {}
               ventas.forEach((v:any)=>{ const k=v.vendedor_nombre||'Sin asignar'; if(!by[k]) by[k]={ventas:0,total:0}; by[k].ventas++; by[k].total+=v.precio_venta||0 })
@@ -330,7 +358,12 @@ export default function DashboardPage() {
 
           {/* MÉTRICAS DEL PERÍODO */}
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'16px 18px'}}>
-            <div style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>Métricas del período</div>
+            <div style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>
+              Métricas
+              <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal',fontSize:10}}>
+                {modoTodoGlobal?'todos los datos':'período'}
+              </span>
+            </div>
             {[
               ['Ticket promedio', ventas.length>0?fmt(totalVentas/ventas.length):'—',''],
               ['Ganancia promedio', ventas.length>0?fmt(totalGanancia/ventas.length):'—','por operación'],
