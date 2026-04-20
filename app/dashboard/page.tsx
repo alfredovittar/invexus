@@ -21,8 +21,13 @@ export default function DashboardPage() {
     diasStock: 'Todos',
   })
 
+  // Toggles
+  const [stockModoTodo, setStockModoTodo] = useState(false)
+  const [ventasModoTodo, setVentasModoTodo] = useState(false)
+
   const { stock } = useStock(empresa)
   const { ventas } = useVentas(empresa, desde||undefined, hasta||undefined)
+  const { ventas: todasVentas } = useVentas(empresa, undefined, undefined)
   const { tcBna, tcBlue } = useTipoCambio()
   const tc = tcBna
 
@@ -40,6 +45,10 @@ export default function DashboardPage() {
   const stockFiltrado = aplicarFiltroVehiculos(stock, filtroStock)
   const stockFiltradoCritico = stockFiltrado.filter((s:any)=>(s.dias_stock||0)>=60)
   const pendienteCobro = ventas.filter((v:any)=>v.estado_cobro==='Pendiente'||v.estado_cobro==='Parcial').length
+
+  // Datos según toggle
+  const stockMostrado = stockModoTodo ? stock : stockFiltrado
+  const ventasMostradas = ventasModoTodo ? todasVentas : ventas
 
   // Mayor días en stock disponible
   const masViejo = [...stock.filter((s:any)=>s.estado==='Disponible')].sort((a:any,b:any)=>(b.dias_stock||0)-(a.dias_stock||0))[0]
@@ -72,7 +81,6 @@ export default function DashboardPage() {
     const Chart = (window as any).Chart
     destroyCharts()
 
-    // Donut stock
     const dispOkm = stock.filter((s:any)=>s.estado==='Disponible'&&(s.tipo==='0km'||s.tipo==='0KM')).length
     const dispUsado = stock.filter((s:any)=>s.estado==='Disponible'&&s.tipo?.toLowerCase()==='usado').length
     const vendOkm = stock.filter((s:any)=>s.estado==='Vendido'&&(s.tipo==='0km'||s.tipo==='0KM')).length
@@ -92,7 +100,6 @@ export default function DashboardPage() {
       })
     }
 
-    // Barras mensuales
     const meses:Record<string,{ingresos:number,ganancia:number}> = {}
     ventas.forEach((v:any)=>{
       if (!v.fecha) return
@@ -136,6 +143,19 @@ export default function DashboardPage() {
     </div>
   )
 
+  const toggle = (activo:boolean, onToggle:()=>void, labelA:string, labelB:string) => (
+    <div style={{display:'flex',background:'#0f172a',borderRadius:6,padding:2,gap:2}}>
+      <button onClick={()=>!activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+        background:!activo?'#334155':'transparent', color:!activo?'#e2e8f0':'#475569'}}>
+        {labelA}
+      </button>
+      <button onClick={()=>activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+        background:activo?'#334155':'transparent', color:activo?'#e2e8f0':'#475569'}}>
+        {labelB}
+      </button>
+    </div>
+  )
+
   return (
     <div style={{minHeight:'100vh',background:'#0f172a',color:'#e2e8f0'}}>
       <Nav empresa={empresa} onEmpresaChange={setEmpresa} moneda={moneda} onMonedaChange={()=>setMoneda(m=>m==='ARS'?'USD':'ARS')} />
@@ -156,7 +176,7 @@ export default function DashboardPage() {
           {kpi('TC hoy','$'+fmtN(tcBna),'Blue: $'+fmtN(tcBlue)+' · spread '+((tcBlue/tcBna-1)*100).toFixed(1)+'%','#fb923c')}
         </div>
 
-        {/* KPIs FILA 2 — nuevos */}
+        {/* KPIs FILA 2 */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:12,marginBottom:20}}>
           {kpi('Ticket promedio', ventas.length>0?fmtM(totalVentas/ventas.length):'—','por unidad','#334155')}
           {kpi('Comisiones', fmtM(totalComisiones), totalVentas>0?(totalComisiones/totalVentas*100).toFixed(2)+'% sobre ingresos':'—','#334155')}
@@ -171,7 +191,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* GRÁFICOS — stock donut + evolución mensual */}
+        {/* GRÁFICOS */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'16px 18px'}}>
             <div style={{fontSize:11,color:'#64748b',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>Stock por estado</div>
@@ -203,28 +223,31 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* GRID INFERIOR — igual al original */}
+        {/* GRID INFERIOR */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
 
-          {/* STOCK CON FILTRO */}
+          {/* STOCK CON TOGGLE */}
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'16px 18px'}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,flexWrap:'wrap',gap:8}}>
               <span style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase'}}>
                 Stock
-                <span style={{fontWeight:400,marginLeft:6,color:'#334155',textTransform:'none',letterSpacing:'normal'}}>
-                  {stockFiltrado.length} vehículos
-                  {stockFiltradoCritico.length>0&&(
+                <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal'}}>
+                  {stockMostrado.length} vehículos
+                  {!stockModoTodo && stockFiltradoCritico.length>0 && (
                     <span style={{color:'#ef4444',marginLeft:4}}>· {stockFiltradoCritico.length} en alerta</span>
                   )}
                 </span>
               </span>
+              {toggle(stockModoTodo, ()=>setStockModoTodo(v=>!v), 'Filtrado', 'Todo')}
             </div>
-            <div style={{marginBottom:12}}>
-              <FiltroVehiculos value={filtroStock} onChange={setFiltroStock} mostrarDiasStock={true} mostrarBusqueda={false} compacto={true} />
-            </div>
-            {stockFiltrado.length===0
+            {!stockModoTodo && (
+              <div style={{marginBottom:12}}>
+                <FiltroVehiculos value={filtroStock} onChange={setFiltroStock} mostrarDiasStock={true} mostrarBusqueda={false} compacto={true} />
+              </div>
+            )}
+            {stockMostrado.length===0
               ?<div style={{color:'#475569',fontSize:13}}>Sin vehículos con ese filtro</div>
-              :stockFiltrado.slice(0,6).map((s:any)=>(
+              :stockMostrado.slice(0,6).map((s:any)=>(
                 <div key={s.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #0f172a'}}>
                   <div>
                     <div style={{fontSize:12,color:'#e2e8f0',fontWeight:500}}>{s.id} · {s.modelo} {s.version}</div>
@@ -240,15 +263,23 @@ export default function DashboardPage() {
                 </div>
               ))
             }
-            {stockFiltrado.length>6&&<div style={{fontSize:11,color:'#475569',marginTop:8,textAlign:'center'}}>+{stockFiltrado.length-6} más</div>}
+            {stockMostrado.length>6&&<div style={{fontSize:11,color:'#475569',marginTop:8,textAlign:'center'}}>+{stockMostrado.length-6} más</div>}
           </div>
 
-          {/* ÚLTIMAS OPERACIONES */}
+          {/* OPERACIONES CON TOGGLE */}
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'16px 18px'}}>
-            <div style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:14}}>Operaciones del período</div>
-            {ventas.length===0
-              ?<div style={{color:'#475569',fontSize:13}}>Sin ventas en el período seleccionado</div>
-              :ventas.slice(0,6).map((v:any)=>(
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
+              <span style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase'}}>
+                Operaciones
+                <span style={{fontWeight:400,marginLeft:6,color:'#475569',textTransform:'none',letterSpacing:'normal'}}>
+                  {ventasMostradas.length} {ventasModoTodo?'total':'en período'}
+                </span>
+              </span>
+              {toggle(ventasModoTodo, ()=>setVentasModoTodo(v=>!v), 'Período', 'Todas')}
+            </div>
+            {ventasMostradas.length===0
+              ?<div style={{color:'#475569',fontSize:13}}>Sin ventas{ventasModoTodo?'':' en el período seleccionado'}</div>
+              :[...ventasMostradas].sort((a:any,b:any)=>(b.fecha||'').localeCompare(a.fecha||'')).slice(0,6).map((v:any)=>(
                 <div key={v.id} style={{display:'flex',justifyContent:'space-between',padding:'7px 0',borderBottom:'1px solid #0f172a'}}>
                   <div>
                     <div style={{fontSize:12,color:'#e2e8f0'}}>{v.cliente}</div>
@@ -261,7 +292,7 @@ export default function DashboardPage() {
                 </div>
               ))
             }
-            {ventas.length>6&&<div style={{fontSize:11,color:'#475569',marginTop:8,textAlign:'center'}}>+{ventas.length-6} más en el período</div>}
+            {ventasMostradas.length>6&&<div style={{fontSize:11,color:'#475569',marginTop:8,textAlign:'center'}}>+{ventasMostradas.length-6} más</div>}
           </div>
 
           {/* RANKING VENDEDORES */}
