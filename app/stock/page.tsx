@@ -128,7 +128,7 @@ export default function StockPage() {
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
               <thead>
                 <tr style={{ borderBottom:'1px solid #334155' }}>
-                  {['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Ingreso','Días','Estado',''].map(h=>(
+                  {['ID','Empresa','Tipo','Modelo','Ver.','Color','Km','Costo','Lista','Margen','Ingreso','Días','Estado','Comprador',''].map(h=>(
                     <th key={h} style={{ textAlign:'left', padding:'7px 8px', color:'#475569', fontWeight:500, fontSize:11, whiteSpace:'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -140,6 +140,7 @@ export default function StockPage() {
                   const d = s.dias_stock||0
                   const isOpen = detalle === s.id
                   const isEditing = editando === s.id
+                  const vendido = s.estado === 'Vendido'
                   return (
                     <>
                       <tr
@@ -162,13 +163,20 @@ export default function StockPage() {
                         <td style={{ padding:'7px 8px', color:'#64748b', fontFamily:'monospace', fontSize:11, whiteSpace:'nowrap' }}>{fmtFecha(s.fecha_ingreso)}</td>
                         <td style={{ padding:'7px 8px' }}><span style={{ color:riskColor(d), fontFamily:'monospace', fontSize:12, fontWeight:600 }}>{d}d</span></td>
                         <td style={{ padding:'7px 8px' }}><span style={{ fontSize:10, padding:'2px 7px', borderRadius:4, fontWeight:600, background:d>=60?`rgba(${d>=90?'239,68,68':'249,115,22'},.15)`:'rgba(34,197,94,.15)', color:riskColor(d), border:`1px solid ${riskColor(d)}44` }}>{d>=60?riskLabel(d):s.estado}</span></td>
+                        {/* ── COLUMNA COMPRADOR ── */}
+                        <td style={{ padding:'7px 8px' }}>
+                          {vendido && s.venta?.cliente
+                            ? <span style={{ fontSize:11, color:'#a78bfa', fontWeight:500 }}>{s.venta.cliente}</span>
+                            : <span style={{ fontSize:11, color:'#334155' }}>—</span>
+                          }
+                        </td>
                         <td style={{ padding:'7px 8px', color:isOpen?'#60a5fa':'#475569', fontSize:13 }}>{isOpen?'▲':'▼'}</td>
                       </tr>
 
                       {/* ── PANEL DETALLE / EDICIÓN ── */}
                       {isOpen && (
                         <tr key={s.id+'-detalle'} style={{borderBottom:'2px solid #3b82f6'}}>
-                          <td colSpan={14} style={{padding:0}}>
+                          <td colSpan={15} style={{padding:0}}>
                             <div style={{background:'#0f1f3d',borderTop:'1px solid #1e3a5f',padding:'20px 24px'}}>
                               {!isEditing ? (
                                 <>
@@ -214,6 +222,35 @@ export default function StockPage() {
                                       {campo('Precio mínimo', fmt(s.precio_minimo||0))}
                                     </div>
                                   </div>
+
+                                  {/* ── BLOQUE VENTA (solo si vendido) ── */}
+                                  {vendido && s.venta && (
+                                    <div style={{background:'rgba(167,139,250,.06)',border:'1px solid rgba(167,139,250,.2)',borderRadius:10,padding:'14px 16px',marginBottom:16}}>
+                                      <div style={{fontSize:10,color:'#a78bfa',textTransform:'uppercase',letterSpacing:'.05em',marginBottom:12}}>Operación de venta</div>
+                                      <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12}}>
+                                        <div>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>Comprador</div>
+                                          <div style={{fontSize:13,color:'#a78bfa',fontWeight:600}}>{s.venta.cliente||'—'}</div>
+                                        </div>
+                                        <div>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>Vendedor</div>
+                                          <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{s.venta.vendedor_nombre||'—'}</div>
+                                        </div>
+                                        <div>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>Fecha venta</div>
+                                          <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{fmtFecha(s.venta.fecha)}</div>
+                                        </div>
+                                        <div>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>Precio vendido</div>
+                                          <div style={{fontSize:13,color:'#4ade80',fontWeight:600,fontFamily:'monospace'}}>{fmt(s.venta.precio_venta||0)}</div>
+                                        </div>
+                                        <div>
+                                          <div style={{fontSize:10,color:'#475569',marginBottom:3,textTransform:'uppercase',letterSpacing:'.05em'}}>Forma de pago</div>
+                                          <div style={{fontSize:13,color:'#e2e8f0',fontWeight:500}}>{s.venta.forma_pago||'—'}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
 
                                   {/* FECHAS */}
                                   <div style={{display:'flex',gap:24,marginBottom:s.observaciones?14:0}}>
@@ -295,4 +332,3 @@ export default function StockPage() {
     </div>
   )
 }
-

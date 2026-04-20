@@ -7,10 +7,18 @@ export function useStock(empresa?: string) {
   const [loading, setLoading] = useState(true)
   const fetchStock = useCallback(async () => {
     const supabase = createClient()
-    let query = supabase.from('inventario_view').select('*').order('dias_stock', { ascending: false })
+    let query = supabase
+      .from('inventario_view')
+      .select('*, venta:ventas(cliente, vendedor_nombre, fecha, precio_venta, forma_pago)')
+      .order('dias_stock', { ascending: false })
     if (empresa && empresa !== 'AMBAS') query = query.eq('empresa', empresa)
     const { data } = await query
-    setStock(data ?? [])
+    // Supabase devuelve array en el join — tomamos el primer registro
+    const normalizado = (data ?? []).map((v: any) => ({
+      ...v,
+      venta: Array.isArray(v.venta) ? v.venta[0] ?? null : v.venta ?? null,
+    }))
+    setStock(normalizado)
     setLoading(false)
   }, [empresa])
   useEffect(() => {
@@ -103,7 +111,6 @@ export function useTipoCambio() {
       const supabase = createClient()
       const today = new Date().toISOString().split('T')[0]
 
-      // 1 — Siempre consultar Bluelytics para el Blue del día (v2)
       try {
         const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
         if (r.ok) {
@@ -115,7 +122,6 @@ export function useTipoCambio() {
         console.warn('Bluelytics error:', e)
       }
 
-      // 2 — Supabase para BNA (fuente oficial del cron)
       const { data } = await supabase
         .from('tipo_cambio')
         .select('*')
@@ -126,7 +132,6 @@ export function useTipoCambio() {
       if (data) {
         setTcBna(data.tc_bna_venta ?? 1392.5)
         setFecha(data.fecha)
-        // Solo usar Blue de Supabase si Bluelytics falló y el registro es de hoy
         if (data.fecha === today && data.tc_blue_venta) {
           setTcBlue(prev => prev === 1462 ? data.tc_blue_venta : prev)
         }
