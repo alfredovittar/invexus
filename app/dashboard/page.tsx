@@ -21,15 +21,22 @@ export default function DashboardPage() {
     diasStock: 'Todos',
   })
 
-  // Toggles
   const [stockModoTodo, setStockModoTodo] = useState(false)
   const [ventasModoTodo, setVentasModoTodo] = useState(false)
 
   const { stock } = useStock(empresa)
-  const { ventas } = useVentas(empresa, desde||undefined, hasta||undefined)
+  // Una sola llamada sin filtro de fechas — filtramos en cliente
   const { ventas: todasVentas } = useVentas(empresa, undefined, undefined)
   const { tcBna, tcBlue } = useTipoCambio()
   const tc = tcBna
+
+  // Filtro de fechas en cliente
+  const ventas = todasVentas.filter((v:any) => {
+    if (!v.fecha) return false
+    if (desde && v.fecha < desde) return false
+    if (hasta && v.fecha > hasta) return false
+    return true
+  })
 
   const fmt = (n:number) => moneda==='USD'
     ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc)
@@ -46,11 +53,9 @@ export default function DashboardPage() {
   const stockFiltradoCritico = stockFiltrado.filter((s:any)=>(s.dias_stock||0)>=60)
   const pendienteCobro = ventas.filter((v:any)=>v.estado_cobro==='Pendiente'||v.estado_cobro==='Parcial').length
 
-  // Datos según toggle
   const stockMostrado = stockModoTodo ? stock : stockFiltrado
   const ventasMostradas = ventasModoTodo ? todasVentas : ventas
 
-  // Mayor días en stock disponible
   const masViejo = [...stock.filter((s:any)=>s.estado==='Disponible')].sort((a:any,b:any)=>(b.dias_stock||0)-(a.dias_stock||0))[0]
 
   // ── CHARTS ──
@@ -60,7 +65,7 @@ export default function DashboardPage() {
   const mensualCanvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    if (ventas.length === 0 && stock.length === 0) return
+    if (todasVentas.length === 0 && stock.length === 0) return
     if ((window as any).Chart) {
       renderCharts()
     } else {
@@ -69,7 +74,7 @@ export default function DashboardPage() {
       script.onload = () => renderCharts()
       document.head.appendChild(script)
     }
-  }, [ventas, stock])
+  }, [todasVentas, stock, desde, hasta])
 
   function destroyCharts() {
     if (chartStockRef.current) { chartStockRef.current.destroy(); chartStockRef.current = null }
@@ -145,11 +150,11 @@ export default function DashboardPage() {
 
   const toggle = (activo:boolean, onToggle:()=>void, labelA:string, labelB:string) => (
     <div style={{display:'flex',background:'#0f172a',borderRadius:6,padding:2,gap:2}}>
-      <button onClick={()=>!activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+      <button onClick={()=>activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
         background:!activo?'#334155':'transparent', color:!activo?'#e2e8f0':'#475569'}}>
         {labelA}
       </button>
-      <button onClick={()=>activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
+      <button onClick={()=>!activo&&onToggle()} style={{padding:'3px 10px',borderRadius:4,fontSize:10,fontWeight:600,cursor:'pointer',border:'none',
         background:activo?'#334155':'transparent', color:activo?'#e2e8f0':'#475569'}}>
         {labelB}
       </button>
