@@ -35,7 +35,10 @@ export default function VentasPage() {
       .then(({ data }) => { if (data) setInventario(data) })
   }, [empresa])
 
-  const vehiculosParaVenta = aplicarFiltroVehiculos(inventario, filtroVehiculo)
+  const inventarioFiltradoPorEmpresa = inventario.filter((v: any) =>
+    form.empresa === 'AMBAS' ? true : v.empresa === form.empresa
+  )
+  const vehiculosParaVenta = aplicarFiltroVehiculos(inventarioFiltradoPorEmpresa, filtroVehiculo)
 
   const getVehiculo = (inv_id:string) => inventario.find((v:any) => v.id === inv_id)
 
@@ -176,7 +179,7 @@ export default function VentasPage() {
               <select value={form.inv_id} onChange={e=>setForm({...form,inv_id:e.target.value})} style={{width:'100%',padding:'7px 10px',borderRadius:8,border:'1px solid #334155',background:'#1e293b',color:'#e2e8f0',fontSize:12}}>
                 <option value="">— Seleccioná un vehículo ({vehiculosParaVenta.length} disponibles) —</option>
                 {vehiculosParaVenta.map((v:any)=>(
-                  <option key={v.id} value={v.id}>[{v.id}] {v.marca} {v.modelo} {v.version} — {v.color}{v.dias_stock?` (${v.dias_stock}d)`:''}</option>
+                  <option key={v.id} value={v.id}>[{v.id}] {v.marca} {v.modelo} {v.version} — {v.color}{v.vin?` | VIN: ${v.vin}`:''}{v.patente?` | Pat: ${v.patente}`:''}{v.dias_stock?` (${v.dias_stock}d)`:''}</option>
                 ))}
               </select>
             </div>
