@@ -24,11 +24,14 @@ type InstrumentoCobro = {
   monto_ars: number
   fecha_emision: string
   fecha_vencimiento: string
-  monto_aplicado: number   // cuánto de este instrumento aplica a ESTA venta
+  monto_aplicado: number
 }
 
 const TIPOS_GASTO: GastoUnidad['tipo'][] = ['flete', 'formularios', 'patentamiento', 'varios']
 const TIPOS_INSTRUMENTO: InstrumentoCobro['tipo'][] = ['cheque', 'transferencia', 'efectivo', 'pagare', 'pxp', 'otro']
+const FORMAS_PAGO = ['Todas', 'Contado', 'Transferencia', 'Financiado', 'Mixto', 'Permuta']
+const ESTADOS_COBRO = ['Todos', 'Cobrado', 'Parcial', 'Pendiente', 'Seña']
+const VENDEDORES = ['Todos', 'GIULIANA', 'CARLITOS', 'GABRIEL', 'LUCAS', 'SAYAGO', 'GERENCIA']
 
 // ─────────────────────────────────────────────
 // COMPONENTE PRINCIPAL
@@ -47,16 +50,20 @@ export default function VentasPage() {
   const [showAnular, setShowAnular] = useState<string | null>(null)
   const [motivoAnulacion, setMotivoAnulacion] = useState('')
 
-  // filtro para selector de vehículo en el form
+  // ── Filtros de la tabla ───────────────────────────────────
+  const [filtroVendedor, setFiltroVendedor] = useState('Todos')
+  const [filtroFormaPago, setFiltroFormaPago] = useState('Todas')
+  const [filtroEstadoCobro, setFiltroEstadoCobro] = useState('Todos')
+  const [busquedaCliente, setBusquedaCliente] = useState('')
+
+  // ── Filtro selector vehículo en form ─────────────────────
   const [filtroVehiculo, setFiltroVehiculo] = useState<FiltroVehiculosState>({
     estado: 'Disponible', marca: 'Todas', tipo: 'Todos', busqueda: '', diasStock: 'Todos',
   })
   const [inventario, setInventario] = useState<any[]>([])
 
-  // gastos por unidad del form
+  // ── Gastos e instrumentos del form ────────────────────────
   const [gastosForm, setGastosForm] = useState<GastoUnidad[]>([])
-
-  // instrumentos de cobro del form
   const [instrumentosForm, setInstrumentosForm] = useState<InstrumentoCobro[]>([])
   const [showInstrumentoExistente, setShowInstrumentoExistente] = useState(false)
 
@@ -73,7 +80,7 @@ export default function VentasPage() {
     estado_cobro: 'Cobrado', observaciones: '', fecha: hoy,
   })
 
-  // ── Cargar inventario disponible ──────────────────────────
+  // ── Cargar inventario ─────────────────────────────────────
   useEffect(() => {
     const supabase = createClient()
     supabase.from('inventario_view').select('*')
@@ -86,7 +93,7 @@ export default function VentasPage() {
   const vehiculosParaVenta = aplicarFiltroVehiculos(inventarioFiltradoPorEmpresa, filtroVehiculo)
   const getVehiculo = (inv_id: string) => inventario.find((v: any) => v.id === inv_id)
 
-  // ── Formateo ─────────────────────────────────────────────
+  // ── Formateo ──────────────────────────────────────────────
   const fmt = (n: number) => moneda === 'USD'
     ? 'USD ' + new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 }).format(n / tc)
     : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n)
@@ -97,9 +104,37 @@ export default function VentasPage() {
     return `${d}/${m}/${y.slice(2)}`
   }
 
-  // ── KPIs ─────────────────────────────────────────────────
-  const totalVentas = ventas.reduce((a: number, v: any) => a + (v.precio_venta || 0), 0)
-  const totalGanancia = ventas.reduce((a: number, v: any) => a + (v.ganancia_neta || 0), 0)
+  // ── Filtrado de la tabla ──────────────────────────────────
+  const ventasFiltradas = ventas.filter((v: any) => {
+    if (filtroVendedor !== 'Todos' && v.vendedor_nombre !== filtroVendedor) return false
+    if (filtroFormaPago !== 'Todas' && v.forma_pago !== filtroFormaPago) return false
+    if (filtroEstadoCobro !== 'Todos' && v.estado_cobro !== filtroEstadoCobro) return false
+    if (busquedaCliente) {
+      const q = busquedaCliente.toLowerCase()
+      const vehiculo = v.inv_id ? getVehiculo(v.inv_id) : null
+      if (
+        !v.cliente?.toLowerCase().includes(q) &&
+        !v.vendedor_nombre?.toLowerCase().includes(q) &&
+        !v.inv_id?.toLowerCase().includes(q) &&
+        !vehiculo?.modelo?.toLowerCase().includes(q) &&
+        !vehiculo?.marca?.toLowerCase().includes(q)
+      ) return false
+    }
+    return true
+  })
+
+  const hayFiltrosActivos = filtroVendedor !== 'Todos' || filtroFormaPago !== 'Todas' || filtroEstadoCobro !== 'Todos' || busquedaCliente !== ''
+
+  const limpiarFiltros = () => {
+    setFiltroVendedor('Todos')
+    setFiltroFormaPago('Todas')
+    setFiltroEstadoCobro('Todos')
+    setBusquedaCliente('')
+  }
+
+  // ── KPIs (sobre ventasFiltradas) ─────────────────────────
+  const totalVentas = ventasFiltradas.reduce((a: number, v: any) => a + (v.precio_venta || 0), 0)
+  const totalGanancia = ventasFiltradas.reduce((a: number, v: any) => a + (v.ganancia_neta || 0), 0)
 
   // ── Cobro del form ────────────────────────────────────────
   const totalCobrado =
@@ -113,7 +148,7 @@ export default function VentasPage() {
   const totalGastosForm = gastosForm.reduce((a, g) => a + (g.monto_ars || 0), 0)
   const diff = precioVenta - totalCobrado
 
-  // ── Navegación filas ─────────────────────────────────────
+  // ── Navegación filas ──────────────────────────────────────
   const handleClickFila = (id: string) => {
     if (detalle === id) { setDetalle(null); setEditando(null) }
     else { setDetalle(id); setEditando(null); setShowAnular(null) }
@@ -133,12 +168,11 @@ export default function VentasPage() {
     })
   }
 
-  // ── REGISTRAR VENTA (FIX PRINCIPAL + gastos + instrumentos) ──
+  // ── REGISTRAR VENTA ───────────────────────────────────────
   const handleGuardar = async () => {
     const supabase = createClient()
     const newId = 'VTA-' + Date.now().toString().slice(-8)
 
-    // 1. INSERT venta
     const { error: errVenta } = await supabase.from('ventas').insert({
       id: newId, empresa: form.empresa, inv_id: form.inv_id || null,
       fecha: form.fecha || hoy, cliente: form.cliente,
@@ -155,7 +189,7 @@ export default function VentasPage() {
     })
     if (errVenta) { alert('Error al registrar venta: ' + errVenta.message); return }
 
-    // 2. ✅ FIX BUG: actualizar estado del vehículo en inventario
+    // ✅ FIX: actualizar estado del vehículo
     if (form.inv_id) {
       const { error: errInv } = await supabase
         .from('inventario')
@@ -164,7 +198,7 @@ export default function VentasPage() {
       if (errInv) console.error('Error actualizando estado vehículo:', errInv.message)
     }
 
-    // 3. Guardar gastos por unidad
+    // Guardar gastos por unidad
     if (gastosForm.length > 0 && form.inv_id) {
       const gastosInsert = gastosForm
         .filter(g => g.monto_ars > 0)
@@ -175,18 +209,16 @@ export default function VentasPage() {
           fecha: form.fecha || hoy,
         }))
       if (gastosInsert.length > 0) {
-        const { error: errG } = await supabase.from('gastos_unidad').insert(gastosInsert)
-        if (errG) console.error('Error guardando gastos unidad:', errG.message)
+        await supabase.from('gastos_unidad').insert(gastosInsert)
       }
     }
 
-    // 4. Guardar instrumentos de cobro
+    // Guardar instrumentos
     for (const inst of instrumentosForm) {
       if (inst.monto_aplicado <= 0) continue
       let instrId = inst.id
       if (!instrId) {
-        // crear instrumento nuevo
-        const { data: newInstr, error: errI } = await supabase
+        const { data: newInstr } = await supabase
           .from('instrumentos_cobro')
           .insert({
             empresa: form.empresa, tipo: inst.tipo,
@@ -195,23 +227,18 @@ export default function VentasPage() {
             fecha_emision: inst.fecha_emision || hoy,
             fecha_vencimiento: inst.fecha_vencimiento || null,
             estado: inst.monto_aplicado >= inst.monto_ars ? 'aplicado_total' : 'aplicado_parcial',
-            observaciones: '',
           })
           .select().single()
-        if (errI || !newInstr) { console.error('Error creando instrumento:', errI?.message); continue }
+        if (!newInstr) continue
         instrId = newInstr.id
       } else {
-        // actualizar estado del instrumento existente
         const instrExistente = instrumentosExistentes.find(i => i.id === instrId)
-        const totalAplicado = (instrExistente?.monto_ars || 0)
         await supabase.from('instrumentos_cobro').update({
-          estado: inst.monto_aplicado >= totalAplicado ? 'aplicado_total' : 'aplicado_parcial',
+          estado: inst.monto_aplicado >= (instrExistente?.monto_ars || 0) ? 'aplicado_total' : 'aplicado_parcial',
         }).eq('id', instrId)
       }
-      // vincular instrumento con venta
       await supabase.from('venta_instrumentos').insert({
-        venta_id: newId, instrumento_id: instrId,
-        monto_aplicado: inst.monto_aplicado,
+        venta_id: newId, instrumento_id: instrId, monto_aplicado: inst.monto_aplicado,
       })
     }
 
@@ -222,7 +249,6 @@ export default function VentasPage() {
     setInstrumentosForm([])
     refresh()
     refreshInstrumentos()
-    // refrescar inventario para que el vehículo desaparezca del selector
     const { data } = await supabase.from('inventario_view').select('*')
     if (data) setInventario(data)
   }
@@ -257,68 +283,49 @@ export default function VentasPage() {
   const handleAnular = async (v: any) => {
     if (!motivoAnulacion.trim()) { alert('Ingresá el motivo de anulación'); return }
     const supabase = createClient()
-
-    // 1. Marcar venta como anulada
     const { error: errV } = await supabase.from('ventas').update({
       estado_venta: 'Anulada',
       fecha_anulacion: new Date().toISOString(),
       motivo_anulacion: motivoAnulacion,
     }).eq('id', v.id)
     if (errV) { alert('Error al anular: ' + errV.message); return }
-
-    // 2. Revertir estado del vehículo a Disponible
     if (v.inv_id) {
-      await supabase.from('inventario').update({
-        estado: 'Disponible',
-        fecha_venta: null,
-      }).eq('id', v.inv_id)
+      await supabase.from('inventario').update({ estado: 'Disponible', fecha_venta: null }).eq('id', v.inv_id)
     }
-
     setToast('Venta ' + v.id + ' anulada — vehículo vuelve a Disponible')
     setTimeout(() => setToast(''), 4000)
-    setShowAnular(null)
-    setMotivoAnulacion('')
-    setDetalle(null)
+    setShowAnular(null); setMotivoAnulacion(''); setDetalle(null)
     refresh()
-    // refrescar inventario
     const { data } = await supabase.from('inventario_view').select('*')
     if (data) setInventario(data)
   }
 
-  // ── GASTOS FORM helpers ───────────────────────────────────
-  const agregarGasto = () => setGastosForm(prev => [
-    ...prev, { tipo: 'flete', descripcion: '', monto_ars: 0 }
-  ])
-  const actualizarGasto = (idx: number, campo: keyof GastoUnidad, valor: any) => {
+  // ── GASTOS helpers ────────────────────────────────────────
+  const agregarGasto = () => setGastosForm(prev => [...prev, { tipo: 'flete', descripcion: '', monto_ars: 0 }])
+  const actualizarGasto = (idx: number, campo: keyof GastoUnidad, valor: any) =>
     setGastosForm(prev => prev.map((g, i) => i === idx ? { ...g, [campo]: valor } : g))
-  }
   const eliminarGasto = (idx: number) => setGastosForm(prev => prev.filter((_, i) => i !== idx))
 
-  // ── INSTRUMENTOS FORM helpers ─────────────────────────────
+  // ── INSTRUMENTOS helpers ──────────────────────────────────
   const agregarInstrumentoNuevo = () => setInstrumentosForm(prev => [
-    ...prev, {
-      tipo: 'cheque', numero_referencia: '', banco: '',
-      monto_ars: 0, fecha_emision: hoy, fecha_vencimiento: '', monto_aplicado: 0,
-    }
+    ...prev, { tipo: 'cheque', numero_referencia: '', banco: '', monto_ars: 0, fecha_emision: hoy, fecha_vencimiento: '', monto_aplicado: 0 }
   ])
   const agregarInstrumentoExistente = (instrumento: any) => {
-    // verificar que no esté ya agregado
     if (instrumentosForm.find(i => i.id === instrumento.id)) return
     setInstrumentosForm(prev => [...prev, {
       id: instrumento.id, tipo: instrumento.tipo,
       numero_referencia: instrumento.numero_referencia,
       banco: instrumento.banco, monto_ars: instrumento.monto_ars,
       fecha_emision: instrumento.fecha_emision, fecha_vencimiento: instrumento.fecha_vencimiento,
-      monto_aplicado: instrumento.monto_ars, // por defecto aplica el total
+      monto_aplicado: instrumento.monto_ars,
     }])
     setShowInstrumentoExistente(false)
   }
-  const actualizarInstrumento = (idx: number, campo: keyof InstrumentoCobro, valor: any) => {
+  const actualizarInstrumento = (idx: number, campo: keyof InstrumentoCobro, valor: any) =>
     setInstrumentosForm(prev => prev.map((i, n) => n === idx ? { ...i, [campo]: valor } : i))
-  }
   const eliminarInstrumento = (idx: number) => setInstrumentosForm(prev => prev.filter((_, i) => i !== idx))
 
-  // ── Estado cobro badge ────────────────────────────────────
+  // ── Badge estado cobro ────────────────────────────────────
   const estadoCobro = (e: string) => {
     const map: Record<string, { bg: string; color: string; border: string }> = {
       Cobrado:   { bg: 'rgba(34,197,94,.15)',  color: '#4ade80', border: 'rgba(34,197,94,.3)' },
@@ -336,6 +343,11 @@ export default function VentasPage() {
     </div>
   )
 
+  const estiloSelect = {
+    padding: '5px 10px', borderRadius: 7, border: '1px solid #334155',
+    background: '#0f172a', color: '#e2e8f0', fontSize: 11, cursor: 'pointer',
+  }
+
   // ─────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────
@@ -349,23 +361,71 @@ export default function VentasPage() {
       )}
       <div style={{ padding: '20px 24px', maxWidth: 1400, margin: '0 auto' }}>
 
-        {/* ── BARRA PERÍODO ── */}
+        {/* ── BARRA PERÍODO + FILTROS ── */}
         <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 10, padding: '10px 14px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 11, color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', whiteSpace: 'nowrap' }}>Período</span>
           <FiltroFechas desde={desde} hasta={hasta} onDesde={setDesde} onHasta={setHasta} />
-          <span style={{ fontSize: 11, color: '#475569', marginLeft: 'auto', whiteSpace: 'nowrap' }}>{ventas.length} operaciones</span>
+
+          {/* separador */}
+          <div style={{ width: 1, height: 24, background: '#334155' }} />
+
+          {/* vendedor */}
+          <select value={filtroVendedor} onChange={e => setFiltroVendedor(e.target.value)} style={estiloSelect}>
+            {VENDEDORES.map(v => <option key={v} value={v}>{v === 'Todos' ? 'Todos los vendedores' : v}</option>)}
+          </select>
+
+          {/* forma de pago */}
+          <select value={filtroFormaPago} onChange={e => setFiltroFormaPago(e.target.value)} style={estiloSelect}>
+            {FORMAS_PAGO.map(f => <option key={f} value={f}>{f === 'Todas' ? 'Todas las formas' : f}</option>)}
+          </select>
+
+          {/* estado cobro — chips con color */}
+          <div style={{ display: 'flex', gap: 4 }}>
+            {ESTADOS_COBRO.map(e => {
+              const ec = estadoCobro(e)
+              const activo = filtroEstadoCobro === e
+              return (
+                <button key={e} onClick={() => setFiltroEstadoCobro(e)} style={{
+                  padding: '4px 10px', borderRadius: 6, border: `1px solid ${activo ? ec.border : '#334155'}`,
+                  background: activo ? ec.bg : 'transparent', color: activo ? ec.color : '#64748b',
+                  fontSize: 11, cursor: 'pointer', fontWeight: activo ? 600 : 400,
+                }}>
+                  {e}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* búsqueda cliente */}
+          <input
+            value={busquedaCliente}
+            onChange={e => setBusquedaCliente(e.target.value)}
+            placeholder="Buscar cliente, vehículo..."
+            style={{ padding: '5px 10px', borderRadius: 7, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11, width: 180 }}
+          />
+
+          {/* limpiar filtros */}
+          {hayFiltrosActivos && (
+            <button onClick={limpiarFiltros} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid #3a1010', background: 'transparent', color: '#ef4444', fontSize: 11, cursor: 'pointer' }}>
+              ✕ Limpiar
+            </button>
+          )}
+
+          <span style={{ fontSize: 11, color: '#475569', marginLeft: 'auto', whiteSpace: 'nowrap' }}>
+            {ventasFiltradas.length}{ventas.length !== ventasFiltradas.length ? ` de ${ventas.length}` : ''} operaciones
+          </span>
           <button onClick={() => setShowForm(v => !v)} style={{ padding: '6px 16px', borderRadius: 8, background: '#3b82f6', color: 'white', border: 'none', fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>
             + Registrar venta
           </button>
         </div>
 
-        {/* ── KPIs ── */}
+        {/* ── KPIs (reflejan filtros) ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,minmax(0,1fr))', gap: 12, marginBottom: 16 }}>
           {[
-            ['Total vendido', fmt(totalVentas), ventas.length + ' operaciones', '#3b82f6'],
+            ['Total vendido', fmt(totalVentas), ventasFiltradas.length + ' operaciones', '#3b82f6'],
             ['Ganancia total', fmt(totalGanancia), totalVentas ? ((totalGanancia / totalVentas) * 100).toFixed(1) + '% margen' : '—', '#22c55e'],
-            ['Ticket promedio', ventas.length > 0 ? fmt(totalVentas / ventas.length) : '—', ventas.length + ' ops', '#8b5cf6'],
-            ['Pendientes cobro', ventas.filter((v: any) => v.estado_cobro !== 'Cobrado').length + ' ventas', 'Requieren seguimiento', '#f97316'],
+            ['Ticket promedio', ventasFiltradas.length > 0 ? fmt(totalVentas / ventasFiltradas.length) : '—', ventasFiltradas.length + ' ops', '#8b5cf6'],
+            ['Pendientes cobro', ventasFiltradas.filter((v: any) => v.estado_cobro !== 'Cobrado').length + ' ventas', 'Requieren seguimiento', '#f97316'],
           ].map(([l, v, s, c]) => (
             <div key={l as string} style={{ background: '#1e293b', border: `1px solid ${c}`, borderRadius: 12, padding: '14px 16px', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: c as string }} />
@@ -381,12 +441,11 @@ export default function VentasPage() {
           <div style={{ background: '#1e293b', border: '1px solid #3b82f6', borderRadius: 12, padding: 20, marginBottom: 16 }}>
             <div style={{ fontSize: 14, fontWeight: 600, color: '#e2e8f0', marginBottom: 16 }}>Nueva operación</div>
 
-            {/* datos básicos */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 12 }}>
               {[
                 ['empresa', 'Empresa', ['INVEXUS', 'MAXIAUTO']],
                 ['cliente', 'Cliente', null],
-                ['vendedor_nombre', 'Vendedor', null],
+                ['vendedor_nombre', 'Vendedor', ['GIULIANA','CARLITOS','GABRIEL','LUCAS','SAYAGO','GERENCIA']],
                 ['precio_venta', 'Precio ARS', null],
                 ['forma_pago', 'Forma pago', ['Contado', 'Transferencia', 'Financiado', 'Mixto', 'Permuta']],
                 ['estado_cobro', 'Estado cobro', ['Cobrado', 'Parcial', 'Pendiente', 'Seña']],
@@ -427,7 +486,7 @@ export default function VentasPage() {
               </select>
             </div>
 
-            {/* desglose cobro tradicional */}
+            {/* desglose cobro */}
             <div style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8', marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #334155' }}>Desglose de cobro directo</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 12 }}>
               {[['cobro_efectivo', 'Efectivo ARS'], ['cobro_transfer', 'Transferencia ARS'], ['cobro_pagare', 'Pagaré ARS'], ['cobro_pxp', 'Parte de pago ARS']].map(([k, l]) => (
@@ -452,23 +511,15 @@ export default function VentasPage() {
               </div>
             </div>
 
-            {/* ── INSTRUMENTOS DE COBRO ── */}
+            {/* instrumentos de cobro */}
             <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                  Instrumentos de cobro (cheques, etc.)
-                </div>
+                <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em' }}>Instrumentos de cobro</div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => setShowInstrumentoExistente(v => !v)} style={{ padding: '4px 12px', borderRadius: 6, background: 'rgba(167,139,250,.1)', color: '#a78bfa', border: '1px solid rgba(167,139,250,.3)', fontSize: 11, cursor: 'pointer' }}>
-                    Usar existente
-                  </button>
-                  <button onClick={agregarInstrumentoNuevo} style={{ padding: '4px 12px', borderRadius: 6, background: 'rgba(96,165,250,.1)', color: '#60a5fa', border: '1px solid rgba(96,165,250,.3)', fontSize: 11, cursor: 'pointer' }}>
-                    + Nuevo instrumento
-                  </button>
+                  <button onClick={() => setShowInstrumentoExistente(v => !v)} style={{ padding: '4px 12px', borderRadius: 6, background: 'rgba(167,139,250,.1)', color: '#a78bfa', border: '1px solid rgba(167,139,250,.3)', fontSize: 11, cursor: 'pointer' }}>Usar existente</button>
+                  <button onClick={agregarInstrumentoNuevo} style={{ padding: '4px 12px', borderRadius: 6, background: 'rgba(96,165,250,.1)', color: '#60a5fa', border: '1px solid rgba(96,165,250,.3)', fontSize: 11, cursor: 'pointer' }}>+ Nuevo</button>
                 </div>
               </div>
-
-              {/* selector de instrumento existente */}
               {showInstrumentoExistente && (
                 <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, padding: 10, marginBottom: 10, maxHeight: 200, overflowY: 'auto' }}>
                   {instrumentosExistentes.filter(i => i.estado !== 'aplicado_total').length === 0
@@ -486,66 +537,38 @@ export default function VentasPage() {
                   }
                 </div>
               )}
-
-              {/* instrumentos agregados */}
               {instrumentosForm.map((inst, idx) => (
                 <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr auto', gap: 8, marginBottom: 8, alignItems: 'flex-end' }}>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Tipo</label>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Tipo</label>
                     <select value={inst.tipo} onChange={e => actualizarInstrumento(idx, 'tipo', e.target.value)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }}>
                       {TIPOS_INSTRUMENTO.map(t => <option key={t}>{t}</option>)}
                     </select>
                   </div>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>N° / Ref</label>
-                    <input value={inst.numero_referencia} onChange={e => actualizarInstrumento(idx, 'numero_referencia', e.target.value)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Banco</label>
-                    <input value={inst.banco} onChange={e => actualizarInstrumento(idx, 'banco', e.target.value)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Monto total ARS</label>
-                    <input type="number" value={inst.monto_ars} onChange={e => actualizarInstrumento(idx, 'monto_ars', parseFloat(e.target.value) || 0)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#a78bfa', display: 'block', marginBottom: 3 }}>Aplicado a esta venta</label>
-                    <input type="number" value={inst.monto_aplicado} onChange={e => actualizarInstrumento(idx, 'monto_aplicado', parseFloat(e.target.value) || 0)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid rgba(167,139,250,.4)', background: '#0f172a', color: '#a78bfa', fontSize: 11, fontWeight: 600 }} />
-                  </div>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>N° / Ref</label><input value={inst.numero_referencia} onChange={e => actualizarInstrumento(idx, 'numero_referencia', e.target.value)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Banco</label><input value={inst.banco} onChange={e => actualizarInstrumento(idx, 'banco', e.target.value)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Monto total</label><input type="number" value={inst.monto_ars} onChange={e => actualizarInstrumento(idx, 'monto_ars', parseFloat(e.target.value) || 0)} disabled={!!inst.id} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
+                  <div><label style={{ fontSize: 10, color: '#a78bfa', display: 'block', marginBottom: 3 }}>Aplicado acá</label><input type="number" value={inst.monto_aplicado} onChange={e => actualizarInstrumento(idx, 'monto_aplicado', parseFloat(e.target.value) || 0)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid rgba(167,139,250,.4)', background: '#0f172a', color: '#a78bfa', fontSize: 11, fontWeight: 600 }} /></div>
                   <button onClick={() => eliminarInstrumento(idx)} style={{ padding: '5px 8px', borderRadius: 6, background: 'rgba(239,68,68,.1)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', fontSize: 12, cursor: 'pointer' }}>✕</button>
                 </div>
               ))}
-              {instrumentosForm.length === 0 && (
-                <div style={{ color: '#334155', fontSize: 11, textAlign: 'center', padding: '6px 0' }}>Sin instrumentos — usá los campos de arriba o agregá cheques acá</div>
-              )}
+              {instrumentosForm.length === 0 && <div style={{ color: '#334155', fontSize: 11, textAlign: 'center', padding: '6px 0' }}>Sin instrumentos agregados</div>}
             </div>
 
-            {/* ── GASTOS POR UNIDAD ── */}
+            {/* gastos por unidad */}
             <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em' }}>
-                  Gastos de la operación
-                </div>
-                <button onClick={agregarGasto} style={{ padding: '4px 12px', borderRadius: 6, background: 'rgba(251,146,60,.1)', color: '#fb923c', border: '1px solid rgba(251,146,60,.3)', fontSize: 11, cursor: 'pointer' }}>
-                  + Agregar gasto
-                </button>
+                <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em' }}>Gastos de la operación</div>
+                <button onClick={agregarGasto} style={{ padding: '4px 12px', borderRadius: 6, background: 'rgba(251,146,60,.1)', color: '#fb923c', border: '1px solid rgba(251,146,60,.3)', fontSize: 11, cursor: 'pointer' }}>+ Agregar gasto</button>
               </div>
               {gastosForm.map((g, idx) => (
                 <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr auto', gap: 8, marginBottom: 8, alignItems: 'flex-end' }}>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Tipo</label>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Tipo</label>
                     <select value={g.tipo} onChange={e => actualizarGasto(idx, 'tipo', e.target.value)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }}>
                       {TIPOS_GASTO.map(t => <option key={t}>{t}</option>)}
                     </select>
                   </div>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Descripción</label>
-                    <input value={g.descripcion} onChange={e => actualizarGasto(idx, 'descripcion', e.target.value)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Monto ARS</label>
-                    <input type="number" value={g.monto_ars} onChange={e => actualizarGasto(idx, 'monto_ars', parseFloat(e.target.value) || 0)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#fb923c', fontSize: 11 }} />
-                  </div>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Descripción</label><input value={g.descripcion} onChange={e => actualizarGasto(idx, 'descripcion', e.target.value)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
+                  <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Monto ARS</label><input type="number" value={g.monto_ars} onChange={e => actualizarGasto(idx, 'monto_ars', parseFloat(e.target.value) || 0)} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#fb923c', fontSize: 11 }} /></div>
                   <button onClick={() => eliminarGasto(idx)} style={{ padding: '5px 8px', borderRadius: 6, background: 'rgba(239,68,68,.1)', color: '#f87171', border: '1px solid rgba(239,68,68,.3)', fontSize: 12, cursor: 'pointer' }}>✕</button>
                 </div>
               ))}
@@ -585,7 +608,7 @@ export default function VentasPage() {
                 </tr>
               </thead>
               <tbody>
-                {ventas.map((v: any) => {
+                {ventasFiltradas.map((v: any) => {
                   const isOpen = detalle === v.id
                   const isEditing = editando === v.id
                   const ec = estadoCobro(v.estado_cobro)
@@ -623,7 +646,6 @@ export default function VentasPage() {
                             <div style={{ background: '#0f1f3d', borderTop: '1px solid #1e3a5f', padding: '20px 24px' }}>
                               {!isEditing ? (
                                 <>
-                                  {/* HEADER */}
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
                                     <div>
                                       <div style={{ fontSize: 15, fontWeight: 700, color: '#e2e8f0' }}>{v.cliente}</div>
@@ -636,29 +658,18 @@ export default function VentasPage() {
                                     </div>
                                   </div>
 
-                                  {/* PANEL ANULACIÓN */}
                                   {showAnular === v.id && (
                                     <div onClick={e => e.stopPropagation()} style={{ background: 'rgba(239,68,68,.08)', border: '1px solid rgba(239,68,68,.3)', borderRadius: 10, padding: '14px 16px', marginBottom: 16 }}>
                                       <div style={{ fontSize: 12, fontWeight: 600, color: '#f87171', marginBottom: 10 }}>⚠ Anular venta {v.id}</div>
-                                      <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 10 }}>
-                                        Esta acción marcará la venta como anulada y devolverá el vehículo {v.inv_id ? `(${v.inv_id})` : ''} al stock como Disponible.
-                                      </div>
+                                      <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 10 }}>Esta acción marcará la venta como anulada y devolverá el vehículo {v.inv_id ? `(${v.inv_id})` : ''} al stock como Disponible.</div>
                                       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                        <input
-                                          value={motivoAnulacion}
-                                          onChange={e => setMotivoAnulacion(e.target.value)}
-                                          placeholder="Motivo de anulación (obligatorio)"
-                                          style={{ flex: 1, padding: '6px 10px', borderRadius: 8, border: '1px solid rgba(239,68,68,.4)', background: '#0f172a', color: '#e2e8f0', fontSize: 12 }}
-                                        />
-                                        <button onClick={e => { e.stopPropagation(); handleAnular(v) }} style={{ padding: '6px 16px', borderRadius: 8, background: '#dc2626', color: 'white', border: 'none', fontSize: 12, cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                                          Confirmar anulación
-                                        </button>
+                                        <input value={motivoAnulacion} onChange={e => setMotivoAnulacion(e.target.value)} placeholder="Motivo de anulación (obligatorio)" style={{ flex: 1, padding: '6px 10px', borderRadius: 8, border: '1px solid rgba(239,68,68,.4)', background: '#0f172a', color: '#e2e8f0', fontSize: 12 }} />
+                                        <button onClick={e => { e.stopPropagation(); handleAnular(v) }} style={{ padding: '6px 16px', borderRadius: 8, background: '#dc2626', color: 'white', border: 'none', fontSize: 12, cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap' }}>Confirmar anulación</button>
                                         <button onClick={e => { e.stopPropagation(); setShowAnular(null) }} style={{ padding: '6px 12px', borderRadius: 8, background: 'transparent', color: '#64748b', border: '1px solid #334155', fontSize: 12, cursor: 'pointer' }}>Cancelar</button>
                                       </div>
                                     </div>
                                   )}
 
-                                  {/* DATOS VENTA */}
                                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 16 }}>
                                     {campo('Vendedor', v.vendedor_nombre)}
                                     {campo('Empresa', v.empresa)}
@@ -670,7 +681,6 @@ export default function VentasPage() {
                                     {campo('TC BNA snapshot', v.tc_bna_snapshot ? '$' + fmtN(v.tc_bna_snapshot) : null)}
                                   </div>
 
-                                  {/* VEHÍCULO */}
                                   {vehiculo && (
                                     <div style={{ background: '#0a1628', border: '1px solid #1e3a5f', borderRadius: 10, padding: '14px 16px', marginBottom: 16 }}>
                                       <div style={{ fontSize: 10, color: '#475569', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 12 }}>Vehículo vendido</div>
@@ -689,7 +699,6 @@ export default function VentasPage() {
                                     </div>
                                   )}
 
-                                  {/* DESGLOSE COBRO */}
                                   <div style={{ borderTop: '1px solid #1e3a5f', paddingTop: 14, marginBottom: 14 }}>
                                     <div style={{ fontSize: 10, color: '#475569', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.05em' }}>Desglose de cobro</div>
                                     <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
@@ -702,9 +711,7 @@ export default function VentasPage() {
                                       ].filter(([, val]) => val && val !== 0).map(([label, val]) => (
                                         <div key={label as string}>
                                           <div style={{ fontSize: 10, color: '#475569', marginBottom: 2 }}>{label}</div>
-                                          <div style={{ fontSize: 12, color: '#cbd5e1', fontFamily: 'monospace' }}>
-                                            {typeof val === 'number' ? fmt(val) : val}
-                                          </div>
+                                          <div style={{ fontSize: 12, color: '#cbd5e1', fontFamily: 'monospace' }}>{typeof val === 'number' ? fmt(val) : val}</div>
                                         </div>
                                       ))}
                                     </div>
@@ -717,7 +724,6 @@ export default function VentasPage() {
                                   )}
                                 </>
                               ) : (
-                                /* ── MODO EDICIÓN ── */
                                 <div onClick={e => e.stopPropagation()}>
                                   <div style={{ fontSize: 13, fontWeight: 600, color: '#60a5fa', marginBottom: 16 }}>Editando {v.id}</div>
                                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
@@ -737,30 +743,19 @@ export default function VentasPage() {
                                     ))}
                                   </div>
                                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 10, marginBottom: 14 }}>
-                                    <div>
-                                      <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>USD cobrado</label>
-                                      <input type="number" value={editForm.cobro_usd} onChange={e => setEditForm({ ...editForm, cobro_usd: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} />
-                                    </div>
-                                    <div>
-                                      <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>TC pactado</label>
-                                      <input type="number" value={editForm.cobro_usd_tc} onChange={e => setEditForm({ ...editForm, cobro_usd_tc: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#fb923c', fontSize: 11 }} />
-                                    </div>
-                                    <div>
-                                      <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Forma de pago</label>
+                                    <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>USD cobrado</label><input type="number" value={editForm.cobro_usd} onChange={e => setEditForm({ ...editForm, cobro_usd: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
+                                    <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>TC pactado</label><input type="number" value={editForm.cobro_usd_tc} onChange={e => setEditForm({ ...editForm, cobro_usd_tc: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#fb923c', fontSize: 11 }} /></div>
+                                    <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Forma de pago</label>
                                       <select value={editForm.forma_pago} onChange={e => setEditForm({ ...editForm, forma_pago: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }}>
                                         {['Contado', 'Transferencia', 'Financiado', 'Mixto', 'Permuta'].map(o => <option key={o}>{o}</option>)}
                                       </select>
                                     </div>
-                                    <div>
-                                      <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Estado cobro</label>
+                                    <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Estado cobro</label>
                                       <select value={editForm.estado_cobro} onChange={e => setEditForm({ ...editForm, estado_cobro: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }}>
                                         {['Cobrado', 'Parcial', 'Pendiente', 'Seña'].map(o => <option key={o}>{o}</option>)}
                                       </select>
                                     </div>
-                                    <div>
-                                      <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Fecha operación</label>
-                                      <input type="date" value={editForm.fecha} onChange={e => setEditForm({ ...editForm, fecha: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} />
-                                    </div>
+                                    <div><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Fecha operación</label><input type="date" value={editForm.fecha} onChange={e => setEditForm({ ...editForm, fecha: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
                                   </div>
                                   <div style={{ marginBottom: 12 }}>
                                     <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>Observaciones</label>
@@ -781,7 +776,11 @@ export default function VentasPage() {
                 })}
               </tbody>
             </table>
-            {ventas.length === 0 && <div style={{ color: '#475569', padding: 24, textAlign: 'center' }}>Sin ventas en el período seleccionado</div>}
+            {ventasFiltradas.length === 0 && (
+              <div style={{ color: '#475569', padding: 24, textAlign: 'center' }}>
+                {ventas.length > 0 ? 'Sin ventas con los filtros aplicados.' : 'Sin ventas en el período seleccionado.'}
+              </div>
+            )}
           </div>
         )}
       </div>
