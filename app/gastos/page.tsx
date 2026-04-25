@@ -21,7 +21,11 @@ export default function GastosPage() {
   const { gastos, loading, refresh } = useGastos(empresa, desde||undefined, hasta||undefined)
   const { tcBna } = useTipoCambio()
   const tc = tcBna
-  const [form, setForm] = useState({ empresa:'INVEXUS', tipo:'por_unidad', inv_id:'', fecha:hoy, categoria:'Traslado', descripcion:'', monto:'', proveedor:'', estado_pago:'Pagado' })
+  const [form, setForm] = useState({
+    empresa:'INVEXUS', tipo:'por_unidad', inv_id:'', fecha:hoy,
+    categoria:'Traslado', descripcion:'', monto:'', proveedor:'',
+    estado_pago:'Pagado', observaciones:''
+  })
 
   const fmt = (n:number) => moneda==='USD'
     ? 'USD '+new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(n/tc)
@@ -33,7 +37,7 @@ export default function GastosPage() {
     return `${d}/${m}/${y.slice(2)}`
   }
 
-  const filtered = gastos.filter((g:any) => tab==='todos'?true:g.tipo===tab)
+  const filtered = gastos.filter((g:any) => tab==='todos' ? true : g.tipo===tab)
   const totalFilt = filtered.reduce((a:number,g:any)=>a+(g.monto||0),0)
   const totalOp = gastos.filter((g:any)=>g.tipo==='operativo').reduce((a:number,g:any)=>a+(g.monto||0),0)
   const totalUn = gastos.filter((g:any)=>g.tipo==='por_unidad').reduce((a:number,g:any)=>a+(g.monto||0),0)
@@ -52,10 +56,13 @@ export default function GastosPage() {
       fecha:form.fecha, categoria:form.categoria, descripcion:form.descripcion,
       monto:parseFloat(form.monto), proveedor:form.proveedor||null,
       estado_pago:form.estado_pago, fecha_pago:form.estado_pago==='Pagado'?form.fecha:null,
+      observaciones:form.observaciones||null,
     })
     if(error){alert('Error: '+error.message);return}
     setToast('Gasto registrado'); setTimeout(()=>setToast(''),3000)
-    setShowForm(false); setForm({...form,inv_id:'',descripcion:'',monto:'',proveedor:''}); refresh()
+    setShowForm(false)
+    setForm({...form,inv_id:'',descripcion:'',monto:'',proveedor:'',observaciones:''})
+    refresh()
   }
 
   const ec=(e:string)=>e==='Pagado'?'#4ade80':e==='Pendiente'?'#fb923c':'#facc15'
@@ -66,14 +73,32 @@ export default function GastosPage() {
       {toast&&<div style={{position:'fixed',top:20,right:20,background:'#166534',color:'#4ade80',border:'1px solid #16a34a',borderRadius:10,padding:'10px 18px',fontSize:13,zIndex:1000,fontWeight:500}}>✓ {toast}</div>}
       <div style={{padding:'20px 24px',maxWidth:1400,margin:'0 auto'}}>
 
+        {/* ── BARRA FILTROS — igual a ventas/stock ── */}
         <div style={{background:'#1e293b',border:'1px solid #334155',borderRadius:10,padding:'10px 14px',marginBottom:16,display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
           <span style={{fontSize:11,color:'#475569',fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em',whiteSpace:'nowrap'}}>Período</span>
           <FiltroFechas desde={desde} hasta={hasta} onDesde={setDesde} onHasta={setHasta} />
-          <button onClick={()=>setShowForm(true)} style={{marginLeft:'auto',padding:'6px 16px',borderRadius:8,background:'#3b82f6',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600,whiteSpace:'nowrap'}}>+ Registrar gasto</button>
+
+          {/* filtro tipo */}
+          <div style={{display:'flex',gap:4,marginLeft:8}}>
+            {[['todos','Todos'],['por_unidad','Por unidad'],['operativo','Operativos']].map(([k,l])=>(
+              <button key={k} onClick={()=>setTab(k)} style={{padding:'4px 12px',borderRadius:6,border:'none',background:tab===k?'#3b82f6':'rgba(51,65,85,.5)',color:tab===k?'white':'#64748b',fontSize:11,cursor:'pointer',fontWeight:tab===k?600:400}}>
+                {l}
+              </button>
+            ))}
+          </div>
+
+          <span style={{fontSize:11,color:'#475569',marginLeft:'auto',whiteSpace:'nowrap'}}>{filtered.length} registros</span>
+          <button onClick={()=>setShowForm(true)} style={{padding:'6px 16px',borderRadius:8,background:'#3b82f6',color:'white',border:'none',fontSize:12,cursor:'pointer',fontWeight:600,whiteSpace:'nowrap'}}>+ Registrar gasto</button>
         </div>
 
+        {/* ── KPIs ── */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:12,marginBottom:16}}>
-          {[['Total gastos',fmt(totalFilt),filtered.length+' registros','#ef4444'],['Operativos',fmt(totalOp),gastos.filter((g:any)=>g.tipo==='operativo').length+' regs','#f97316'],['Por unidad',fmt(totalUn),gastos.filter((g:any)=>g.tipo==='por_unidad').length+' regs','#eab308'],['Pendiente pago',fmt(pendientes.reduce((a:number,g:any)=>a+(g.monto||0),0)),pendientes.length+' regs','#8b5cf6']].map(([l,v,s,c])=>(
+          {[
+            ['Total gastos',fmt(totalFilt),filtered.length+' registros','#ef4444'],
+            ['Operativos',fmt(totalOp),gastos.filter((g:any)=>g.tipo==='operativo').length+' regs','#f97316'],
+            ['Por unidad',fmt(totalUn),gastos.filter((g:any)=>g.tipo==='por_unidad').length+' regs','#eab308'],
+            ['Pendiente pago',fmt(pendientes.reduce((a:number,g:any)=>a+(g.monto||0),0)),pendientes.length+' regs','#8b5cf6'],
+          ].map(([l,v,s,c])=>(
             <div key={l} style={{background:'#1e293b',border:`1px solid ${c}`,borderRadius:12,padding:'14px 16px',position:'relative',overflow:'hidden'}}>
               <div style={{position:'absolute',top:0,left:0,right:0,height:2,background:c as string}} />
               <div style={{fontSize:11,color:'#64748b',fontWeight:500,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:6}}>{l}</div>
@@ -83,47 +108,61 @@ export default function GastosPage() {
           ))}
         </div>
 
+        {/* ── FORMULARIO ── */}
         {showForm&&(
           <div style={{background:'#1e293b',border:'1px solid #3b82f6',borderRadius:12,padding:20,marginBottom:16}}>
             <div style={{fontSize:14,fontWeight:600,color:'#e2e8f0',marginBottom:16}}>Registrar gasto</div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Empresa</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Empresa</label>
                 <select value={form.empresa} onChange={e=>setForm({...form,empresa:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}}>
                   <option>INVEXUS</option><option>MAXIAUTO</option>
                 </select>
               </div>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Tipo</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Tipo</label>
                 <select value={form.tipo} onChange={e=>{const nf={...form,tipo:e.target.value}; nf.categoria=e.target.value==='por_unidad'?CATS_UNIDAD[0]:CATS_OP[0]; setForm(nf)}} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}}>
                   <option value="por_unidad">Por unidad (auto)</option>
                   <option value="operativo">Operativo (concesionaria)</option>
                 </select>
               </div>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Categoría</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Categoría</label>
                 <select value={form.categoria} onChange={e=>setForm({...form,categoria:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}}>
                   {(form.tipo==='por_unidad'?CATS_UNIDAD:CATS_OP).map(c=><option key={c}>{c}</option>)}
                 </select>
               </div>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Fecha</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Fecha</label>
                 <input type="date" value={form.fecha} onChange={e=>setForm({...form,fecha:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
               {form.tipo==='por_unidad'&&(
-                <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>ID Vehículo</label>
+                <div>
+                  <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>ID Vehículo</label>
                   <input value={form.inv_id} onChange={e=>setForm({...form,inv_id:e.target.value})} placeholder="INV-001" style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
                 </div>
               )}
-              <div style={{gridColumn:'span 2'}}><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Descripción</label>
+              <div style={{gridColumn:'span 2'}}>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Descripción</label>
                 <input value={form.descripcion} onChange={e=>setForm({...form,descripcion:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Monto ARS</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Monto ARS</label>
                 <input type="number" value={form.monto} onChange={e=>setForm({...form,monto:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Proveedor</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Proveedor</label>
                 <input value={form.proveedor} onChange={e=>setForm({...form,proveedor:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
-              <div><label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Estado pago</label>
+              <div>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Estado pago</label>
                 <select value={form.estado_pago} onChange={e=>setForm({...form,estado_pago:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}}>
                   <option>Pagado</option><option>Pendiente</option><option>Parcial</option>
                 </select>
+              </div>
+              <div style={{gridColumn:'span 2'}}>
+                <label style={{fontSize:11,color:'#64748b',display:'block',marginBottom:4}}>Observaciones</label>
+                <input value={form.observaciones} onChange={e=>setForm({...form,observaciones:e.target.value})} style={{width:'100%',padding:'6px 10px',borderRadius:8,border:'1px solid #334155',background:'#0f172a',color:'#e2e8f0',fontSize:12}} />
               </div>
             </div>
             <div style={{display:'flex',gap:8}}>
@@ -133,36 +172,51 @@ export default function GastosPage() {
           </div>
         )}
 
+        {/* ── TABLA + SIDEBAR ── */}
         <div style={{display:'grid',gridTemplateColumns:'1fr 280px',gap:16}}>
           <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',overflow:'hidden'}}>
-            <div style={{display:'flex',borderBottom:'1px solid #334155'}}>
-              {[['todos','Todos'],['por_unidad','Por unidad'],['operativo','Operativos']].map(([k,l])=>(
-                <button key={k} onClick={()=>setTab(k)} style={{flex:1,padding:'10px',border:'none',background:tab===k?'#0f172a':'transparent',color:tab===k?'#60a5fa':'#64748b',fontSize:12,cursor:'pointer',fontWeight:tab===k?600:400,borderBottom:tab===k?'2px solid #3b82f6':'2px solid transparent'}}>
-                  {l} ({gastos.filter((g:any)=>k==='todos'?true:g.tipo===k).length})
-                </button>
-              ))}
-            </div>
             {loading?<div style={{color:'#475569',padding:24,textAlign:'center'}}>Cargando...</div>:(
               <div style={{overflowX:'auto'}}>
                 <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
-                  <thead><tr style={{borderBottom:'1px solid #334155'}}>{['Fecha','Tipo','Categoría','Vehículo','Descripción','Proveedor','Monto','Estado'].map(h=><th key={h} style={{textAlign:'left',padding:'8px 10px',color:'#475569',fontWeight:500,fontSize:11,whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
-                  <tbody>{filtered.map((g:any)=>(
-                    <tr key={g.id} style={{borderBottom:'1px solid #0f172a'}}>
-                      <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11,whiteSpace:'nowrap'}}>{fmtFecha(g.fecha)}</td>
-                      <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:g.tipo==='por_unidad'?'rgba(234,179,8,.15)':'rgba(249,115,22,.15)',color:g.tipo==='por_unidad'?'#facc15':'#fb923c',border:`1px solid ${g.tipo==='por_unidad'?'rgba(234,179,8,.3)':'rgba(249,115,22,.3)'}`}}>{g.tipo==='por_unidad'?'Unidad':'Operativo'}</span></td>
-                      <td style={{padding:'8px 10px',color:'#94a3b8'}}>{g.categoria}</td>
-                      <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{g.inv_id||'—'}</td>
-                      <td style={{padding:'8px 10px',color:'#e2e8f0'}}>{g.descripcion}</td>
-                      <td style={{padding:'8px 10px',color:'#64748b'}}>{g.proveedor||'—'}</td>
-                      <td style={{padding:'8px 10px',color:'#f87171',fontFamily:'monospace',fontWeight:600}}>{fmt(g.monto||0)}</td>
-                      <td style={{padding:'8px 10px'}}><span style={{fontSize:10,padding:'2px 7px',borderRadius:4,fontWeight:600,color:ec(g.estado_pago),background:ec(g.estado_pago)+'22',border:`1px solid ${ec(g.estado_pago)}44`}}>{g.estado_pago}</span></td>
+                  <thead>
+                    <tr style={{borderBottom:'1px solid #334155'}}>
+                      {['Fecha','Tipo','Categoría','Vehículo','Descripción','Proveedor','Monto','Estado','Obs.'].map(h=>(
+                        <th key={h} style={{textAlign:'left',padding:'8px 10px',color:'#475569',fontWeight:500,fontSize:11,whiteSpace:'nowrap'}}>{h}</th>
+                      ))}
                     </tr>
-                  ))}</tbody>
+                  </thead>
+                  <tbody>
+                    {filtered.map((g:any)=>(
+                      <tr key={g.id} style={{borderBottom:'1px solid #0f172a'}}>
+                        <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11,whiteSpace:'nowrap'}}>{fmtFecha(g.fecha)}</td>
+                        <td style={{padding:'8px 10px'}}>
+                          <span style={{fontSize:10,padding:'2px 7px',borderRadius:4,background:g.tipo==='por_unidad'?'rgba(234,179,8,.15)':'rgba(249,115,22,.15)',color:g.tipo==='por_unidad'?'#facc15':'#fb923c',border:`1px solid ${g.tipo==='por_unidad'?'rgba(234,179,8,.3)':'rgba(249,115,22,.3)'}`}}>
+                            {g.tipo==='por_unidad'?'Unidad':'Operativo'}
+                          </span>
+                        </td>
+                        <td style={{padding:'8px 10px',color:'#94a3b8'}}>{g.categoria}</td>
+                        <td style={{padding:'8px 10px',color:'#64748b',fontFamily:'monospace',fontSize:11}}>{g.inv_id||'—'}</td>
+                        <td style={{padding:'8px 10px',color:'#e2e8f0'}}>{g.descripcion}</td>
+                        <td style={{padding:'8px 10px',color:'#64748b'}}>{g.proveedor||'—'}</td>
+                        <td style={{padding:'8px 10px',color:'#f87171',fontFamily:'monospace',fontWeight:600}}>{fmt(g.monto||0)}</td>
+                        <td style={{padding:'8px 10px'}}>
+                          <span style={{fontSize:10,padding:'2px 7px',borderRadius:4,fontWeight:600,color:ec(g.estado_pago),background:ec(g.estado_pago)+'22',border:`1px solid ${ec(g.estado_pago)}44`}}>
+                            {g.estado_pago}
+                          </span>
+                        </td>
+                        <td style={{padding:'8px 10px',color:'#475569',fontSize:11,maxWidth:160,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}} title={g.observaciones||''}>
+                          {g.observaciones||'—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 </table>
-                {filtered.length===0&&<div style={{color:'#475569',padding:24,textAlign:'center'}}>Sin gastos en el período. ¡Registrá el primero!</div>}
+                {filtered.length===0&&<div style={{color:'#475569',padding:24,textAlign:'center'}}>Sin gastos en el período seleccionado.</div>}
               </div>
             )}
           </div>
+
+          {/* SIDEBAR */}
           <div style={{display:'flex',flexDirection:'column',gap:12}}>
             <div style={{background:'#1e293b',borderRadius:12,border:'1px solid #334155',padding:'14px 16px'}}>
               <div style={{fontSize:11,color:'#64748b',fontWeight:500,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:12}}>Por categoría</div>
@@ -178,6 +232,7 @@ export default function GastosPage() {
                 </div>
               ))}
             </div>
+
             {pendientes.length>0&&(
               <div style={{background:'#1e293b',borderRadius:12,border:'1px solid rgba(249,115,22,.3)',padding:'14px 16px'}}>
                 <div style={{fontSize:11,color:'#fb923c',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:10}}>⚠ Pendientes</div>
