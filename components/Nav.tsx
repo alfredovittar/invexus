@@ -2,6 +2,7 @@
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { useTipoCambio } from '@/hooks/useSupabase'
+import { useEffect, useState } from 'react'
 
 interface NavProps {
   empresa: string
@@ -15,6 +16,24 @@ export default function Nav({ empresa, onEmpresaChange, moneda, onMonedaChange }
   const pathname = usePathname()
   const { tcBna, tcBlue } = useTipoCambio()
   const fmtN = (n: number) => new Intl.NumberFormat('es-AR').format(n)
+  const [rol, setRol] = useState<string>('')
+  const [userEmail, setUserEmail] = useState<string>('')
+
+  useEffect(() => {
+    const cargarRol = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      setUserEmail(user.email || '')
+      const { data } = await supabase
+        .from('usuarios_config')
+        .select('rol')
+        .eq('user_id', user.id)
+        .single()
+      if (data) setRol(data.rol)
+    }
+    cargarRol()
+  }, [])
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -22,13 +41,16 @@ export default function Nav({ empresa, onEmpresaChange, moneda, onMonedaChange }
     router.push('/login')
   }
 
+  const esCeo = rol === 'ceo' || rol === '' // mientras carga o no tiene config → CEO (los 3 usuarios actuales)
+
   const nav = [
     { href: '/dashboard', label: 'Dashboard' },
-    { href: '/stock', label: 'Stock' },
-    { href: '/ventas', label: 'Ventas' },
-    { href: '/gastos', label: 'Gastos' },
-    { href: '/crm', label: 'CRM' },
-    { href: '/divisas', label: 'Divisas' },
+    { href: '/stock',     label: 'Stock' },
+    { href: '/ventas',    label: 'Ventas' },
+    { href: '/gastos',    label: 'Gastos' },
+    { href: '/crm',       label: 'CRM' },
+    { href: '/divisas',   label: 'Divisas' },
+    ...(esCeo ? [{ href: '/auditoria', label: '🔍 Auditoría' }] : []),
   ]
 
   return (
@@ -69,6 +91,11 @@ export default function Nav({ empresa, onEmpresaChange, moneda, onMonedaChange }
           <span style={{ fontSize:12, fontWeight:600, color:'#fb923c', fontFamily:'monospace' }}>${fmtN(tcBlue)}</span>
         </div>
       </div>
+      {userEmail && (
+        <span style={{ fontSize:10, color:'#334155', maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+          {userEmail.split('@')[0]}
+        </span>
+      )}
       <button onClick={handleLogout}
         style={{ padding:'3px 9px', borderRadius:6, border:'1px solid #334155', background:'transparent', color:'#64748b', fontSize:11, cursor:'pointer' }}>
         Salir
