@@ -13,7 +13,6 @@ export function useStock(empresa?: string) {
       .order('dias_stock', { ascending: false })
     if (empresa && empresa !== 'AMBAS') query = query.eq('empresa', empresa)
     const { data } = await query
-    // Supabase devuelve array en el join — tomamos el primer registro
     const normalizado = (data ?? []).map((v: any) => ({
       ...v,
       venta: Array.isArray(v.venta) ? v.venta[0] ?? null : v.venta ?? null,
@@ -37,7 +36,11 @@ export function useVentas(empresa?: string, desde?: string, hasta?: string) {
   const [loading, setLoading] = useState(true)
   const fetchVentas = useCallback(async () => {
     const supabase = createClient()
-    let query = supabase.from('ventas').select('*').order('fecha', { ascending: false })
+    let query = supabase
+      .from('ventas')
+      .select('*')
+      .eq('estado_venta', 'Activa')   // ← excluye anuladas de todos los listados
+      .order('fecha', { ascending: false })
     if (empresa && empresa !== 'AMBAS') query = query.eq('empresa', empresa)
     if (desde) query = query.gte('fecha', desde)
     if (hasta) query = query.lte('fecha', hasta)
@@ -80,6 +83,42 @@ export function useGastos(empresa?: string, desde?: string, hasta?: string) {
   return { gastos, loading, refresh: fetchGastos }
 }
 
+export function useGastosUnidad(inv_id?: string) {
+  const [gastosUnidad, setGastosUnidad] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const fetchGastosUnidad = useCallback(async () => {
+    if (!inv_id) { setGastosUnidad([]); setLoading(false); return }
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('gastos_unidad')
+      .select('*')
+      .eq('inv_id', inv_id)
+      .order('fecha', { ascending: false })
+    setGastosUnidad(data ?? [])
+    setLoading(false)
+  }, [inv_id])
+  useEffect(() => { fetchGastosUnidad() }, [fetchGastosUnidad])
+  return { gastosUnidad, loading, refresh: fetchGastosUnidad }
+}
+
+export function useInstrumentos(empresa?: string) {
+  const [instrumentos, setInstrumentos] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const fetchInstrumentos = useCallback(async () => {
+    const supabase = createClient()
+    let query = supabase
+      .from('instrumentos_cobro')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (empresa && empresa !== 'AMBAS') query = query.eq('empresa', empresa)
+    const { data } = await query
+    setInstrumentos(data ?? [])
+    setLoading(false)
+  }, [empresa])
+  useEffect(() => { fetchInstrumentos() }, [fetchInstrumentos])
+  return { instrumentos, loading, refresh: fetchInstrumentos }
+}
+
 export function useLeads(empresa?: string) {
   const [leads, setLeads] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -110,7 +149,6 @@ export function useTipoCambio() {
     const cargarTC = async () => {
       const supabase = createClient()
       const today = new Date().toISOString().split('T')[0]
-
       try {
         const r = await window.fetch('https://api.bluelytics.com.ar/v2/latest')
         if (r.ok) {
@@ -118,17 +156,13 @@ export function useTipoCambio() {
           const blueVenta = d.blue?.value_sell ?? null
           if (blueVenta) setTcBlue(blueVenta)
         }
-      } catch(e) {
-        console.warn('Bluelytics error:', e)
-      }
-
+      } catch(e) { console.warn('Bluelytics error:', e) }
       const { data } = await supabase
         .from('tipo_cambio')
         .select('*')
         .order('fecha', { ascending: false })
         .limit(1)
         .single()
-
       if (data) {
         setTcBna(data.tc_bna_venta ?? 1392.5)
         setFecha(data.fecha)
