@@ -174,4 +174,203 @@ export function useTipoCambio() {
     cargarTC()
   }, [])
   return { tcBna, tcBlue, fecha }
+}// =============================================================================
+// INVEXUS — Hooks nuevos para useSupabase.ts
+// Agregar al archivo existente: hooks/useSupabase.ts
+// =============================================================================
+
+
+const supabase = createClient()
+
+// ─── TIPOS ───────────────────────────────────────────────────────────────────
+
+export type CuentaCorriente = {
+  id: string
+  empresa: string
+  venta_id: string
+  cliente: string | null
+  monto_total: number
+  cant_cuotas: number
+  aprobado_por: string | null
+  observaciones: string | null
+  estado: 'Activa' | 'Saldada' | 'Cancelada'
+  created_at: string
+  updated_at: string
+}
+
+export type CcCuota = {
+  id: string
+  cc_id: string
+  nro_cuota: number
+  monto: number
+  fecha_vencimiento: string
+  estado_pago: 'Pendiente' | 'Cobrado' | 'Vencido'
+  fecha_cobro: string | null
+  nro_pagare: string | null
+  observaciones: string | null
+  // campos extras de la vista cc_cuotas_estado
+  empresa?: string
+  venta_id?: string
+  cliente?: string | null
+  monto_total?: number
+  estado_calculado?: 'Cobrado' | 'Vencido' | 'Por vencer' | 'Pendiente'
+  dias_para_vencer?: number
+}
+
+export type TomaPxp = {
+  id: string
+  empresa: string
+  venta_id: string
+  inv_id_tomado: string | null
+  valor_pxp: number
+  marca: string | null
+  modelo: string | null
+  version: string | null
+  anio: number | null
+  km: number | null
+  color: string | null
+  patente: string | null
+  vin: string | null
+  combustible: string | null
+  transmision: string | null
+  observaciones: string | null
+  created_at: string
+}
+
+// ─── HOOK: useCuentasCorrientes ───────────────────────────────────────────────
+
+export function useCuentasCorrientes(empresa?: string) {
+  const [cuentas, setCuentas] = useState<CuentaCorriente[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchCuentas = useCallback(async () => {
+    setLoading(true)
+    let query = supabase
+      .from('cuentas_corrientes')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (empresa) query = query.eq('empresa', empresa)
+
+    const { data, error } = await query
+    if (error) setError(error.message)
+    else setCuentas(data || [])
+    setLoading(false)
+  }, [empresa])
+
+  useEffect(() => { fetchCuentas() }, [fetchCuentas])
+
+  return { cuentas, loading, error, refetch: fetchCuentas }
+}
+
+// ─── HOOK: useCcCuotas ───────────────────────────────────────────────────────
+
+export function useCcCuotas(ccId?: string) {
+  const [cuotas, setCuotas] = useState<CcCuota[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchCuotas = useCallback(async () => {
+    if (!ccId) { setCuotas([]); setLoading(false); return }
+    setLoading(true)
+    const { data } = await supabase
+      .from('cc_cuotas_estado')
+      .select('*')
+      .eq('cc_id', ccId)
+      .order('nro_cuota', { ascending: true })
+    setCuotas(data || [])
+    setLoading(false)
+  }, [ccId])
+
+  useEffect(() => { fetchCuotas() }, [fetchCuotas])
+
+  return { cuotas, loading, refetch: fetchCuotas }
+}
+
+// ─── HOOK: useCuotasPendientes (para módulo cobranzas) ───────────────────────
+
+export function useCuotasPendientes(empresa?: string) {
+  const [cuotas, setCuotas] = useState<CcCuota[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetch = async () => {
+      let query = supabase
+        .from('cc_cuotas_estado')
+        .select('*')
+        .neq('estado_pago', 'Cobrado')
+        .order('fecha_vencimiento', { ascending: true })
+
+      if (empresa) query = query.eq('empresa', empresa)
+
+      const { data } = await query
+      setCuotas(data || [])
+      setLoading(false)
+    }
+    fetch()
+  }, [empresa])
+
+  return { cuotas, loading }
+}
+
+// ─── HOOK: useTomas ──────────────────────────────────────────────────────────
+
+export function useTomas(empresa?: string) {
+  const [tomas, setTomas] = useState<TomaPxp[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchTomas = useCallback(async () => {
+    setLoading(true)
+    let query = supabase
+      .from('tomas_pxp')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (empresa) query = query.eq('empresa', empresa)
+
+    const { data } = await query
+    setTomas(data || [])
+    setLoading(false)
+  }, [empresa])
+
+  useEffect(() => { fetchTomas() }, [fetchTomas])
+
+  return { tomas, loading, refetch: fetchTomas }
+}
+
+// ─── HELPERS: generar IDs correlativos ───────────────────────────────────────
+
+export async function siguienteIdCc(empresa: string): Promise<string> {
+  const { data } = await supabase.rpc('siguiente_id_cc', { p_empresa: empresa })
+  return data || 'CC-001'
+}
+
+export async function siguienteIdPxp(empresa: string): Promise<string> {
+  const { data } = await supabase.rpc('siguiente_id_pxp', { p_empresa: empresa })
+  return data || 'PXP-001'
+}
+
+// ─── HELPER: generar cuotas por defecto ──────────────────────────────────────
+
+export function generarCuotasDefault(
+  ccId: string,
+  montoTotal: number,
+  cantCuotas: number,
+  fechaVenta: string
+): Omit<CcCuota, 'id' | 'estado_pago' | 'fecha_cobro' | 'nro_pagare' | 'observaciones'>[] {
+  const montoCuota = Math.floor(montoTotal / cantCuotas)
+  const resto = montoTotal - montoCuota * cantCuotas
+  const fechaBase = new Date(fechaVenta)
+
+  return Array.from({ length: cantCuotas }, (_, i) => {
+    const fechaVenc = new Date(fechaBase)
+    fechaVenc.setDate(fechaVenc.getDate() + 30 * (i + 1))
+    const monto = i === cantCuotas - 1 ? montoCuota + resto : montoCuota
+    return {
+      cc_id: ccId,
+      nro_cuota: i + 1,
+      monto,
+      fecha_vencimiento: fechaVenc.toISOString().split('T')[0],
+    }
+  })
 }

@@ -6,8 +6,6 @@ import FiltroVehiculos, { FiltroVehiculosState, aplicarFiltroVehiculos } from '@
 import { useVentas, useTipoCambio, useInstrumentos } from '@/hooks/useSupabase'
 import { createClient } from '@/utils/supabase/client'
 import { registrarAuditoria } from '@/utils/auditoria'
-import MediosCobro, { type ValoresCobro } from '@/components/MediosCobro'
-import { guardarVentaCompleta } from '@/utils/guardarVentaCompleta'
 
 type GastoUnidad = {
   id?: string
@@ -68,15 +66,10 @@ export default function VentasPage() {
   const [form, setForm] = useState({
     empresa: 'INVEXUS', inv_id: '', cliente: '', vendedor_nombre: '',
     precio_venta: '', forma_pago: 'Contado',
+    cobro_efectivo: 0, cobro_transfer: 0, cobro_usd: 0,
+    cobro_usd_tc: tcBna, cobro_pagare: 0, cobro_pxp: 0,
     estado_cobro: 'Cobrado', observaciones: '', fecha: hoy,
   })
-
-  const COBROS_INICIAL: ValoresCobro = {
-    cobro_efectivo: 0, cobro_transfer: 0, cobro_usd: 0, cobro_usd_tc: tcBna,
-    cobro_pagare: 0, cobro_tarjeta: 0, cobro_tarjeta_detalle: '',
-    cobro_pxp: 0, cobro_cc: 0, cuotas_cc: [], aprobado_por_cc: '', datos_pxp: null,
-  }
-  const [cobros, setCobros] = useState<ValoresCobro>(COBROS_INICIAL)
 
   useEffect(() => {
     const supabase = createClient()
@@ -117,7 +110,17 @@ export default function VentasPage() {
 
   const totalVentas = ventasFiltradas.reduce((a: number, v: any) => a + (v.precio_venta || 0), 0)
   const totalGanancia = ventasFiltradas.reduce((a: number, v: any) => a + (v.ganancia_neta || 0), 0)
+
+  const totalCobrado =
+    (parseFloat(String(form.cobro_efectivo)) || 0) +
+    (parseFloat(String(form.cobro_transfer)) || 0) +
+    (parseFloat(String(form.cobro_usd)) || 0) * form.cobro_usd_tc +
+    (parseFloat(String(form.cobro_pagare)) || 0) +
+    (parseFloat(String(form.cobro_pxp)) || 0) +
+    instrumentosForm.reduce((a, i) => a + (i.monto_aplicado || 0), 0)
+  const precioVenta = parseFloat(form.precio_venta) || 0
   const totalGastosForm = gastosForm.reduce((a, g) => a + (g.monto_ars || 0), 0)
+  const diff = precioVenta - totalCobrado
 
   const handleClickFila = (id: string) => {
     if (detalle === id) { setDetalle(null); setEditando(null) }
@@ -132,7 +135,6 @@ export default function VentasPage() {
       cobro_efectivo: v.cobro_efectivo || 0, cobro_transfer: v.cobro_transfer || 0,
       cobro_usd: v.cobro_usd || 0, cobro_usd_tc: v.cobro_usd_tc || tcBna,
       cobro_pagare: v.cobro_pagare || 0, cobro_pxp: v.cobro_pxp || 0,
-      cobro_cc: v.cobro_cc || 0, cobro_tarjeta: v.cobro_tarjeta || 0,
       ganancia_neta: v.ganancia_neta || '', costo_compra: v.costo_compra || '',
       estado_cobro: v.estado_cobro || 'Cobrado', observaciones: v.observaciones || '',
       fecha: v.fecha ? v.fecha.split('T')[0] : hoy,
@@ -141,67 +143,40 @@ export default function VentasPage() {
 
   // ── REGISTRAR VENTA ───────────────────────────────────────
   const handleGuardar = async () => {
-    const precioVenta = parseFloat(form.precio_venta) || 0
-
-    if (!form.cliente || !precioVenta) { alert('Completar cliente y precio de venta.'); return }
-
-    // Validar que cobros + instrumentos cuadren con el precio
-    const totalCobradoMedios =
-      cobros.cobro_efectivo + cobros.cobro_transfer +
-      cobros.cobro_usd * cobros.cobro_usd_tc +
-      cobros.cobro_pagare + cobros.cobro_tarjeta +
-      cobros.cobro_pxp + cobros.cobro_cc
-    const totalInstrumentos = instrumentosForm.reduce((a: number, i: any) => a + (i.monto_aplicado || 0), 0)
-    const totalCobrado = totalCobradoMedios + totalInstrumentos
-
-    if (Math.abs(totalCobrado - precioVenta) > 1) {
-      alert(`Los medios de cobro (${new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(totalCobrado)}) no coinciden con el precio de venta (${new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(precioVenta)}).`)
-      return
-    }
-
-    // Validar cuotas CC
-    if (cobros.cobro_cc > 0) {
-      if (cobros.cuotas_cc.length === 0) { alert('Configurar las cuotas de cuenta corriente.'); return }
-      const sumaCC = cobros.cuotas_cc.reduce((a, c) => a + c.monto, 0)
-      if (Math.abs(sumaCC - cobros.cobro_cc) > 1) { alert('La suma de cuotas CC no coincide con el monto financiado.'); return }
-    }
-
-    // Validar PxP
-    if (cobros.cobro_pxp > 0 && cobros.datos_pxp) {
-      const p = cobros.datos_pxp
-      if (!p.marca || !p.modelo || !p.patente) { alert('Parte de pago: completar Marca, Modelo y Patente.'); return }
-    }
-
-    const resultado = await guardarVentaCompleta({
-      empresa: form.empresa,
-      inv_id: form.inv_id,
-      fecha: form.fecha || hoy,
-      cliente: form.cliente,
-      vendedor_nombre: form.vendedor_nombre,
-      precio_venta: precioVenta,
-      forma_pago: form.forma_pago,
-      estado_cobro: form.estado_cobro,
-      tc_bna_snapshot: tcBna,
-      tc_blue_snapshot: tcBlue,
-      observaciones: form.observaciones || '',
-      cobros,
-    })
-
-    if (!resultado.ok) { alert('Error: ' + resultado.error); return }
-
     const supabase = createClient()
-    const newId = resultado.ventaId
+    const newId = 'VTA-' + Date.now().toString().slice(-8)
+    const ventaData = {
+      id: newId, empresa: form.empresa, inv_id: form.inv_id || null,
+      fecha: form.fecha || hoy, cliente: form.cliente,
+      vendedor_nombre: form.vendedor_nombre,
+      precio_venta: parseFloat(form.precio_venta),
+      forma_pago: form.forma_pago,
+      cobro_efectivo: form.cobro_efectivo, cobro_transfer: form.cobro_transfer,
+      cobro_usd: form.cobro_usd, cobro_usd_tc: form.cobro_usd_tc,
+      cobro_pagare: form.cobro_pagare, cobro_pxp: form.cobro_pxp,
+      estado_cobro: form.estado_cobro,
+      tc_bna_snapshot: tcBna, tc_blue_snapshot: tcBlue,
+      observaciones: form.observaciones, estado_venta: 'Activa',
+    }
+    const { error: errVenta } = await supabase.from('ventas').insert(ventaData)
+    if (errVenta) { alert('Error al registrar venta: ' + errVenta.message); return }
 
-    // Gastos por unidad (lógica preservada)
+    // Actualizar estado vehículo
+    if (form.inv_id) {
+      await supabase.from('inventario').update({ estado: 'Vendido', fecha_venta: form.fecha || hoy }).eq('id', form.inv_id)
+      await registrarAuditoria({ tabla: 'inventario', registro_id: form.inv_id, accion: 'UPDATE', descripcion: `Estado cambiado a Vendido por venta ${newId}`, datos_despues: { estado: 'Vendido', fecha_venta: form.fecha || hoy }, empresa: form.empresa })
+    }
+
+    // Gastos por unidad
     if (gastosForm.length > 0 && form.inv_id) {
-      const gastosInsert = gastosForm.filter((g: any) => g.monto_ars > 0).map((g: any) => ({
+      const gastosInsert = gastosForm.filter(g => g.monto_ars > 0).map(g => ({
         inv_id: form.inv_id, venta_id: newId, empresa: form.empresa,
         tipo: g.tipo, descripcion: g.descripcion, monto_ars: g.monto_ars, fecha: form.fecha || hoy,
       }))
       if (gastosInsert.length > 0) await supabase.from('gastos_unidad').insert(gastosInsert)
     }
 
-    // Instrumentos de cobro (lógica preservada)
+    // Instrumentos
     for (const inst of instrumentosForm) {
       if (inst.monto_aplicado <= 0) continue
       let instrId = inst.id
@@ -215,22 +190,23 @@ export default function VentasPage() {
         if (!newInstr) continue
         instrId = newInstr.id
       } else {
-        const instrExistente = instrumentosExistentes.find((i: any) => i.id === instrId)
-        await supabase.from('instrumentos_cobro').update({
-          estado: inst.monto_aplicado >= (instrExistente?.monto_ars || 0) ? 'aplicado_total' : 'aplicado_parcial'
-        }).eq('id', instrId)
+        const instrExistente = instrumentosExistentes.find(i => i.id === instrId)
+        await supabase.from('instrumentos_cobro').update({ estado: inst.monto_aplicado >= (instrExistente?.monto_ars || 0) ? 'aplicado_total' : 'aplicado_parcial' }).eq('id', instrId)
       }
       await supabase.from('venta_instrumentos').insert({ venta_id: newId, instrumento_id: instrId, monto_aplicado: inst.monto_aplicado })
     }
 
+    // ── AUDITORÍA ──
+    await registrarAuditoria({
+      tabla: 'ventas', registro_id: newId, accion: 'INSERT',
+      descripcion: `Venta registrada: ${form.cliente} · ${form.empresa} · $${parseFloat(form.precio_venta).toLocaleString('es-AR')}`,
+      datos_despues: ventaData, empresa: form.empresa,
+    })
+
     setToast('Venta registrada correctamente')
     setTimeout(() => setToast(''), 3000)
-    setShowForm(false)
-    setGastosForm([])
-    setInstrumentosForm([])
-    setCobros(COBROS_INICIAL)
-    refresh()
-    refreshInstrumentos()
+    setShowForm(false); setGastosForm([]); setInstrumentosForm([])
+    refresh(); refreshInstrumentos()
     const { data } = await supabase.from('inventario_view').select('*')
     if (data) setInventario(data)
   }
@@ -248,8 +224,6 @@ export default function VentasPage() {
       cobro_usd_tc: parseFloat(editForm.cobro_usd_tc) || tcBna,
       cobro_pagare: parseFloat(editForm.cobro_pagare) || 0,
       cobro_pxp: parseFloat(editForm.cobro_pxp) || 0,
-      cobro_cc: parseFloat(editForm.cobro_cc) || 0,
-      cobro_tarjeta: parseFloat(editForm.cobro_tarjeta) || 0,
       ganancia_neta: editForm.ganancia_neta ? parseFloat(editForm.ganancia_neta) : null,
       costo_compra: editForm.costo_compra ? parseFloat(editForm.costo_compra) : null,
       estado_cobro: editForm.estado_cobro,
@@ -259,6 +233,7 @@ export default function VentasPage() {
     const { error } = await supabase.from('ventas').update(datosNuevos).eq('id', v.id)
     if (error) { alert('Error: ' + error.message); return }
 
+    // ── AUDITORÍA ──
     await registrarAuditoria({
       tabla: 'ventas', registro_id: v.id, accion: 'UPDATE',
       descripcion: `Venta editada: ${editForm.cliente} · ${v.empresa}`,
@@ -285,6 +260,7 @@ export default function VentasPage() {
       await registrarAuditoria({ tabla: 'inventario', registro_id: v.inv_id, accion: 'UPDATE', descripcion: `Vehículo vuelto a Disponible por anulación de ${v.id}`, datos_despues: { estado: 'Disponible' }, empresa: v.empresa })
     }
 
+    // ── AUDITORÍA ──
     await registrarAuditoria({
       tabla: 'ventas', registro_id: v.id, accion: 'ANULACION',
       descripcion: `Venta anulada: ${v.cliente} · Motivo: ${motivoAnulacion}`,
@@ -418,17 +394,20 @@ export default function VentasPage() {
               </select>
             </div>
 
-            {/* medios de cobro — nuevo componente */}
-            <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
-              <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 12 }}>Medios de cobro</div>
-              <MediosCobro
-                precioVenta={parseFloat(form.precio_venta) || 0}
-                empresa={form.empresa}
-                fechaVenta={form.fecha || hoy}
-                tcActual={tcBna}
-                valores={cobros}
-                onChange={setCobros}
-              />
+            {/* cobro */}
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8', marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #334155' }}>Desglose de cobro directo</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 12 }}>
+              {[['cobro_efectivo','Efectivo ARS'],['cobro_transfer','Transferencia ARS'],['cobro_pagare','Pagaré ARS'],['cobro_pxp','Parte de pago ARS']].map(([k,l]) => (
+                <div key={k}><label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>{l}</label><input type="number" value={(form as any)[k]} onChange={e => setForm({ ...form, [k]: parseFloat(e.target.value) || 0 })} style={{ width: '100%', padding: '6px 10px', borderRadius: 8, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 12 }} /></div>
+              ))}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
+              <div><label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>USD</label><input type="number" value={form.cobro_usd} onChange={e => setForm({ ...form, cobro_usd: parseFloat(e.target.value) || 0 })} style={{ width: '100%', padding: '6px 10px', borderRadius: 8, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 12 }} /></div>
+              <div><label style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 4 }}>TC pactado</label><input type="number" value={form.cobro_usd_tc} onChange={e => setForm({ ...form, cobro_usd_tc: parseFloat(e.target.value) || tcBna })} style={{ width: '100%', padding: '6px 10px', borderRadius: 8, border: '1px solid #334155', background: '#0f172a', color: '#fb923c', fontSize: 12 }} /></div>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
+                <button onClick={() => setForm({ ...form, cobro_usd_tc: tcBna })} style={{ flex: 1, padding: '6px 8px', borderRadius: 8, border: '1px solid #334155', background: 'rgba(96,165,250,.1)', color: '#60a5fa', fontSize: 11, cursor: 'pointer' }}>BNA ${fmtN(tcBna)}</button>
+                <button onClick={() => setForm({ ...form, cobro_usd_tc: tcBlue })} style={{ flex: 1, padding: '6px 8px', borderRadius: 8, border: '1px solid rgba(251,146,60,.3)', background: 'rgba(251,146,60,.1)', color: '#fb923c', fontSize: 11, cursor: 'pointer' }}>Blue ${fmtN(tcBlue)}</button>
+              </div>
             </div>
 
             {/* instrumentos */}
@@ -483,9 +462,16 @@ export default function VentasPage() {
               {gastosForm.length > 0 && <div style={{ textAlign: 'right', fontSize: 12, color: '#fb923c', fontFamily: 'monospace', paddingTop: 6, borderTop: '1px solid #1e293b' }}>Total gastos: {fmt(totalGastosForm)}</div>}
             </div>
 
+            {/* resumen */}
+            <div style={{ background: diff > 100 ? 'rgba(239,68,68,.1)' : diff < -100 ? 'rgba(234,179,8,.1)' : 'rgba(34,197,94,.1)', border: `1px solid ${diff > 100 ? 'rgba(239,68,68,.3)' : diff < -100 ? 'rgba(234,179,8,.3)' : 'rgba(34,197,94,.3)'}`, borderRadius: 8, padding: '10px 14px', marginBottom: 14, fontSize: 12 }}>
+              <span style={{ color: '#94a3b8' }}>Precio: </span><span style={{ color: '#e2e8f0', fontFamily: 'monospace', marginRight: 12 }}>{fmt(precioVenta)}</span>
+              <span style={{ color: '#94a3b8' }}>Cobrado: </span><span style={{ color: '#e2e8f0', fontFamily: 'monospace', marginRight: 12 }}>{fmt(totalCobrado)}</span>
+              {totalGastosForm > 0 && <><span style={{ color: '#94a3b8' }}>Gastos: </span><span style={{ color: '#fb923c', fontFamily: 'monospace', marginRight: 12 }}>{fmt(totalGastosForm)}</span></>}
+              <span style={{ color: diff > 100 ? '#f87171' : diff < -100 ? '#facc15' : '#4ade80', fontWeight: 600 }}>{diff > 100 ? 'Faltan: ' + fmt(diff) : diff < -100 ? 'Exceso: ' + fmt(Math.abs(diff)) : 'Cobro completo ✓'}</span>
+            </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={handleGuardar} style={{ padding: '7px 20px', borderRadius: 8, background: '#16a34a', color: 'white', border: 'none', fontSize: 12, cursor: 'pointer', fontWeight: 600 }}>Registrar venta</button>
-              <button onClick={() => { setShowForm(false); setGastosForm([]); setInstrumentosForm([]); setCobros(COBROS_INICIAL) }} style={{ padding: '7px 16px', borderRadius: 8, background: 'transparent', color: '#64748b', border: '1px solid #334155', fontSize: 12, cursor: 'pointer' }}>Cancelar</button>
+              <button onClick={() => { setShowForm(false); setGastosForm([]); setInstrumentosForm([]) }} style={{ padding: '7px 16px', borderRadius: 8, background: 'transparent', color: '#64748b', border: '1px solid #334155', fontSize: 12, cursor: 'pointer' }}>Cancelar</button>
             </div>
           </div>
         )}
@@ -566,19 +552,8 @@ export default function VentasPage() {
                                   <div style={{ borderTop: '1px solid #1e3a5f', paddingTop: 14, marginBottom: 14 }}>
                                     <div style={{ fontSize: 10, color: '#475569', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.05em' }}>Desglose de cobro</div>
                                     <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                                      {[
-                                        ['Efectivo', v.cobro_efectivo],
-                                        ['Transferencia', v.cobro_transfer],
-                                        ['USD', v.cobro_usd ? `USD ${fmtN(v.cobro_usd)} × $${fmtN(v.cobro_usd_tc)}` : null],
-                                        ['Pagaré', v.cobro_pagare],
-                                        ['Tarjeta', v.cobro_tarjeta],
-                                        ['Parte de pago', v.cobro_pxp],
-                                        ['Cuenta corriente', v.cobro_cc],
-                                      ].filter(([, val]) => val && val !== 0).map(([label, val]) => (
-                                        <div key={label as string}>
-                                          <div style={{ fontSize: 10, color: '#475569', marginBottom: 2 }}>{label}</div>
-                                          <div style={{ fontSize: 12, color: '#cbd5e1', fontFamily: 'monospace' }}>{typeof val === 'number' ? fmt(val) : val}</div>
-                                        </div>
+                                      {[['Efectivo',v.cobro_efectivo],['Transferencia',v.cobro_transfer],['USD',v.cobro_usd?`USD ${fmtN(v.cobro_usd)} × $${fmtN(v.cobro_usd_tc)}`:null],['Pagaré',v.cobro_pagare],['Parte de pago',v.cobro_pxp]].filter(([,val])=>val&&val!==0).map(([label,val])=>(
+                                        <div key={label as string}><div style={{ fontSize: 10, color: '#475569', marginBottom: 2 }}>{label}</div><div style={{ fontSize: 12, color: '#cbd5e1', fontFamily: 'monospace' }}>{typeof val === 'number' ? fmt(val) : val}</div></div>
                                       ))}
                                     </div>
                                   </div>
@@ -594,11 +569,6 @@ export default function VentasPage() {
                                   </div>
                                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
                                     {[['cobro_efectivo','Efectivo'],['cobro_transfer','Transferencia'],['cobro_pagare','Pagaré'],['cobro_pxp','Parte de pago']].map(([k,l]) => (
-                                      <div key={k}><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>{l}</label><input type="number" value={editForm[k]} onChange={e => setEditForm({ ...editForm, [k]: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
-                                    ))}
-                                  </div>
-                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
-                                    {[['cobro_cc','Cta. Corriente'],['cobro_tarjeta','Tarjeta']].map(([k,l]) => (
                                       <div key={k}><label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 3 }}>{l}</label><input type="number" value={editForm[k]} onChange={e => setEditForm({ ...editForm, [k]: e.target.value })} style={{ width: '100%', padding: '5px 8px', borderRadius: 6, border: '1px solid #334155', background: '#0f172a', color: '#e2e8f0', fontSize: 11 }} /></div>
                                     ))}
                                   </div>
