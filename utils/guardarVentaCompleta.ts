@@ -3,11 +3,12 @@
 // Archivo: utils/guardarVentaCompleta.ts
 //
 // Ejecuta en secuencia atómica:
-//   1. INSERT ventas
-//   2. UPDATE inventario (vehículo vendido → Vendido)
-//   3. Si hay PxP: INSERT inventario (usado tomado) + INSERT tomas_pxp
-//   4. Si hay CC:  INSERT cuentas_corrientes + INSERT cc_cuotas (N rows)
-//   5. INSERT auditoria_log
+//   1. Genera ID correlativo formato YYYYMMDD-NNN
+//   2. INSERT ventas
+//   3. UPDATE inventario (vehículo vendido → Vendido)
+//   4. Si hay PxP: INSERT inventario (usado tomado) + INSERT tomas_pxp
+//   5. Si hay CC:  INSERT cuentas_corrientes + INSERT cc_cuotas (N rows)
+//   6. INSERT auditoria_log
 // =============================================================================
 
 import { createClient } from '@/utils/supabase/client'
@@ -60,10 +61,27 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
     cobro_cc:              datos.cobros.cobro_cc || 0,
   }
 
-  // ─── 2. INSERT ventas ─────────────────────────────────────────────────────
+  // ─── 2. Generar ID correlativo formato YYYYMMDD-NNN ───────────────────────
+  const fechaHoy = datos.fecha.replace(/-/g, '') // "2026-04-29" → "20260429"
+
+  // Buscar el último número usado en esa fecha para evitar duplicados
+  const { data: ventasHoy } = await supabase
+    .from('ventas')
+    .select('id')
+    .ilike('id', `${fechaHoy}-%`)
+    .order('id', { ascending: false })
+    .limit(1)
+    .single()
+
+  const ultimoNum = ventasHoy?.id
+    ? parseInt(ventasHoy.id.split('-')[1]) || 0
+    : 0
+  const nuevoVentaId = `${fechaHoy}-${String(ultimoNum + 1).padStart(3, '0')}`
+
+  // ─── 3. INSERT ventas ─────────────────────────────────────────────────────
   const { data: ventaData, error: errVenta } = await supabase
     .from('ventas')
-    .insert(ventaPayload)
+    .insert({ id: nuevoVentaId, ...ventaPayload })
     .select('id')
     .single()
 
@@ -72,18 +90,20 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
   }
   const ventaId = ventaData.id
 
-  // ─── 3. UPDATE inventario: vehículo vendido → Vendido ────────────────────
-  const { error: errInv } = await supabase
-    .from('inventario')
-    .update({ estado: 'Vendido', fecha_venta: datos.fecha, precio_vendido: datos.precio_venta })
-    .eq('id', datos.inv_id)
+  // ─── 4. UPDATE inventario: vehículo vendido → Vendido ────────────────────
+  if (datos.inv_id) {
+    const { error: errInv } = await supabase
+      .from('inventario')
+      .update({ estado: 'Vendido', fecha_venta: datos.fecha, precio_vendido: datos.precio_venta })
+      .eq('id', datos.inv_id)
 
-  if (errInv) {
-    // No revertimos la venta pero avisamos — el admin puede corregirlo
-    console.error('Advertencia: venta registrada pero no se actualizó el estado del inventario:', errInv.message)
+    if (errInv) {
+      // No revertimos la venta pero avisamos — el admin puede corregirlo
+      console.error('Advertencia: venta registrada pero no se actualizó el estado del inventario:', errInv.message)
+    }
   }
 
-  // ─── 4. Si hay PxP: dar de alta el usado + registrar toma ────────────────
+  // ─── 5. Si hay PxP: dar de alta el usado + registrar toma ────────────────
   const cobros = datos.cobros
   if (cobros.cobro_pxp > 0 && cobros.datos_pxp) {
     const pxp: DatosPxP = cobros.datos_pxp
@@ -93,11 +113,7 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
       return { ok: false, error: 'Parte de pago: completar al menos Marca, Modelo y Patente.' }
     }
 
-    // Obtener siguiente ID de inventario para este empresa
-    // Reutilizamos la lógica existente del sistema — llamada al backend
-    const { data: idData } = await supabase.rpc('siguiente_id_cc', { p_empresa: datos.empresa })
-    // Nota: el sistema ya tiene lógica de IDs en el front, usamos el mismo patrón
-    // Para inventario usamos la función existente que genera INV-XXX / MAX-XXX
+    // Obtener siguiente ID de inventario para esta empresa
     const prefijo = datos.empresa === 'INVEXUS' ? 'INV' : 'MAX'
     const { data: ultimoInv } = await supabase
       .from('inventario')
@@ -107,10 +123,10 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
       .limit(1)
       .single()
 
-    const ultimoNum = ultimoInv?.id
+    const ultimoNumInv = ultimoInv?.id
       ? parseInt(ultimoInv.id.replace(`${prefijo}-`, '')) || 0
       : 0
-    const nuevoInvId = `${prefijo}-${String(ultimoNum + 1).padStart(3, '0')}`
+    const nuevoInvId = `${prefijo}-${String(ultimoNumInv + 1).padStart(3, '0')}`
 
     // INSERT inventario (usado tomado)
     const { error: errNuevoInv } = await supabase.from('inventario').insert({
@@ -166,7 +182,7 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
     }
   }
 
-  // ─── 5. Si hay CC: crear cuenta corriente + cuotas ───────────────────────
+  // ─── 6. Si hay CC: crear cuenta corriente + cuotas ───────────────────────
   if (cobros.cobro_cc > 0 && cobros.cuotas_cc.length > 0) {
     const ccId = await siguienteIdCc(datos.empresa)
 
@@ -185,7 +201,6 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
       return { ok: false, error: `Error al crear la cuenta corriente: ${errCC.message}` }
     }
 
-    // INSERT cuotas — una por una (Supabase acepta array también)
     const cuotasPayload = cobros.cuotas_cc.map(c => ({
       cc_id:             ccId,
       nro_cuota:         c.nro_cuota,
@@ -202,14 +217,19 @@ export async function guardarVentaCompleta(datos: DatosVenta): Promise<Resultado
     }
   }
 
-  // ─── 6. Auditoría ─────────────────────────────────────────────────────────
+  // ─── 7. Auditoría ─────────────────────────────────────────────────────────
   await registrarAuditoria({
-    tabla:    'ventas',
-    accion:   'INSERT',
+    tabla:       'ventas',
+    accion:      'INSERT',
     registro_id: ventaId,
     descripcion: `Venta registrada: ${datos.cliente} · ${datos.empresa}`,
-    empresa: datos.empresa,
-    datos_despues: { ...ventaPayload, tiene_pxp: cobros.cobro_pxp > 0, tiene_cc: cobros.cobro_cc > 0 },
+    empresa:     datos.empresa,
+    datos_despues: {
+      ...ventaPayload,
+      id:         ventaId,
+      tiene_pxp:  cobros.cobro_pxp > 0,
+      tiene_cc:   cobros.cobro_cc > 0,
+    },
   })
 
   return { ok: true, ventaId }
